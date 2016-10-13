@@ -49,6 +49,7 @@
             else if (field.Type == DataType.Int32) type = typeof(Int32);
             else if (field.Type == DataType.Int64) type = typeof(Int64);
             else if (field.Type == DataType.String) type = typeof(string);
+            else if (field.Type == DataType.Collection(DataType.String)) type = typeof(string[]);
             else if (field.Type == DataType.GeographyPoint) type = typeof(GeographyPoint);
             else
             {
@@ -118,6 +119,14 @@
                     builder.Append(')');
                     filter = builder.ToString();
                 }
+                if (field.Type == typeof(string[]))
+                {
+                    if (expression.Operator != Operator.Equal)
+                    {
+                        throw new NotSupportedException();
+                    }
+                    filter = $"{field.Name}/any(z: z eq {constant})";
+                }
                 else
                 {
                     filter = $"{field.Name} {op} {constant}";
@@ -165,7 +174,7 @@
                     if (Schema.TryGetValue(entry.Key, out field))
                     {
                         filter.Append(separator);
-                        filter.Append(FilterExpression.ToFilter(field, entry.Value));
+                        filter.Append(ToFilter(field, entry.Value));
                         separator = " and ";
                     }
                     else

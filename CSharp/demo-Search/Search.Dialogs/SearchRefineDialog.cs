@@ -84,6 +84,11 @@
             {
                 PromptDialog.Number(context, GetRangeMin, $"What is the minimum {this.Refiner}?");
             }
+            else
+            {
+                await context.PostAsync($"None of the results have a value for {this.Refiner}, please select something else to use.");
+                context.Done<FilterExpression>(null);
+            }
         }
 
         public async Task MinRefiner(IDialogContext context, IAwaitable<double> number)

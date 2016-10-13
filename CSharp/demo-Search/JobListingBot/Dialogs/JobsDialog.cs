@@ -12,7 +12,7 @@
     [Serializable]
     public class JobsDialog : SearchDialog
     {
-        private static readonly string[] TopRefiners = { "business_title", "agency", "work_location" };
+        private static readonly string[] TopRefiners = { "business_title", "agency", "work_location", "tags" };
 
         public JobsDialog(ISearchClient searchClient, SearchQueryBuilder queryBuilder) : base(searchClient, queryBuilder, new JobStyler(), multipleSelection: true)
         {

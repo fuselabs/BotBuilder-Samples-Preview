@@ -60,6 +60,18 @@
                     Name = "work_location",
                     Type = typeof(string)
                 });
+                schema.Add("tags", new SearchField
+                {
+                    FilterPreference = PreferredFilter.None,
+                    IsFacetable = true,
+                    IsFilterable = true,
+                    IsKey = false,
+                    IsRetrievable = true,
+                    IsSearchable = true,
+                    IsSortable = false,
+                    Name = "tags",
+                    Type = typeof(string[])
+                });
             }
         }
 
@@ -73,9 +85,9 @@
         {
             context.Call(
                 new SearchRefineDialog(
-                    this.searchClient, 
-                    "business_title", 
-                    this.QueryBuilder, 
+                    this.searchClient,
+                    "business_title",
+                    this.QueryBuilder,
                     prompt: "Hi! To get started, what kind of position are you looking for?"),
                 this.StartSearchDialog);
             return Task.CompletedTask;
@@ -84,15 +96,7 @@
         public async Task StartSearchDialog(IDialogContext context, IAwaitable<FilterExpression> input)
         {
             var title = await input;
-
-            if (title == null)
-            {
-                context.Done<object>(null);
-            }
-            else
-            {
-                context.Call(new JobsDialog(this.searchClient, this.QueryBuilder), this.Done);
-            }
+            context.Call(new JobsDialog(this.searchClient, this.QueryBuilder), this.Done);
         }
 
         public async Task Done(IDialogContext context, IAwaitable<IList<SearchHit>> input)
