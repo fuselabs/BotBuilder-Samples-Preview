@@ -36,7 +36,7 @@
             List<string> options = new List<string>();
             List<string> descriptions = new List<string>();
             var choices = (from facet in result.Facets[this.Refiner] orderby facet.Value ascending select facet);
-            var schema = SearchClient.Schema[Refiner];
+            var schema = SearchClient.Schema.Fields[Refiner];
             if (schema.FilterPreference == PreferredFilter.None)
             {
                 foreach (var choice in choices)
@@ -125,7 +125,7 @@
         protected virtual FilterExpression ParseRefinerValue(string value)
         {
             var expression = new FilterExpression();
-            var field = this.SearchClient.Schema[this.Refiner];
+            var field = this.SearchClient.Schema.Fields[this.Refiner];
             if (field.Type == typeof(string) || field.Type == typeof(string[]))
             {
                 expression = new FilterExpression(Operator.Equal, value);

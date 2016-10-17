@@ -15,7 +15,7 @@
     {
         private readonly ISearchIndexClient searchClient;
         private readonly IMapper<DocumentSearchResult, GenericSearchResult> mapper;
-        private IDictionary<string, SearchField> schema = new Dictionary<string, SearchField>();
+        private SearchSchema schema = new SearchSchema();
 
         public AzureSearchClient(IMapper<DocumentSearchResult, GenericSearchResult> mapper)
         {
@@ -72,9 +72,9 @@
         {
             foreach (var field in fields)
             {
-                schema[field.Name] = ToSearchField(field);
+                schema.Fields[field.Name] = ToSearchField(field);
             }
-            TraceFields(schema);
+            TraceFields(schema.Fields);
         }
 
         public static void TraceFields(IDictionary<string, SearchField> schema)
@@ -171,7 +171,7 @@
                 foreach (var entry in queryBuilder.Refinements)
                 {
                     SearchField field;
-                    if (Schema.TryGetValue(entry.Key, out field))
+                    if (Schema.Fields.TryGetValue(entry.Key, out field))
                     {
                         filter.Append(separator);
                         filter.Append(ToFilter(field, entry.Value));
@@ -194,10 +194,12 @@
             return s.Replace("'", "''");
         }
 
-        public IDictionary<string, SearchField> Schema
+        public SearchSchema Schema
         {
             get
-            { return schema; }
+            {
+                return schema;
+            }
         }
     }
 }

@@ -46,6 +46,7 @@
     <Compile Include="Models\SearchField.cs" />
     <Compile Include="Models\SearchHit.cs" />
     <Compile Include="Models\SearchQueryBuilder.cs" />
+    <Compile Include="Models\SearchSchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ISearchClient.cs" />
   </ItemGroup>

@@ -20,11 +20,11 @@
         public IntroDialog(ISearchClient searchClient)
         {
             SetField.NotNull(out this.searchClient, nameof(searchClient), searchClient);
-            var schema = searchClient.Schema;
+            var fields = searchClient.Schema.Fields;
             // This is not needed is you supply the web.config SearchDialogsServiceAdminKey because it will come from the service itself
-            if (schema.Count() == 0)
+            if (fields.Count() == 0)
             {
-                schema.Add("business_title", new SearchField
+                fields.Add("business_title", new SearchField
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,
@@ -36,7 +36,7 @@
                     Name = "business_title",
                     Type = typeof(string)
                 });
-                schema.Add("agency", new SearchField
+                fields.Add("agency", new SearchField
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,
@@ -48,7 +48,7 @@
                     Name = "agency",
                     Type = typeof(string)
                 });
-                schema.Add("work_location", new SearchField
+                fields.Add("work_location", new SearchField
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,
@@ -60,7 +60,7 @@
                     Name = "work_location",
                     Type = typeof(string)
                 });
-                schema.Add("tags", new SearchField
+                fields.Add("tags", new SearchField
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,

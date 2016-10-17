@@ -14,11 +14,12 @@
         {
             // TODO: This should really be driven by analyzing the schema
             // Preferred interaction model
-            SearchClient.Schema["baths"].FilterPreference = PreferredFilter.MinValue;
-            SearchClient.Schema["beds"].FilterPreference = PreferredFilter.MinValue;
-            SearchClient.Schema["price"].FilterPreference = PreferredFilter.Range;
-            SearchClient.Schema["daysOnMarket"].FilterPreference = PreferredFilter.RangeMax;
-            SearchClient.Schema["sqft"].FilterPreference = PreferredFilter.RangeMax;
+            var fields = SearchClient.Schema.Fields;
+            fields["baths"].FilterPreference = PreferredFilter.MinValue;
+            fields["beds"].FilterPreference = PreferredFilter.MinValue;
+            fields["price"].FilterPreference = PreferredFilter.Range;
+            fields["daysOnMarket"].FilterPreference = PreferredFilter.RangeMax;
+            fields["sqft"].FilterPreference = PreferredFilter.RangeMax;
         }
 
         protected override string[] GetTopRefiners()

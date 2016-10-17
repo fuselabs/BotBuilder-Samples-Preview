@@ -7,6 +7,6 @@
     public interface ISearchClient
     {
         Task<GenericSearchResult> SearchAsync(SearchQueryBuilder queryBuilder, string refiner = null);
-        IDictionary<string, SearchField> Schema { get; }
+        SearchSchema Schema { get; }
     }
 }
