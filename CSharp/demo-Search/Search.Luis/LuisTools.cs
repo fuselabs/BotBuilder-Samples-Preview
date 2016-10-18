@@ -50,7 +50,8 @@
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 response = await client.PostAsync(uri, content);
             }
-            return await response.Content.ReadAsStringAsync();
+            var id = await response.Content.ReadAsStringAsync();
+            return id.Replace("\"", "");
         }
 
         /// <summary>
@@ -68,12 +69,48 @@
             return response.IsSuccessStatusCode;
         }
 
-        /* 
         public static async Task<bool> TrainModelAsync(string subscriptionKey, string appID)
         {
-
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+            var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/{appID}/train";
+            byte[] byteData = Encoding.UTF8.GetBytes("{body}");
+            using (var content = new ByteArrayContent(byteData))
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await client.PostAsync(uri, content);
+                return response.IsSuccessStatusCode;
+            }
         }
-        */
+
+        public static async Task<bool> PublishModelAsync(string subscriptionKey, string appID)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+            var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/{appID}/publish";
+            var body =
+                @"{
+                ""BotFramework"": {
+                    ""Enabled"": false,
+                    ""AppId"": """",
+                    ""SubscriptionKey"": """",
+                    ""Endpoint"": """"
+                },
+                ""Slack"": {
+                    ""Enabled"": false,
+                    ""ClientId"": """",
+                    ""ClientSecret"": """",
+                    ""RedirectUri"": """"
+                }
+            }";
+            byte[] byteData = Encoding.UTF8.GetBytes($"{body}");
+            using (var content = new ByteArrayContent(byteData))
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await client.PostAsync(uri, content);
+                return response.IsSuccessStatusCode;
+            }
+        }
 
         // Derived methods over REST API primitives
 
@@ -91,9 +128,9 @@
             {
                 foreach (var app in apps)
                 {
-                    if ((string) app["Name"] == appName)
+                    if ((string)app["Name"] == appName)
                     {
-                        model = (JObject) app;
+                        model = (JObject)app;
                         break;
                     }
                 }
@@ -110,15 +147,21 @@
         /// <returns>LUIS Model ID.</returns>
         public static async Task<string> GetOrImportModelAsync(string subscriptionKey, string appName, string modelPath)
         {
-            string modelID;
+            string modelID = null;
             var model = await GetModelAsync(subscriptionKey, appName);
             if (model == null)
             {
-                modelID = await ImportModelAsync(subscriptionKey, appName, modelPath);
+                var id = await ImportModelAsync(subscriptionKey, appName, modelPath);
+                if (id != null 
+                    && await TrainModelAsync(subscriptionKey, id) 
+                    && await PublishModelAsync(subscriptionKey, modelID))
+                {
+                    modelID = id;
+                }
             }
             else
             {
-                modelID = (string) model["ID"];
+                modelID = (string)model["ID"];
             }
             return modelID;
         }

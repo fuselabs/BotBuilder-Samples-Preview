@@ -61,8 +61,9 @@
         public async Task StartSearchDialog(IDialogContext context, IAwaitable<IMessageActivity> input)
         {
             var key = ConfigurationManager.AppSettings["LUISSubscriptionKey"];
+            // TODO: Remove this
             if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
-            var appName = "testImport";
+            var appName = "testImport4";
             var id = await LUISTools.GetOrImportModelAsync(key, appName, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"));
             context.Call(new SearchLanguageDialog(this.searchClient.Schema, key, id), DoneSpec);
             // context.Call(new RealEstateSearchDialog(this.searchClient), this.Done);
