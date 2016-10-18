@@ -145,6 +145,9 @@
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\catalogbot - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\catalogbot - Web Deploy.pubxml" />
+    <Content Include="Dialogs\RealEstateModel.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -164,6 +167,10 @@
     <ProjectReference Include="..\Search.Contracts\Search.Contracts.csproj">
       <Project>{FF10CD6A-2BE1-4520-A01F-769C396906CB}</Project>
       <Name>Search.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Search.Luis\Search.LUIS.csproj">
+      <Project>{a9af656a-82c5-4309-a573-c9af4bfd49c2}</Project>
+      <Name>Search.LUIS</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

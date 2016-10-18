@@ -10,6 +10,10 @@
     using Search.Models;
     using Search.Services;
     using Search.Dialogs;
+    using System.Web;
+    using System.IO;
+    using System.Configuration;
+    using Search.LUIS;
 
     [Serializable]
     public class IntroDialog : IDialog<object>
@@ -54,9 +58,18 @@
             return Task.CompletedTask;
         }
 
-        public Task StartSearchDialog(IDialogContext context, IAwaitable<IMessageActivity> input)
+        public async Task StartSearchDialog(IDialogContext context, IAwaitable<IMessageActivity> input)
         {
-            context.Call(new RealEstateSearchDialog(this.searchClient), this.Done);
+            var key = ConfigurationManager.AppSettings["LUISSubscriptionKey"];
+            if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
+            var appName = "testImport";
+            var id = await LUISTools.GetOrImportModelAsync(key, appName, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"));
+            context.Call(new SearchLanguageDialog(this.searchClient.Schema, key, id), DoneSpec);
+            // context.Call(new RealEstateSearchDialog(this.searchClient), this.Done);
+        }
+
+        public Task DoneSpec(IDialogContext context, IAwaitable<SearchSpec> spec)
+        {
             return Task.CompletedTask;
         }
 
