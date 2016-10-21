@@ -1,4 +1,4 @@
-﻿namespace Search.LUIS
+﻿namespace Search.Utilities
 {
     using Newtonsoft.Json.Linq;
     using System.Collections.Generic;
@@ -74,13 +74,24 @@
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
             var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/{appID}/train";
+            HttpResponseMessage response;
             byte[] byteData = Encoding.UTF8.GetBytes("{body}");
             using (var content = new ByteArrayContent(byteData))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await client.PostAsync(uri, content);
-                return response.IsSuccessStatusCode;
+                response = await client.PostAsync(uri, content);
             }
+            if (response.IsSuccessStatusCode)
+            {
+                JObject model;
+                do
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    var a = JArray.Parse(await (await client.GetAsync(uri)).Content.ReadAsStringAsync());
+                    model = await GetModelAsync(subscriptionKey, "realestatemodel");
+                } while (!(bool) model["IsTrained"]);
+            }
+            return response.IsSuccessStatusCode;
         }
 
         public static async Task<bool> PublishModelAsync(string subscriptionKey, string appID)
@@ -154,7 +165,7 @@
                 var id = await ImportModelAsync(subscriptionKey, appName, modelPath);
                 if (id != null 
                     && await TrainModelAsync(subscriptionKey, id) 
-                    && await PublishModelAsync(subscriptionKey, modelID))
+                    && await PublishModelAsync(subscriptionKey, id))
                 {
                     modelID = id;
                 }

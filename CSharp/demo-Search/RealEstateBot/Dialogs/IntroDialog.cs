@@ -13,7 +13,7 @@
     using System.Web;
     using System.IO;
     using System.Configuration;
-    using Search.LUIS;
+    using Search.Utilities;
 
     [Serializable]
     public class IntroDialog : IDialog<object>
@@ -50,6 +50,8 @@
                 fields.Add("price", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "price", Type = typeof(Int64) });
                 fields.Add("thumbnail", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Name = "thumbnail", Type = typeof(String) });
             }
+            // TODO: Remove this
+            
         }
 
         public Task StartAsync(IDialogContext context)
@@ -63,7 +65,12 @@
             var key = ConfigurationManager.AppSettings["LUISSubscriptionKey"];
             // TODO: Remove this
             if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
-            var appName = "testImport4";
+            var appName = "realestatemodel";
+            var old = await LUISTools.GetModelAsync(key, appName);
+            if (old != null)
+            {
+                await LUISTools.DeleteModelAsync(key, (string) old["ID"]);
+            }
             var id = await LUISTools.GetOrImportModelAsync(key, appName, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"));
             context.Call(new SearchLanguageDialog(this.searchClient.Schema, key, id), DoneSpec);
             // context.Call(new RealEstateSearchDialog(this.searchClient), this.Done);

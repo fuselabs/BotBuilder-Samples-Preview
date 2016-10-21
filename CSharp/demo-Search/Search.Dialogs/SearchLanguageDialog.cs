@@ -182,6 +182,11 @@ namespace Search.Dialogs
         [LuisIntent("Filter")]
         public Task ProcessComparison(IDialogContext context, LuisResult result)
         {
+            using (var stream = new System.IO.StreamWriter(@"c:\tmp\luis.json"))
+            {
+                stream.Write(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+            }
+
             var comparisons = (from entity in result.Entities where entity.Type == "Comparison" select new ComparisonEntity(entity)).ToList();
             var attributes = (from entity in result.Entities where schema.Fields.ContainsKey(entity.Type) select entity);
             var substrings = result.Entities.UncoveredSubstrings(result.Query);
