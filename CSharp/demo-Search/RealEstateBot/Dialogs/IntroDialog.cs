@@ -14,6 +14,7 @@
     using System.IO;
     using System.Configuration;
     using Search.Utilities;
+    using Newtonsoft.Json;
 
     [Serializable]
     public class IntroDialog : IDialog<object>
@@ -23,35 +24,37 @@
         public IntroDialog(ISearchClient searchClient)
         {
             SetField.NotNull(out this.searchClient, nameof(searchClient), searchClient);
-            var fields = searchClient.Schema.Fields;
+            var schema = searchClient.Schema;
 
             // This is not needed is you supply the web.config SearchDialogsServiceAdminKey because it will come from the service itself
-            if (fields.Count == 0)
+            if (schema.Fields.Count == 0)
             {
-                fields.Add("listingId", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = true, IsRetrievable = true, IsSearchable = false, IsSortable = false, Name = "listingId", Type = typeof(String) });
-                fields.Add("beds", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "beds", Type = typeof(Int32) });
-                fields.Add("baths", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "baths", Type = typeof(Int32) });
-                fields.Add("description", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Name = "description", Type = typeof(String) });
-                fields.Add("sqft", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "sqft", Type = typeof(Int32) });
-                fields.Add("daysOnMarket", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "daysOnMarket", Type = typeof(Int32) });
-                fields.Add("status", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Name = "status", Type = typeof(String) });
-                fields.Add("source", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Name = "source", Type = typeof(String) });
-                fields.Add("number", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Name = "number", Type = typeof(String) });
-                fields.Add("street", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Name = "street", Type = typeof(String) });
-                fields.Add("unit", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Name = "unit", Type = typeof(String) });
-                fields.Add("type", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Name = "type", Type = typeof(String) });
-                fields.Add("city", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Name = "city", Type = typeof(String) });
-                fields.Add("cityPhonetic", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Name = "cityPhonetic", Type = typeof(String) });
-                fields.Add("district", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "district", Type = typeof(String) });
-                fields.Add("region", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Name = "region", Type = typeof(String) });
-                fields.Add("zipcode", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Name = "zipcode", Type = typeof(String) });
-                fields.Add("countryCode", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Name = "countryCode", Type = typeof(String) });
-                fields.Add("location", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "location", Type = typeof(Microsoft.Spatial.GeographyPoint) });
-                fields.Add("price", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Name = "price", Type = typeof(Int64) });
-                fields.Add("thumbnail", new SearchField { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Name = "thumbnail", Type = typeof(String) });
+                schema.DefaultCurrencyProperty = "price";
+                schema.AddField(new SearchField("listingId") { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = true, IsRetrievable = true, IsSearchable = false, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("beds") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(Int32) });
+                schema.AddField(new SearchField("baths") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(Int32) });
+                schema.AddField(new SearchField("description") { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("sqft") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(Int32) });
+                schema.AddField(new SearchField("daysOnMarket") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(Int32) });
+                schema.AddField(new SearchField("status") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("source") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("number") { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("street") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("unit") { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("type") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Type = typeof(String) });
+                schema.AddField(new SearchField("city") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Type = typeof(String) });
+                // schema.AddField(new SearchField("") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Type = typeof(String) });
+                schema.AddField(new SearchField("district") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(String) });
+                schema.AddField(new SearchField("region") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Type = typeof(String) });
+                schema.AddField(new SearchField("zipcode") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Type = typeof(String) });
+                schema.AddField(new SearchField("countryCode") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = true, IsSortable = true, Type = typeof(String) });
+                schema.AddField(new SearchField("location") { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(Microsoft.Spatial.GeographyPoint) });
+                schema.AddField(new SearchField("price") { FilterPreference = PreferredFilter.None, IsFacetable = true, IsFilterable = true, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = true, Type = typeof(Int64) });
+                // schema.AddField(new SearchField("") { FilterPreference = PreferredFilter.None, IsFacetable = false, IsFilterable = false, IsKey = false, IsRetrievable = true, IsSearchable = false, IsSortable = false, Type = typeof(String) });
             }
             // TODO: Remove this
-            
+            schema.Save(@"c:\tmp\schema.json");
+            var s = SearchSchema.Load(@"C:\tmp\schema.json");
         }
 
         public Task StartAsync(IDialogContext context)
@@ -63,14 +66,15 @@
         public async Task StartSearchDialog(IDialogContext context, IAwaitable<IMessageActivity> input)
         {
             var key = ConfigurationManager.AppSettings["LUISSubscriptionKey"];
+            var appName = "realestatemodel";
             // TODO: Remove this
             if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
-            var appName = "realestatemodel";
             var old = await LUISTools.GetModelAsync(key, appName);
-            if (old != null)
+            if (false && old != null)
             {
-                await LUISTools.DeleteModelAsync(key, (string) old["ID"]);
+                await LUISTools.DeleteModelAsync(key, (string)old["ID"]);
             }
+
             var id = await LUISTools.GetOrImportModelAsync(key, appName, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"));
             context.Call(new SearchLanguageDialog(this.searchClient.Schema, key, id), DoneSpec);
             // context.Call(new RealEstateSearchDialog(this.searchClient), this.Done);

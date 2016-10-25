@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Search.Models
 {
-    public enum Operator { None, LessThan, LessThanOrEqual, Equal, GreaterThanOrEqual, GreaterThan, And, Or };
+    public enum Operator { None, LessThan, LessThanOrEqual, Equal, GreaterThanOrEqual, GreaterThan, And, Or, FullText };
 
     [Serializable]
     public class FilterExpression

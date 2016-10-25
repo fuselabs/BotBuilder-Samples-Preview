@@ -20,11 +20,11 @@
         public IntroDialog(ISearchClient searchClient)
         {
             SetField.NotNull(out this.searchClient, nameof(searchClient), searchClient);
-            var fields = searchClient.Schema.Fields;
+            var schema = searchClient.Schema;
             // This is not needed is you supply the web.config SearchDialogsServiceAdminKey because it will come from the service itself
-            if (fields.Count() == 0)
+            if (schema.Fields.Count() == 0)
             {
-                fields.Add("business_title", new SearchField
+                schema.AddField(new SearchField("business_title")
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,
@@ -33,10 +33,9 @@
                     IsRetrievable = true,
                     IsSearchable = true,
                     IsSortable = true,
-                    Name = "business_title",
                     Type = typeof(string)
                 });
-                fields.Add("agency", new SearchField
+                schema.AddField(new SearchField("agency")
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,
@@ -45,10 +44,9 @@
                     IsRetrievable = true,
                     IsSearchable = true,
                     IsSortable = true,
-                    Name = "agency",
                     Type = typeof(string)
                 });
-                fields.Add("work_location", new SearchField
+                schema.AddField(new SearchField("work_location")
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,
@@ -57,10 +55,9 @@
                     IsRetrievable = true,
                     IsSearchable = true,
                     IsSortable = true,
-                    Name = "work_location",
                     Type = typeof(string)
                 });
-                fields.Add("tags", new SearchField
+                schema.AddField(new SearchField("tags")
                 {
                     FilterPreference = PreferredFilter.None,
                     IsFacetable = true,

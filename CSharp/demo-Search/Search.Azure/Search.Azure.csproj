@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Search.Azure</RootNamespace>
     <AssemblyName>Search.Azure</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,6 +77,10 @@
     <ProjectReference Include="..\Search.Contracts\Search.Contracts.csproj">
       <Project>{FF10CD6A-2BE1-4520-A01F-769C396906CB}</Project>
       <Name>Search.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Search.Utilities\Search.Utilities.csproj">
+      <Project>{a9af656a-82c5-4309-a573-c9af4bfd49c2}</Project>
+      <Name>Search.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

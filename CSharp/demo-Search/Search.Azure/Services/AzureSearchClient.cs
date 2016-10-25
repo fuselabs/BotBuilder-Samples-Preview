@@ -20,16 +20,15 @@
         public AzureSearchClient(IMapper<DocumentSearchResult, GenericSearchResult> mapper)
         {
             this.mapper = mapper;
+            var serviceName = ConfigurationManager.AppSettings["SearchDialogsServiceName"];
             var indexName = ConfigurationManager.AppSettings["SearchDialogsIndexName"];
+            var serviceKey = ConfigurationManager.AppSettings["SearchDialogsServiceKey"];
             var adminKey = ConfigurationManager.AppSettings["SearchDialogsServiceAdminKey"];
             if (adminKey != null)
             {
-                var adminClient = new SearchServiceClient(ConfigurationManager.AppSettings["SearchDialogsServiceName"],
-                                                                      new SearchCredentials(adminKey));
-                AddFields(adminClient.Indexes.Get(indexName).Fields);
+                schema = SearchTools.GetIndexSchema(serviceName, adminKey, indexName);
             }
-            var client = new SearchServiceClient(ConfigurationManager.AppSettings["SearchDialogsServiceName"],
-                                                                 new SearchCredentials(ConfigurationManager.AppSettings["SearchDialogsServiceKey"]));
+            var client = new SearchServiceClient(serviceName, new SearchCredentials(serviceKey));
             searchClient = client.Indexes.GetClient(indexName);
         }
 
@@ -40,50 +39,11 @@
             return this.mapper.Map(documentSearchResult);
         }
 
-        private SearchField ToSearchField(Field field)
-        {
-            Type type;
-            if (field.Type == DataType.Boolean) type = typeof(Boolean);
-            else if (field.Type == DataType.DateTimeOffset) type = typeof(DateTime);
-            else if (field.Type == DataType.Double) type = typeof(double);
-            else if (field.Type == DataType.Int32) type = typeof(Int32);
-            else if (field.Type == DataType.Int64) type = typeof(Int64);
-            else if (field.Type == DataType.String) type = typeof(string);
-            else if (field.Type == DataType.Collection(DataType.String)) type = typeof(string[]);
-            else if (field.Type == DataType.GeographyPoint) type = typeof(GeographyPoint);
-            else
-            {
-                throw new ArgumentException($"Cannot map {field.Type} to a C# type");
-            }
-            return new SearchField()
-            {
-                Name = field.Name,
-                Type = type,
-                IsFacetable = field.IsFacetable,
-                IsFilterable = field.IsFilterable,
-                IsKey = field.IsKey,
-                IsRetrievable = field.IsRetrievable,
-                IsSearchable = field.IsSearchable,
-                IsSortable = field.IsSortable
-            };
-        }
-
         public void AddFields(IEnumerable<Field> fields)
         {
             foreach (var field in fields)
             {
-                schema.Fields[field.Name] = ToSearchField(field);
-            }
-            TraceFields(schema.Fields);
-        }
-
-        public static void TraceFields(IDictionary<string, SearchField> schema)
-        {
-            Func<bool, string> toBool = (val) => val ? "true" : "false";
-            foreach (var entry in schema)
-            {
-                var field = entry.Value;
-                System.Diagnostics.Trace.WriteLine($"SearchClient.Schema.Add(\"{entry.Key}\", new SearchField {{FilterPreference=PreferredFilter.{field.FilterPreference}, IsFacetable={toBool(field.IsFacetable)}, IsFilterable={toBool(field.IsFilterable)}, IsKey={toBool(field.IsKey)}, IsRetrievable={toBool(field.IsRetrievable)}, IsSearchable={toBool(field.IsSearchable)}, IsSortable={toBool(field.IsSortable)}, Name=\"{field.Name}\", Type=typeof({field.Type.Name})}});");
+                schema.AddField(SearchTools.ToSearchField(field));
             }
         }
 

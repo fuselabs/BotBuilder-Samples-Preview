@@ -1,7 +1,9 @@
 ﻿namespace Search.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.IO;
 
     [Serializable]
     public class SearchSchema
@@ -14,14 +16,39 @@
 
         public string DefaultGeoProperty { get; set; }
 
-        public IDictionary<string, SearchField> Fields
+        public List<SearchFragment> Fragments = new List<SearchFragment>();
+
+        public void AddField(SearchField field)
+        {
+            fields.Add(field.Name, field);
+        }
+
+        public void RemoveField(string name)
+        {
+            fields.Remove(name);
+        }
+
+        public SearchField Field(string name)
+        {
+            return fields[name];
+        }
+
+        public IReadOnlyDictionary<string, SearchField> Fields
         {
             get { return fields; }
         }
 
-        public string CanonicalProperty(string propertyName)
+        public void Save(string path)
         {
-            return propertyName;
+            using (var output = new StreamWriter(path))
+            {
+                output.Write(JsonConvert.SerializeObject(this));
+            }
+        }
+
+        public static SearchSchema Load(string path)
+        {
+            return JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(path));
         }
     }
 }

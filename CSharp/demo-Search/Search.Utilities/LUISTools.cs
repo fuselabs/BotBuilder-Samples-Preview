@@ -1,6 +1,7 @@
 ﻿namespace Search.Utilities
 {
     using Newtonsoft.Json.Linq;
+    using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -8,7 +9,7 @@
     using System.Threading.Tasks;
     using System.Web;
 
-    public static class LUISTools
+    public static partial class LUISTools
     {
         // Rest API primitives
 
@@ -162,12 +163,22 @@
             var model = await GetModelAsync(subscriptionKey, appName);
             if (model == null)
             {
-                var id = await ImportModelAsync(subscriptionKey, appName, modelPath);
-                if (id != null 
-                    && await TrainModelAsync(subscriptionKey, id) 
-                    && await PublishModelAsync(subscriptionKey, id))
+                string id = null;
+                try
                 {
-                    modelID = id;
+                    id = await ImportModelAsync(subscriptionKey, appName, modelPath);
+                    if (id != null
+                        && await TrainModelAsync(subscriptionKey, id)
+                        && await PublishModelAsync(subscriptionKey, id))
+                    {
+                        modelID = id;
+                    }
+                }
+                catch (Exception)
+                {
+                    // Try to clean up non published model
+                    await LUISTools.DeleteModelAsync(subscriptionKey, id);
+                    throw;
                 }
             }
             else

@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Search.Models;
 
 namespace Search.Extract
 {

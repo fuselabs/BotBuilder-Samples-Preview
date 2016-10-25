@@ -11,8 +11,14 @@ namespace Search.Models
     [Serializable]
     public class SearchField
     {
+        public SearchField(string name, params string[] alternatives)
+        {
+            Name = name;
+            NameSynonyms = new Synonyms(name, alternatives);
+        }
+
         public string Name;
-        public Type Type;
+        public Type Type = typeof(string);
         public bool IsFacetable;
         public bool IsFilterable;
         public bool IsKey;
@@ -20,7 +26,9 @@ namespace Search.Models
         public bool IsSearchable;
         public bool IsSortable;
 
-        // Fields to control experince
+        // Fields to control experience
         public PreferredFilter FilterPreference;
+        public Synonyms NameSynonyms;
+        public Synonyms[] ValueSynonyms = new Synonyms[0];
     }
 }

@@ -12,12 +12,6 @@ namespace Search.Dialogs
     using System.Text;
     using System.Threading.Tasks;
 
-    public class SearchSpec
-    {
-        public string Text;
-        public SearchParameters Parameters;
-    }
-
     public class Range
     {
         public string Property;
@@ -165,11 +159,20 @@ namespace Search.Dialogs
         public int HitsPerPage { get; set; } = DefaultHitPerPage;
 
         protected SearchSchema schema;
+        protected Canonicalizer fieldCanonicalizer;
+        protected Dictionary<string, Canonicalizer> valueCanonicalizers;
 
         public SearchLanguageDialog(SearchSchema searchSchema, string subscription, string appID)
             : base(new LuisService(new LuisModelAttribute(appID, subscription)))
         {
             schema = searchSchema;
+            fieldCanonicalizer = new Canonicalizer();
+            valueCanonicalizers = new Dictionary<string, Canonicalizer>();
+            foreach(var field in schema.Fields.Values)
+            {
+                fieldCanonicalizer.Add(field.NameSynonyms);
+                valueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
+            }
         }
 
         [LuisIntent("")]
@@ -197,9 +200,9 @@ namespace Search.Dialogs
                     comparison.AddEntity(entity);
                 }
             }
-            var ranges = from comparison in comparisons select comparison.Resolve(schema.CanonicalProperty);
+            var ranges = from comparison in comparisons select comparison.Resolve((field) => fieldCanonicalizer.Canonicalize(field));
             var filter = ranges.GenerateFilter();
-            var spec = new SearchSpec { Parameters = new SearchParameters { Filter = filter } };
+            var spec = new SearchSpec {  };
             context.Done(spec);
             return Task.CompletedTask;
         }

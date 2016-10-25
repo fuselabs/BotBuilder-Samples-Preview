@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Search.Contracts</RootNamespace>
     <AssemblyName>Search.Contracts</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Canonicalizer.cs" />
     <Compile Include="Models\FilterExpression.cs" />
     <Compile Include="Models\GenericFacet.cs" />
     <Compile Include="Models\GenericSearchResult.cs" />
@@ -47,7 +50,11 @@
     <Compile Include="Models\SearchHit.cs" />
     <Compile Include="Models\SearchQueryBuilder.cs" />
     <Compile Include="Models\SearchSchema.cs" />
+    <Compile Include="Models\SearchSpec.cs" />
+    <Compile Include="Models\SortKey.cs" />
+    <Compile Include="Models\Synonyms.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\SearchFragment.cs" />
     <Compile Include="Services\ISearchClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
