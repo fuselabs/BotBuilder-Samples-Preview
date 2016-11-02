@@ -18,14 +18,15 @@ namespace Search.Generate
 
         static void Usage()
         {
-            Console.WriteLine("generate <schemaFile> <templateFile> [-h <histogramFile>]");
+            Console.WriteLine("generate <schemaFile> <templateFile> [-h <histogramFile>] [-l <luis subscription>]");
             Console.WriteLine("Generate a <schemaFile>Model.Json file from <schemaFile> and <templateFile> which is an exported LUIS model.");
+            Console.WriteLine("-l <LUIS subscription> : Will upload both SearchTemplate.json and <schemaFile>Model.json as LUIS models.");
             System.Environment.Exit(-1);
         }
 
         static void Clear(dynamic model)
         {
-            foreach(var feature in model.model_features)
+            foreach (var feature in model.model_features)
             {
                 if (feature.name == "Properties")
                 {
@@ -43,7 +44,7 @@ namespace Search.Generate
         {
             var builder = new StringBuilder(original);
             var prefix = string.IsNullOrEmpty(original) ? "" : ",";
-            foreach(var alt in synonyms.Alternatives)
+            foreach (var alt in synonyms.Alternatives)
             {
                 builder.Append(prefix);
                 builder.Append(Normalize(alt));
@@ -54,11 +55,17 @@ namespace Search.Generate
 
         static string AddValueSynonyms(string original, IEnumerable<Synonyms> synonyms)
         {
-            foreach(var synonym in synonyms)
+            foreach (var synonym in synonyms)
             {
                 original = AddSynonyms(original, synonym);
             }
             return original;
+        }
+
+        static void AddDescription(dynamic model, string appName, string[] args)
+        {
+            model.desc = $"LUIS model generated via the command generate {string.Join(" ", args)}";
+            model.name = appName;
         }
 
         static dynamic Feature(dynamic model, string name)
@@ -78,7 +85,7 @@ namespace Search.Generate
         static void AddComparison(dynamic model, SearchField field)
         {
             var feature = Feature(model, "Properties");
-            feature.words = AddSynonyms((string) feature.words, field.NameSynonyms);
+            feature.words = AddSynonyms((string)feature.words, field.NameSynonyms);
         }
 
         static void AddAttribute(dynamic model, SearchField field)
@@ -102,7 +109,7 @@ namespace Search.Generate
             dynamic attribute = new JObject();
             attribute.entity = field.Name;
             attribute.startPos = 0;
-            attribute.endPos = text.Count();
+            attribute.endPos = text.Count() - 1;
             entities.Add(attribute);
             newUtterance.entities = entities;
             model.utterances.Add(newUtterance);
@@ -113,11 +120,11 @@ namespace Search.Generate
             var rand = new Random();
             var feature = Feature(model, "Properties");
             var words = ((string)feature.words).Split(',');
-            foreach(var utterance in model.utterances)
+            foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
                 var tokens = text.Split(' ').ToList();
-                var properties = (from prop in (IEnumerable<dynamic>) utterance.entities where prop.entity == "Property" select prop).ToList();
+                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" select prop).ToList();
                 for (var i = 0; i < tokens.Count();)
                 {
                     var token = tokens[i];
@@ -164,7 +171,9 @@ namespace Search.Generate
             string schemaPath = args[0];
             string templatePath = args[1];
             string modelPath = Path.Combine(Path.GetDirectoryName(schemaPath), Path.GetFileNameWithoutExtension(schemaPath) + "Model.json");
+            string modelName = Path.GetFileNameWithoutExtension(schemaPath) + "Model";
             string histogramPath = null;
+            string LUISKey = null;
             for (var i = 2; i < args.Count(); ++i)
             {
                 var arg = args[i];
@@ -180,14 +189,37 @@ namespace Search.Generate
                             Usage();
                         }
                         break;
+                    case "-l":
+                        if (++i < args.Length)
+                        {
+                            LUISKey = args[i];
+                        }
+                        else
+                        {
+                            Usage();
+                        }
+                        break;
                 }
             }
-            var schema = JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(schemaPath));
+
+            /*
+            // TODO: Remove this--only for testing
+            {
+                var rsschema = SearchSchema.Load(@"C:\Users\chrimc\Source\Repos\BotBuilder-Samples-Preview\CSharp\demo-Search\RealEstateBot\Dialogs\RealEstate.json");
+                var dialog = new Search.Dialogs.SearchLanguageDialog(rsschema, "", "");
+                var luis = JsonConvert.DeserializeObject<Microsoft.Bot.Builder.Luis.Models.LuisResult>(File.ReadAllText(@"c:\tmp\props.json"));
+                dialog.ProcessComparison(null, luis);
+                System.Environment.Exit(-1);
+            }
+            */
+
+            var schema = SearchSchema.Load(File.ReadAllText(schemaPath));
             var template = JObject.Parse(File.ReadAllText(templatePath));
             Clear(template);
-            foreach(var field in schema.Fields.Values)
+            AddDescription(template, modelName, args);
+            foreach (var field in schema.Fields.Values)
             {
-                if (field.Type == typeof(Int32) 
+                if (field.Type == typeof(Int32)
                     || field.Type == typeof(Int64)
                     || field.Type == typeof(double))
                 {
@@ -203,6 +235,13 @@ namespace Search.Generate
             using (var stream = new StreamWriter(modelPath))
             {
                 stream.Write(JsonConvert.SerializeObject(template, Formatting.Indented));
+            }
+            if (LUISKey != null)
+            {
+                Console.WriteLine("Uploading LUIS models");
+                Task.WaitAll(
+                    LUISTools.CreateModelAsync(LUISKey, "SearchTemplate", templatePath),
+                    LUISTools.CreateModelAsync(LUISKey, modelName, modelPath));
             }
             /*
             Dictionary<string, Histogram<object>> histograms;

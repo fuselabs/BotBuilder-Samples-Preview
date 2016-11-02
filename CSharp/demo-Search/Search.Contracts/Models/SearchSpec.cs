@@ -16,6 +16,15 @@ namespace Search.Models
         public int? Skip;
         public int? Top;
 
+        public void Remove(SearchField field)
+        {
+            if (Filter != null)
+            {
+                Filter = Filter.Remove(field);
+            }
+            Sort.RemoveAll((s) => s.Field == field.Name);
+        }
+
         public void Merge(SearchSpec other, Operator filterCombine)
         {
             Text = Text ?? "" + " " + other.Text ?? "";

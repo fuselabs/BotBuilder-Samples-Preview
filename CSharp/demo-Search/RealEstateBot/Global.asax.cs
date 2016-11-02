@@ -10,6 +10,8 @@
     using Search.Azure.Services;
     using Search.Models;
     using Search.Services;
+    using System.IO;
+    using Newtonsoft.Json;
 
     public class WebApiApplication : HttpApplication
     {
@@ -25,6 +27,9 @@
                .Keyed<IMapper<DocumentSearchResult, GenericSearchResult>>(FiberModule.Key_DoNotSerialize)
                .AsImplementedInterfaces()
                .SingleInstance();
+
+            builder.Register((c) => JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestate.json"))))
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<AzureSearchClient>()
                 .Keyed<ISearchClient>(FiberModule.Key_DoNotSerialize)

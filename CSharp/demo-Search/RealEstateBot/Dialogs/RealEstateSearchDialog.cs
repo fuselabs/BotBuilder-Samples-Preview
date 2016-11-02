@@ -10,16 +10,9 @@
     {
         private static readonly string[] TopRefiners = { "region", "city", "type", "beds", "baths", "price", "daysOnMarket", "sqft" };
 
-        public RealEstateSearchDialog(ISearchClient searchClient) : base(searchClient, multipleSelection: true)
+        public RealEstateSearchDialog(ISearchClient searchClient, string key, string model) 
+            : base(searchClient, key, model, multipleSelection: true)
         {
-            // TODO: This should really be driven by analyzing the schema
-            // Preferred interaction model
-            var fields = SearchClient.Schema.Fields;
-            fields["baths"].FilterPreference = PreferredFilter.MinValue;
-            fields["beds"].FilterPreference = PreferredFilter.MinValue;
-            fields["price"].FilterPreference = PreferredFilter.Range;
-            fields["daysOnMarket"].FilterPreference = PreferredFilter.RangeMax;
-            fields["sqft"].FilterPreference = PreferredFilter.RangeMax;
         }
 
         protected override string[] GetTopRefiners()

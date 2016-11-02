@@ -17,6 +17,11 @@ namespace Search.Models
             NameSynonyms = new Synonyms(name, alternatives);
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public string Name;
         public Type Type = typeof(string);
         public bool IsFacetable;

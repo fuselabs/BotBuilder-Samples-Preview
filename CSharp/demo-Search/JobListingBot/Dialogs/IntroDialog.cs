@@ -84,7 +84,7 @@
                 new SearchRefineDialog(
                     this.searchClient,
                     "business_title",
-                    this.QueryBuilder,
+                    this.QueryBuilder.Spec.Filter,
                     prompt: "Hi! To get started, what kind of position are you looking for?"),
                 this.StartSearchDialog);
             return Task.CompletedTask;

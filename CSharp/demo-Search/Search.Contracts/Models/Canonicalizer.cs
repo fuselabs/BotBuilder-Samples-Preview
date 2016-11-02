@@ -26,7 +26,6 @@ namespace Search.Models
 
         public void Add(Synonyms synonyms)
         {
-            map.Add(Normalize(synonyms.Canonical), synonyms);
             foreach (var alt in synonyms.Alternatives)
             {
                 map.Add(Normalize(alt), synonyms);

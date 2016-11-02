@@ -10,22 +10,18 @@
 
         public SearchQueryBuilder()
         {
-            this.Refinements = new Dictionary<string, FilterExpression>();
         }
 
-        public string SearchText { get; set; }
+        public SearchSpec Spec;
 
         public int PageNumber { get; set; }
 
         public int HitsPerPage { get; set; } = DefaultHitPerPage;
 
-        public Dictionary<string, FilterExpression> Refinements { get; private set; }
-
         public virtual void Reset()
         {
-            this.SearchText = null;
+            Spec = new SearchSpec();
             this.PageNumber = 0;
-            this.Refinements.Clear();
         }
     }
 }

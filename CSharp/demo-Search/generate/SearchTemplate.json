@@ -1,6 +1,6 @@
 {
   "luis_schema_version": "1.3.0",
-  "name": "Comparison",
+  "name": "SearchTemplate",
   "desc": "",
   "culture": "en-us",
   "intents": [
@@ -32,7 +32,9 @@
       ]
     }
   ],
-  "bing_entities": [],
+  "bing_entities": [
+    "geography"
+  ],
   "actions": [],
   "model_features": [
     {
@@ -46,7 +48,7 @@
       "mode": true,
       "words": "PropertyName",
       "activated": true
-    }
+    },
   ],
   "regex_features": [
     {
@@ -57,83 +59,31 @@
   ],
   "utterances": [
     {
-      "text": "at least 3 propertyname",
+      "text": "2-4 propertyName",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Operator",
+          "entity": "Number",
           "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
+          "endPos": 0
         },
         {
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "no more than 3 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
         },
         {
           "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "between 3 and 4 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
           "startPos": 3,
           "endPos": 3
         }
@@ -144,14 +94,14 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 5
-        },
-        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
         },
         {
           "entity": "Number",
@@ -166,163 +116,173 @@
       ]
     },
     {
-      "text": "3-4 propertyname",
+      "text": "parks nearby",
       "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
+      "entities": []
     },
     {
-      "text": "3+ propertyname",
+      "text": "no more than 3 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        },
         {
           "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 2,
+          "startPos": 0,
           "endPos": 2
         },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "2-4 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "no more than 3 propertyname",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
         },
         {
           "entity": "Property",
           "startPos": 4,
           "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3-4 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
         },
         {
           "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
           "startPos": 3,
           "endPos": 3
         }
       ]
     },
     {
-      "text": "at least 43 propertyname",
+      "text": "at least 3 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
         {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
     {
-      "text": "3 propertyname",
+      "text": "between 3 and 4 propertyName",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Operator",
           "startPos": 0,
-          "endPos": 1
+          "endPos": 0
         },
         {
-          "entity": "Property",
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Number",
           "startPos": 1,
           "endPos": 1
         },
         {
           "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3+ propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "at least 43 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
@@ -331,14 +291,14 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 7
-        },
-        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
         },
         {
           "entity": "Number",
@@ -357,14 +317,14 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
         },
         {
           "entity": "Number",
@@ -374,74 +334,18 @@
       ]
     },
     {
-      "text": "1+ propertyname",
+      "text": "no more than 3 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        },
         {
           "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 2,
+          "startPos": 0,
           "endPos": 2
         },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "between 3-4 propertyname and at least 3 propertyname",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 6,
-          "endPos": 9
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Operator",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 6,
-          "endPos": 7
-        },
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 1
         },
         {
           "entity": "Number",
@@ -449,16 +353,47 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
-          "startPos": 8,
-          "endPos": 8
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
         }
       ]
     },
     {
-      "text": "no more than 4 propertyname and and at most 2 propertyname",
+      "text": "3 propertyName",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "no more than 4 bedooms and and at most 2 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 8
+        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -470,14 +405,14 @@
           "endPos": 10
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
         },
         {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 8
+          "entity": "Number",
+          "startPos": 9,
+          "endPos": 9
         },
         {
           "entity": "Property",
@@ -488,6 +423,68 @@
           "entity": "Property",
           "startPos": 10,
           "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "1+ propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "between 3-4 bedooms and at least 3 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 6,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 6,
+          "endPos": 9
+        },
+        {
+          "entity": "Number",
+          "startPos": 1,
+          "endPos": 1
         },
         {
           "entity": "Number",
@@ -496,67 +493,82 @@
         },
         {
           "entity": "Number",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
           "startPos": 9,
           "endPos": 9
         }
       ]
     },
     {
-      "text": "at most 3 propertyname",
+      "text": "at most 3 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
         {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
     {
-      "text": "at most 1 propertyname",
+      "text": "at most 1 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
         {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
     {
-      "text": "at most 3 propertyname and 1 propertyname",
+      "text": "at most 3 propertyName and 1 propertyNameroom",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -568,21 +580,6 @@
           "endPos": 6
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Property",
-          "startPos": 6,
-          "endPos": 6
-        },
-        {
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
@@ -591,64 +588,28 @@
           "entity": "Number",
           "startPos": 5,
           "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 6
         }
       ]
     },
     {
-      "text": "i'd like a house with 3+ propertyname and 1-2 propertyname",
+      "text": "find me a 2 propertyName with at least 1 propertyNameroom",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 9
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 11,
-          "endPos": 14
-        },
-        {
           "entity": "Operator",
-          "startPos": 8,
-          "endPos": 8
-        },
-        {
-          "entity": "Operator",
-          "startPos": 12,
-          "endPos": 12
-        },
-        {
-          "entity": "Property",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Property",
-          "startPos": 14,
-          "endPos": 14
-        },
-        {
-          "entity": "Number",
-          "startPos": 7,
+          "startPos": 6,
           "endPos": 7
         },
-        {
-          "entity": "Number",
-          "startPos": 11,
-          "endPos": 11
-        },
-        {
-          "entity": "Number",
-          "startPos": 13,
-          "endPos": 13
-        }
-      ]
-    },
-    {
-      "text": "find me a 2 propertyname with at least 1 propertyname",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Comparison",
           "startPos": 3,
@@ -657,21 +618,6 @@
         {
           "entity": "Comparison",
           "startPos": 6,
-          "endPos": 9
-        },
-        {
-          "entity": "Operator",
-          "startPos": 6,
-          "endPos": 7
-        },
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 9,
           "endPos": 9
         },
         {
@@ -683,47 +629,111 @@
           "entity": "Number",
           "startPos": 8,
           "endPos": 8
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 9
         }
       ]
     },
     {
-      "text": "house in redmond with at least 3 propertyname for no more than $500k",
+      "text": "house",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 4,
-          "endPos": 7
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 9,
-          "endPos": 13
-        },
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "less than $200k",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Operator",
-          "startPos": 4,
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "less than 200k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "more than $110k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "less than $200,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 5
         },
         {
-          "entity": "Operator",
-          "startPos": 9,
-          "endPos": 11
-        },
-        {
-          "entity": "Property",
-          "startPos": 7,
-          "endPos": 7
-        },
-        {
           "entity": "Number",
-          "startPos": 6,
-          "endPos": 6
-        },
-        {
-          "entity": "Number",
-          "startPos": 12,
-          "endPos": 13
+          "startPos": 2,
+          "endPos": 5
         }
       ]
     }

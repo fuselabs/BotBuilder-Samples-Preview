@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Dialogs\RealEstate.json" />
     <None Include="Properties\PublishProfiles\catalogbot - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\catalogbot - Web Deploy.pubxml" />
     <Content Include="Dialogs\RealEstateModel.json">

@@ -1,7 +1,7 @@
 {
   "luis_schema_version": "1.3.0",
-  "name": "Comparison3",
-  "desc": "",
+  "name": "RealEstateModel",
+  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json SearchTemplate.json -l bca5f68330234c2f9634610b48eea2da",
   "culture": "en-us",
   "intents": [
     {
@@ -49,14 +49,14 @@
     {
       "name": "Properties",
       "mode": true,
-      "words": "PropertyName",
+      "words": "bed,beds,bedroom,bedrooms,baths,bath,bathroom,bathrooms,sqft,sq feet,square feet,days on market,price,cost",
       "activated": true
     },
     {
-      "name": "Types",
+      "name": "type",
       "mode": true,
-      "words": "house,apartment",
-      "activated": true
+      "activated": true,
+      "words": "home,houses,apartments"
     }
   ],
   "regex_features": [
@@ -68,66 +68,9 @@
   ],
   "utterances": [
     {
-      "text": "no more than 3 bathrooms",
+      "text": "2-4 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "at least 3 bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "3-4 bedroom",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
         {
           "entity": "Operator",
           "startPos": 1,
@@ -147,35 +90,9 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "between 3 and 4 bedrooms",
-      "intent": "Filter",
-      "entities": [
+        },
         {
           "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
           "startPos": 3,
           "endPos": 3
         }
@@ -208,50 +125,128 @@
       ]
     },
     {
-      "text": "2-4 bedroom",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
       "text": "parks nearby",
       "intent": "Filter",
       "entities": []
     },
     {
-      "text": "3+ bathrooms",
+      "text": "no more than 3 propertyName",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
           "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3-4 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Number",
           "startPos": 2,
           "endPos": 2
         },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "at least 3 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Number",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3+ propertyName",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Operator",
           "startPos": 1,
@@ -266,44 +261,18 @@
           "entity": "Number",
           "startPos": 0,
           "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "no more than 3 bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 2,
           "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
         }
       ]
     },
     {
-      "text": "at least 43 bedrooms",
+      "text": "at least 43 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
         {
           "entity": "Operator",
           "startPos": 0,
@@ -318,6 +287,11 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
@@ -348,27 +322,6 @@
       ]
     },
     {
-      "text": "3 bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
       "text": "no more than $500k",
       "intent": "Filter",
       "entities": [
@@ -390,9 +343,86 @@
       ]
     },
     {
-      "text": "no more than 4 bedooms and and at most 2 bathrooms",
+      "text": "no more than 3 propertyName",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "no more than 4 bedooms and and at most 2 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 8
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 7,
+          "endPos": 10
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 9,
+          "endPos": 9
+        },
         {
           "entity": "Property",
           "startPos": 4,
@@ -402,48 +432,13 @@
           "entity": "Property",
           "startPos": 10,
           "endPos": 10
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 8
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 10
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 9,
-          "endPos": 9
         }
       ]
     },
     {
-      "text": "1+ bedrooms",
+      "text": "1+ propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
         {
           "entity": "Operator",
           "startPos": 1,
@@ -458,23 +453,18 @@
           "entity": "Number",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
     {
-      "text": "between 3-4 bedooms and at least 3 baths",
+      "text": "between 3-4 bedooms and at least 3 propertyName",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 9,
-          "endPos": 9
-        },
         {
           "entity": "Operator",
           "startPos": 0,
@@ -514,162 +504,7 @@
           "entity": "Number",
           "startPos": 8,
           "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "at most 3 bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
         },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "at most 1 bedroom",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "at most 3 bedrooms and 1 bathroom",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Property",
-          "startPos": 6,
-          "endPos": 6
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 5,
-          "endPos": 6
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 5,
-          "endPos": 5
-        }
-      ]
-    },
-    {
-      "text": "i'd like a house with 3+ bedrooms and 1-2 bathrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Property",
-          "startPos": 14,
-          "endPos": 14
-        },
-        {
-          "entity": "Operator",
-          "startPos": 8,
-          "endPos": 8
-        },
-        {
-          "entity": "Operator",
-          "startPos": 12,
-          "endPos": 12
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 9
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 11,
-          "endPos": 14
-        },
-        {
-          "entity": "type",
-          "startPos": 5,
-          "endPos": 5
-        },
-        {
-          "entity": "Number",
-          "startPos": 7,
-          "endPos": 7
-        },
-        {
-          "entity": "Number",
-          "startPos": 11,
-          "endPos": 11
-        },
-        {
-          "entity": "Number",
-          "startPos": 13,
-          "endPos": 13
-        }
-      ]
-    },
-    {
-      "text": "find me a 2 bedroom with at least 1 bathroom",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Property",
           "startPos": 4,
@@ -679,7 +514,106 @@
           "entity": "Property",
           "startPos": 9,
           "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "at most 3 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
         },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "at most 1 propertyName",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "at most 3 propertyName and 1 propertyNameroom",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "find me a 2 propertyName with at least 1 propertyNameroom",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Operator",
           "startPos": 6,
@@ -704,99 +638,16 @@
           "entity": "Number",
           "startPos": 8,
           "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "house in redmond with at least 3 bedrooms for no more than $500k",
-      "intent": "Filter",
-      "entities": [
+        },
         {
           "entity": "Property",
-          "startPos": 7,
-          "endPos": 7
-        },
-        {
-          "entity": "Operator",
           "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Operator",
-          "startPos": 9,
-          "endPos": 11
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 4,
-          "endPos": 7
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 9,
-          "endPos": 13
-        },
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 6,
-          "endPos": 6
-        },
-        {
-          "entity": "Number",
-          "startPos": 12,
-          "endPos": 13
-        }
-      ]
-    },
-    {
-      "text": "$200k - $500k house in redmond",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 1,
           "endPos": 4
         },
         {
-          "entity": "type",
-          "startPos": 5,
-          "endPos": 5
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 4
-        }
-      ]
-    },
-    {
-      "text": "apartment",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 9
         }
       ]
     },
@@ -833,17 +684,6 @@
       ]
     },
     {
-      "text": "house in las vegas",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
       "text": "less than 200k",
       "intent": "Filter",
       "entities": [
@@ -861,74 +701,6 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "house in redmond, washington",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "apartment in los angeles",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "apartment in seattle for less than 400k with 2+ bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Operator",
-          "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Operator",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 4,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 8,
-          "endPos": 10
-        },
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 6,
-          "endPos": 6
-        },
-        {
-          "entity": "Number",
-          "startPos": 8,
-          "endPos": 8
         }
       ]
     },
@@ -954,150 +726,6 @@
       ]
     },
     {
-      "text": "house for no more than $800k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 2,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 2,
-          "endPos": 6
-        },
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 5,
-          "endPos": 6
-        }
-      ]
-    },
-    {
-      "text": "house in redmond for less than $800k with 3+ bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 11,
-          "endPos": 11
-        },
-        {
-          "entity": "Operator",
-          "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Operator",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 4,
-          "endPos": 7
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 9,
-          "endPos": 11
-        },
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 6,
-          "endPos": 7
-        },
-        {
-          "entity": "Number",
-          "startPos": 9,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "house in seattle for less than $800k and 3+ bedrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 11,
-          "endPos": 11
-        },
-        {
-          "entity": "Operator",
-          "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Operator",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 4,
-          "endPos": 7
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 9,
-          "endPos": 11
-        },
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 6,
-          "endPos": 7
-        },
-        {
-          "entity": "Number",
-          "startPos": 9,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "house for less than $200k in seattle",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 2,
-          "endPos": 5
-        },
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 4,
-          "endPos": 5
-        }
-      ]
-    },
-    {
       "text": "less than $200,000",
       "intent": "Filter",
       "entities": [
@@ -1115,6 +743,17 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "home",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     }

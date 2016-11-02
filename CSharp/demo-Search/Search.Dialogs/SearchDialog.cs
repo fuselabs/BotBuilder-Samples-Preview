@@ -10,12 +10,14 @@
     using Search.Models;
     using Search.Services;
 
-    public delegate string CanonicalizerDelegate(string propertyName);
+    public delegate SearchField CanonicalizerDelegate(string propertyName);
         
     [Serializable]
     public abstract class SearchDialog : IDialog<IList<SearchHit>>
     {
         protected readonly ISearchClient SearchClient;
+        protected readonly string Key;
+        protected readonly string Model;
         protected readonly SearchQueryBuilder QueryBuilder;
         protected readonly PromptStyler HitStyler;
         protected readonly bool MultipleSelection;
@@ -24,10 +26,11 @@
         private bool firstPrompt = true;
         private IList<SearchHit> found;
 
-        public SearchDialog(ISearchClient searchClient, SearchQueryBuilder queryBuilder = null, PromptStyler searchHitStyler = null, bool multipleSelection = false)
+        public SearchDialog(ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null, PromptStyler searchHitStyler = null, bool multipleSelection = false)
         {
             SetField.NotNull(out this.SearchClient, nameof(searchClient), searchClient);
-
+            SetField.NotNull(out this.Key, nameof(Key), key);
+            SetField.NotNull(out this.Model, nameof(Model), model);
             this.QueryBuilder = queryBuilder ?? new SearchQueryBuilder();
             this.HitStyler = searchHitStyler ?? new SearchHitStyler();
             this.MultipleSelection = multipleSelection;
@@ -38,9 +41,10 @@
             return this.InitialPrompt(context);
         }
 
-        public async Task Search(IDialogContext context, IAwaitable<string> input)
+        public async Task Search(IDialogContext context, SearchSpec spec)
         {
-            string text = input != null ? await input : null;
+            var text = spec.Text;
+
             if (this.MultipleSelection && text != null && text.ToLowerInvariant() == "list")
             {
                 await this.ListAddedSoFar(context);
@@ -48,13 +52,8 @@
             }
             else
             {
-                if (text != null)
-                {
-                    this.QueryBuilder.SearchText = text;
-                }
-
+                this.QueryBuilder.Spec = spec;
                 var response = await this.ExecuteSearchAsync();
-
                 if (response.Results.Count() == 0)
                 {
                     await this.NoResultsConfirmRetry(context);
@@ -77,7 +76,7 @@
             }
         }
 
-        protected virtual Task InitialPrompt(IDialogContext context)
+        protected virtual async Task InitialPrompt(IDialogContext context)
         {
             string prompt = "What would you like to search for?";
 
@@ -91,9 +90,13 @@
             }
 
             this.firstPrompt = false;
+            await context.PostAsync(prompt);
+            context.Call(new SearchLanguageDialog(this.SearchClient.Schema, this.Key, this.Model), this.InitialSearch);
+        }
 
-            PromptDialog.Text(context, this.Search, prompt);
-            return Task.CompletedTask;
+        protected async Task InitialSearch(IDialogContext context, IAwaitable<SearchSpec> spec)
+        {
+            await this.Search(context, await spec);
         }
 
         protected virtual Task NoResultsConfirmRetry(IDialogContext context)
@@ -180,7 +183,7 @@
 
             if (!string.IsNullOrWhiteSpace(refiner))
             {
-                var dialog = new SearchRefineDialog(this.SearchClient, refiner, this.QueryBuilder);
+                var dialog = new SearchRefineDialog(this.SearchClient, refiner, this.QueryBuilder.Spec.Filter);
                 context.Call(dialog, this.ResumeFromRefine);
             }
             else
@@ -189,10 +192,10 @@
             }
         }
 
-        protected async Task ResumeFromRefine(IDialogContext context, IAwaitable<FilterExpression> input)
+        protected async Task ResumeFromRefine(IDialogContext context, IAwaitable<FilterExpression> filter)
         {
-            await input; // refiner filter is already applied to the SearchQueryBuilder instance we passed in
-            await this.Search(context, null);
+            this.QueryBuilder.Spec.Filter = await filter;
+            await this.Search(context, this.QueryBuilder.Spec);
         }
 
         protected async Task<GenericSearchResult> ExecuteSearchAsync()

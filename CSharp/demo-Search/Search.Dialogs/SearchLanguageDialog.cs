@@ -1,20 +1,20 @@
-﻿
-namespace Search.Dialogs
+﻿namespace Search.Dialogs
 {
-    using Microsoft.Azure.Search.Models;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Models;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
     public class Range
     {
-        public string Property;
+        public SearchField Property;
         public double Lower;
         public double Upper;
         public bool IncludeLower;
@@ -168,7 +168,7 @@ namespace Search.Dialogs
             schema = searchSchema;
             fieldCanonicalizer = new Canonicalizer();
             valueCanonicalizers = new Dictionary<string, Canonicalizer>();
-            foreach(var field in schema.Fields.Values)
+            foreach (var field in schema.Fields.Values)
             {
                 fieldCanonicalizer.Add(field.NameSynonyms);
                 valueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
@@ -185,13 +185,18 @@ namespace Search.Dialogs
         [LuisIntent("Filter")]
         public Task ProcessComparison(IDialogContext context, LuisResult result)
         {
+            // TODO: Remove this
             using (var stream = new System.IO.StreamWriter(@"c:\tmp\luis.json"))
             {
                 stream.Write(Newtonsoft.Json.JsonConvert.SerializeObject(result));
             }
 
-            var comparisons = (from entity in result.Entities where entity.Type == "Comparison" select new ComparisonEntity(entity)).ToList();
-            var attributes = (from entity in result.Entities where schema.Fields.ContainsKey(entity.Type) select entity);
+            var comparisons = (from entity in result.Entities
+                               where entity.Type == "Comparison"
+                               select new ComparisonEntity(entity)).ToList();
+            var attributes = (from entity in result.Entities
+                              where schema.Fields.ContainsKey(entity.Type)
+                              select new FilterExpression(Operator.Equal, schema.Field(entity.Type), entity.Entity));
             var substrings = result.Entities.UncoveredSubstrings(result.Query);
             foreach (var entity in result.Entities)
             {
@@ -200,9 +205,11 @@ namespace Search.Dialogs
                     comparison.AddEntity(entity);
                 }
             }
-            var ranges = from comparison in comparisons select comparison.Resolve((field) => fieldCanonicalizer.Canonicalize(field));
-            var filter = ranges.GenerateFilter();
-            var spec = new SearchSpec {  };
+            var ranges = from comparison in comparisons
+                         select comparison.Resolve((field) => schema.Field(fieldCanonicalizer.Canonicalize(field)));
+            var filter = ranges.GenerateFilterExpression(Operator.And);
+            filter = attributes.GenerateFilterExpression(Operator.And, filter);
+            var spec = new SearchSpec { Filter = filter };
             context.Done(spec);
             return Task.CompletedTask;
         }
@@ -213,7 +220,7 @@ namespace Search.Dialogs
         public static IEnumerable<string> UncoveredSubstrings(this IEnumerable<EntityRecommendation> entities, string originalText)
         {
             var ranges = new[] { new { start = 0, end = originalText.Length } }.ToList();
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 if (entity.StartIndex.HasValue)
                 {
@@ -268,11 +275,51 @@ namespace Search.Dialogs
                 }
             }
             var substrings = new List<string>();
-            foreach(var range in ranges)
+            foreach (var range in ranges)
             {
                 substrings.Add(originalText.Substring(range.start, range.end - range.start));
             }
             return substrings;
+        }
+
+        public static FilterExpression GenerateFilterExpression(this IEnumerable<FilterExpression> filters, Operator connector = Operator.And, FilterExpression soFar = null)
+        {
+            FilterExpression result = soFar;
+            foreach (var filter in filters)
+            {
+                result = FilterExpression.Combine(result, filter, connector);
+            }
+            return result;
+        }
+
+        public static FilterExpression GenerateFilterExpression(this IEnumerable<Range> ranges, Operator connector, FilterExpression soFar = null)
+        {
+            FilterExpression filter = soFar;
+
+            foreach (var range in ranges)
+            {
+                var lowercmp = (range.IncludeLower ? Operator.GreaterThanOrEqual : Operator.GreaterThan);
+                var uppercmp = (range.IncludeUpper ? Operator.LessThanOrEqual : Operator.LessThan);
+                if (double.IsNegativeInfinity(range.Lower))
+                {
+                    filter = FilterExpression.Combine(filter, new FilterExpression(uppercmp, range.Property, range.Upper), connector);
+                }
+                else if (double.IsPositiveInfinity(range.Upper))
+                {
+                    filter = FilterExpression.Combine(filter, new FilterExpression(lowercmp, range.Property, range.Lower), connector);
+                }
+                else if (range.Lower == range.Upper)
+                {
+                    filter = FilterExpression.Combine(filter, new FilterExpression(Operator.Equal, range.Property, range.Lower), connector);
+                }
+                else
+                {
+                    var child = FilterExpression.Combine(new FilterExpression(lowercmp, range.Property, range.Lower),
+                                        new FilterExpression(uppercmp, range.Property, range.Upper), Operator.And);
+                    filter = FilterExpression.Combine(filter, child, connector);
+                }
+            }
+            return filter;
         }
 
         public static string GenerateFilter(this IEnumerable<Range> ranges)

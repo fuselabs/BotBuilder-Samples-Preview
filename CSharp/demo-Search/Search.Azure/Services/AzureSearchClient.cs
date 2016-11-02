@@ -17,24 +17,20 @@
         private readonly IMapper<DocumentSearchResult, GenericSearchResult> mapper;
         private SearchSchema schema = new SearchSchema();
 
-        public AzureSearchClient(IMapper<DocumentSearchResult, GenericSearchResult> mapper)
+        public AzureSearchClient(SearchSchema schema, IMapper<DocumentSearchResult, GenericSearchResult> mapper)
         {
+            this.schema = schema;
             this.mapper = mapper;
             var serviceName = ConfigurationManager.AppSettings["SearchDialogsServiceName"];
             var indexName = ConfigurationManager.AppSettings["SearchDialogsIndexName"];
             var serviceKey = ConfigurationManager.AppSettings["SearchDialogsServiceKey"];
-            var adminKey = ConfigurationManager.AppSettings["SearchDialogsServiceAdminKey"];
-            if (adminKey != null)
-            {
-                schema = SearchTools.GetIndexSchema(serviceName, adminKey, indexName);
-            }
             var client = new SearchServiceClient(serviceName, new SearchCredentials(serviceKey));
             searchClient = client.Indexes.GetClient(indexName);
         }
 
         public async Task<GenericSearchResult> SearchAsync(SearchQueryBuilder queryBuilder, string refiner)
         {
-            var documentSearchResult = await this.searchClient.Documents.SearchAsync(queryBuilder.SearchText, BuildParameters(queryBuilder, refiner));
+            var documentSearchResult = await this.searchClient.Documents.SearchAsync(queryBuilder.Spec.Text, BuildParameters(queryBuilder, refiner));
 
             return this.mapper.Map(documentSearchResult);
         }
@@ -47,6 +43,8 @@
             }
         }
 
+        /*
+         * TODO: Remove this
         private static string ToFilter(SearchField field, FilterExpression expression)
         {
             string filter = "";
@@ -94,6 +92,7 @@
             }
             return filter;
         }
+        */
 
         public static string Constant(object value)
         {
@@ -107,6 +106,64 @@
                 constant = value.ToString();
             }
             return constant;
+        }
+
+        private string BuildFilter(FilterExpression expression)
+        {
+            string filter = "";
+            string op = null;
+            switch(expression.Operator)
+            {
+                case Operator.And:
+                    {
+                        var left = BuildFilter((FilterExpression)expression.Values[0]);
+                        var right = BuildFilter((FilterExpression)expression.Values[1]);
+                        filter = $"({left}) and ({right})";
+                        break;
+                    }
+                case Operator.Or:
+                    {
+                        var left = BuildFilter((FilterExpression)expression.Values[0]);
+                        var right = BuildFilter((FilterExpression)expression.Values[1]);
+                        filter = $"({left}) or ({right})";
+                        break;
+                    }
+                case Operator.Not:
+                    {
+                        var child = BuildFilter((FilterExpression)expression.Values[0]);
+                        filter = $"not ({child})";
+                        break;
+                    }
+                case Operator.FullText:
+                    // TODO: What is the right thing here?
+                    break;
+
+                case Operator.LessThan: op = "lt"; break;
+                case Operator.LessThanOrEqual: op = "le"; break;
+                case Operator.Equal: op = "eq"; break;
+                case Operator.GreaterThanOrEqual: op = "ge"; break;
+                case Operator.GreaterThan: op = "gt"; break;
+                default:
+                    break;
+            }
+            if (op != null)
+            {
+                var field = (SearchField)expression.Values[0];
+                var value = Constant(expression.Values[1]);
+                if (field.Type == typeof(string[]))
+                {
+                    if (expression.Operator != Operator.Equal)
+                    {
+                        throw new NotSupportedException();
+                    }
+                    filter = $"{field.Name}/any(z: z eq {value})";
+                }
+                else
+                {
+                    filter = $"{field.Name} {op} {value}";
+                }
+            }
+            return filter;
         }
 
         private SearchParameters BuildParameters(SearchQueryBuilder queryBuilder, string facet)
@@ -123,29 +180,14 @@
                 parameters.Facets = new List<string> { facet };
             }
 
-            if (queryBuilder.Refinements.Count > 0)
+            if (queryBuilder.Spec.Filter != null)
             {
-                StringBuilder filter = new StringBuilder();
-                string separator = string.Empty;
-
-                foreach (var entry in queryBuilder.Refinements)
-                {
-                    SearchField field;
-                    if (Schema.Fields.TryGetValue(entry.Key, out field))
-                    {
-                        filter.Append(separator);
-                        filter.Append(ToFilter(field, entry.Value));
-                        separator = " and ";
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"{entry.Key} is not in the schema");
-                    }
-                }
-
-                parameters.Filter = filter.ToString();
+                parameters.Filter = BuildFilter(queryBuilder.Spec.Filter);
             }
-
+            else
+            {
+                parameters.Filter = null;
+            }
             return parameters;
         }
 

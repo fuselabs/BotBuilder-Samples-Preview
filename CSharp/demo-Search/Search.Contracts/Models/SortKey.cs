@@ -8,6 +8,7 @@ namespace Search.Models
 {
     public enum SortDirection { Descending, Ascending };
 
+    [Serializable]
     public class SortKey
     {
         public SortDirection Direction;
