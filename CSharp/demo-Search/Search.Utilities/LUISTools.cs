@@ -1,11 +1,14 @@
 ﻿namespace Search.Utilities
 {
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
 
@@ -13,13 +16,13 @@
     {
         // Rest API primitives
 
-        public static async Task<JObject> GetModelAsync(string subscriptionKey, string appID)
+        public static async Task<JObject> GetModelAsync(string subscriptionKey, string appID, CancellationToken ct)
         {
             JObject result = null;
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
             var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/{appID}";
-            var response = await client.GetAsync(uri);
+            var response = await client.GetAsync(uri, ct);
             if (response.IsSuccessStatusCode)
             {
                 result = JObject.Parse(await response.Content.ReadAsStringAsync());
@@ -32,12 +35,12 @@
         /// </summary>
         /// <param name="subscriptionKey">LUIS subscription key.</param>
         /// <returns>JArray of app descriptions.</returns>
-        public static async Task<JArray> GetAppsAsync(string subscriptionKey)
+        public static async Task<JArray> GetAppsAsync(string subscriptionKey, CancellationToken ct)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
             var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps";
-            var response = await client.GetAsync(uri);
+            var response = await client.GetAsync(uri, ct);
             JArray result = null;
             if (response.IsSuccessStatusCode)
             {
@@ -47,27 +50,27 @@
         }
 
         /// <summary>
-        /// Import a LUIS model found in a JSON file.
+        /// Import a LUIS model.
         /// </summary>
         /// <param name="subscriptionKey">LUIS Subscription key.</param>
         /// <param name="appName">Name of app to upload.</param>
-        /// <param name="modelPath">Path to JSON model.</param>
+        /// <param name="model">LUIS model.</param>
         /// <returns>ID of uploaded model.</returns>
-        public static async Task<string> ImportModelAsync(string subscriptionKey, string appName, string modelPath)
+        public static async Task<string> ImportModelAsync(string subscriptionKey, string appName, JObject model, CancellationToken ct)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
             var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/import?appName={appName}";
             HttpResponseMessage response;
-            var byteData = Encoding.UTF8.GetBytes(System.IO.File.ReadAllText(modelPath));
+            var byteData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
             using (var content = new ByteArrayContent(byteData))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                response = await client.PostAsync(uri, content);
+                response = await client.PostAsync(uri, content, ct);
             }
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception(await response.Content.ReadAsStringAsync());
+                throw new Exception(response.ReasonPhrase);
             }
             var id = await response.Content.ReadAsStringAsync();
             return id.Replace("\"", "");
@@ -79,16 +82,16 @@
         /// <param name="subscriptionKey">LUIS Subscription key.</param>
         /// <param name="appID">ID of the app to delete.</param>
         /// <returns>True if model was deleted.</returns>
-        public static async Task<bool> DeleteModelAsync(string subscriptionKey, string appID)
+        public static async Task<bool> DeleteModelAsync(string subscriptionKey, string appID, CancellationToken ct)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
             var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/{appID}";
-            var response = await client.DeleteAsync(uri);
+            var response = await client.DeleteAsync(uri, ct);
             return response.IsSuccessStatusCode;
         }
 
-        public static async Task<bool> TrainModelAsync(string subscriptionKey, string appID)
+        public static async Task<bool> TrainModelAsync(string subscriptionKey, string appID, CancellationToken ct)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
@@ -98,7 +101,7 @@
             using (var content = new ByteArrayContent(byteData))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                response = await client.PostAsync(uri, content);
+                response = await client.PostAsync(uri, content, ct);
             }
             if (response.IsSuccessStatusCode)
             {
@@ -106,14 +109,16 @@
                 do
                 {
                     System.Threading.Thread.Sleep(1000);
-                    // TODO: var a = JArray.Parse(await (await client.GetAsync(uri)).Content.ReadAsStringAsync());
-                    model = await GetModelAsync(subscriptionKey, appID);
+                    // TODO: The GET below seems necessary to get training to happen, but the 
+                    // returned value does not include the actual model id being trained...
+                    var a = JArray.Parse(await (await client.GetAsync(uri)).Content.ReadAsStringAsync());
+                    model = await GetModelAsync(subscriptionKey, appID, ct);
                 } while (!(bool)model["IsTrained"]);
             }
             return response.IsSuccessStatusCode;
         }
 
-        public static async Task<bool> PublishModelAsync(string subscriptionKey, string appID)
+        public static async Task<bool> PublishModelAsync(string subscriptionKey, string appID, CancellationToken ct)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
@@ -137,9 +142,23 @@
             using (var content = new ByteArrayContent(byteData))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await client.PostAsync(uri, content);
+                var response = await client.PostAsync(uri, content, ct);
                 return response.IsSuccessStatusCode;
             }
+        }
+
+        public static async Task<JObject> DownloadModelAsync(string subscriptionKey, string appID, CancellationToken ct)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+            var uri = $"https://api.projectoxford.ai/luis/v1.0/prog/apps/{appID}/export";
+            var response = await client.GetAsync(uri, ct);
+            JObject result = null;
+            if (response.IsSuccessStatusCode)
+            {
+                result = JObject.Parse(await response.Content.ReadAsStringAsync());
+            }
+            return result;
         }
 
         // Derived methods over REST API primitives
@@ -150,10 +169,10 @@
         /// <param name="subscriptionKey">LUIS subscription key.</param>
         /// <param name="appName">Name of app.</param>
         /// <returns>Model information for app or null if not present.</returns>
-        public static async Task<JObject> GetModelByNameAsync(string subscriptionKey, string appName)
+        public static async Task<JObject> GetModelByNameAsync(string subscriptionKey, string appName, CancellationToken ct)
         {
             JObject model = null;
-            var apps = await GetAppsAsync(subscriptionKey);
+            var apps = await GetAppsAsync(subscriptionKey, ct);
             if (apps != null)
             {
                 foreach (var app in apps)
@@ -168,21 +187,21 @@
             return model;
         }
 
-        public static async Task<string> CreateModelAsync(string subscriptionKey, string appName, string modelPath)
+        public static async Task<string> CreateModelAsync(string subscriptionKey, string appName, JObject model, CancellationToken ct)
         {
             string modelID = null;
-            var old = await LUISTools.GetModelByNameAsync(subscriptionKey, appName);
+            var old = await LUISTools.GetModelByNameAsync(subscriptionKey, appName, ct);
             if (old != null)
             {
-                await LUISTools.DeleteModelAsync(subscriptionKey, (string)old["ID"]);
+                await LUISTools.DeleteModelAsync(subscriptionKey, (string)old["ID"], ct);
             }
             string id = null;
             try
             {
-                id = await ImportModelAsync(subscriptionKey, appName, modelPath);
+                id = await ImportModelAsync(subscriptionKey, appName, model, ct);
                 if (id != null
-                    && await TrainModelAsync(subscriptionKey, id)
-                    && await PublishModelAsync(subscriptionKey, id))
+                    && await TrainModelAsync(subscriptionKey, id, ct)
+                    && await PublishModelAsync(subscriptionKey, id, ct))
                 {
                     modelID = id;
                 }
@@ -192,7 +211,7 @@
                 // Try to clean up non published model
                 if (id != null)
                 {
-                    await LUISTools.DeleteModelAsync(subscriptionKey, id);
+                    await LUISTools.DeleteModelAsync(subscriptionKey, id, ct);
                 }
                 throw;
             }
@@ -206,13 +225,14 @@
         /// <param name="appName">Name of app.</param>
         /// <param name="modelPath">Path to the exported LUIS model.</param>
         /// <returns>LUIS Model ID.</returns>
-        public static async Task<string> GetOrCreateModelAsync(string subscriptionKey, string appName, string modelPath)
+        public static async Task<string> GetOrCreateModelAsync(string subscriptionKey, string appName, string modelPath, CancellationToken ct)
         {
             string modelID = null;
-            var model = await GetModelByNameAsync(subscriptionKey, appName);
+            var model = await GetModelByNameAsync(subscriptionKey, appName, ct);
             if (model == null)
             {
-                modelID = await CreateModelAsync(subscriptionKey, appName, modelPath);
+                var newModel = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(modelPath));
+                modelID = await CreateModelAsync(subscriptionKey, appName, newModel, ct);
             }
             else
             {

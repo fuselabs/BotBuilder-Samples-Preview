@@ -4,25 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using Search.Models;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Search.Generate
 {
     class Program
     {
         const string propertyName = "propertyname";
-
-        static void Usage()
-        {
-            Console.WriteLine("generate <schemaFile> <templateFile> [-h <histogramFile>] [-l <luis subscription>]");
-            Console.WriteLine("Generate a <schemaFile>Model.Json file from <schemaFile> and <templateFile> which is an exported LUIS model.");
-            Console.WriteLine("-l <LUIS subscription> : Will upload both SearchTemplate.json and <schemaFile>Model.json as LUIS models.");
-            System.Environment.Exit(-1);
-        }
 
         static void Clear(dynamic model)
         {
@@ -88,6 +80,20 @@ namespace Search.Generate
             feature.words = AddSynonyms((string)feature.words, field.NameSynonyms);
         }
 
+        static void AddNamed(dynamic model, string feature, dynamic entry)
+        {
+            JArray newArray = new JArray();
+            foreach(dynamic val in model[feature])
+            {
+                if (val.name != entry.name)
+                {
+                    newArray.Add(val);
+                }
+            }
+            newArray.Add(entry);
+            model[feature] = newArray;
+        }
+
         static void AddAttribute(dynamic model, SearchField field)
         {
             dynamic newFeature = new JObject();
@@ -95,11 +101,11 @@ namespace Search.Generate
             newFeature.mode = true;
             newFeature.activated = true;
             newFeature.words = AddValueSynonyms("", field.ValueSynonyms);
-            model.model_features.Add(newFeature);
+            AddNamed(model, "model_features", newFeature);
 
             dynamic newEntity = new JObject();
             newEntity.name = field.Name;
-            model.entities.Add(newEntity);
+            AddNamed(model, "entities", newEntity);
 
             dynamic newUtterance = new JObject();
             var text = field.ValueSynonyms[0].Alternatives[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -162,61 +168,45 @@ namespace Search.Generate
             }
         }
 
-        static void Main(string[] args)
+        static async Task<string> ModelID(string subscription, string appName, CancellationToken ct)
         {
-            if (args.Count() < 2)
+            dynamic model = await LUISTools.GetModelByNameAsync(subscription, appName, ct);
+            if (model == null)
             {
-                Usage();
+                Usage($"{appName} does not exist in your LUIS subscription.");
             }
-            string schemaPath = args[0];
-            string templatePath = args[1];
-            string modelPath = Path.Combine(Path.GetDirectoryName(schemaPath), Path.GetFileNameWithoutExtension(schemaPath) + "Model.json");
-            string modelName = Path.GetFileNameWithoutExtension(schemaPath) + "Model";
-            string histogramPath = null;
-            string LUISKey = null;
-            for (var i = 2; i < args.Count(); ++i)
+            return model.ID;
+        }
+
+        static async Task MainAsync(string[] args, Parameters p)
+        {
+            var cts = new CancellationTokenSource();
+            System.Console.CancelKeyPress += (s, e) =>
             {
-                var arg = args[i];
-                switch (arg.Trim().ToLower())
+                e.Cancel = true;
+                cts.Cancel();
+            };
+
+            var schema = SearchSchema.Load(p.SchemaPath);
+            dynamic template;
+            if (p.TemplatePath != null)
+            {
+                Console.WriteLine($"Reading template from {p.TemplatePath}");
+                template = JObject.Parse(File.ReadAllText(p.TemplatePath));
+            }
+            else
+            {
+                Console.WriteLine($"Downloading {p.TemplateName} template from LUIS");
+                template = await LUISTools.DownloadModelAsync(p.LUISKey, await ModelID(p.LUISKey, p.TemplateName, cts.Token), cts.Token);
+                if (template == null)
                 {
-                    case "-h":
-                        if (++i < args.Length)
-                        {
-                            histogramPath = args[i];
-                        }
-                        else
-                        {
-                            Usage();
-                        }
-                        break;
-                    case "-l":
-                        if (++i < args.Length)
-                        {
-                            LUISKey = args[i];
-                        }
-                        else
-                        {
-                            Usage();
-                        }
-                        break;
+                    Usage($"Could not download {p.TemplateName} from LUIS.");
                 }
             }
 
-            /*
-            // TODO: Remove this--only for testing
-            {
-                var rsschema = SearchSchema.Load(@"C:\Users\chrimc\Source\Repos\BotBuilder-Samples-Preview\CSharp\demo-Search\RealEstateBot\Dialogs\RealEstate.json");
-                var dialog = new Search.Dialogs.SearchLanguageDialog(rsschema, "", "");
-                var luis = JsonConvert.DeserializeObject<Microsoft.Bot.Builder.Luis.Models.LuisResult>(File.ReadAllText(@"c:\tmp\props.json"));
-                dialog.ProcessComparison(null, luis);
-                System.Environment.Exit(-1);
-            }
-            */
-
-            var schema = SearchSchema.Load(File.ReadAllText(schemaPath));
-            var template = JObject.Parse(File.ReadAllText(templatePath));
+            Console.WriteLine($"Generating {p.OutputName} from schema {p.SchemaPath}");
             Clear(template);
-            AddDescription(template, modelName, args);
+            AddDescription(template, p.OutputName, args);
             foreach (var field in schema.Fields.Values)
             {
                 if (field.Type == typeof(Int32)
@@ -232,28 +222,115 @@ namespace Search.Generate
                 }
             }
             ReplacePropertyNames(template);
-            using (var stream = new StreamWriter(modelPath))
+
+            if (p.OutputPath != null)
             {
-                stream.Write(JsonConvert.SerializeObject(template, Formatting.Indented));
+                Console.WriteLine($"Writing generated model to {p.OutputPath}");
+                using (var stream = new StreamWriter(p.OutputPath))
+                {
+                    stream.Write(JsonConvert.SerializeObject(template, Formatting.Indented));
+                }
             }
-            if (LUISKey != null)
+
+            if (p.Upload)
             {
-                Console.WriteLine("Uploading LUIS models");
-                Task.WaitAll(
-                    LUISTools.CreateModelAsync(LUISKey, "SearchTemplate", templatePath),
-                    LUISTools.CreateModelAsync(LUISKey, modelName, modelPath));
+                Console.WriteLine($"Uploading {p.OutputName} to LUIS");
+                await LUISTools.CreateModelAsync(p.LUISKey, p.OutputName, template, cts.Token);
             }
-            /*
-            Dictionary<string, Histogram<object>> histograms;
-            using (var stream = new FileStream(histogramPath, FileMode.Open))
+        }
+
+        static void Usage(string msg = null)
+        {
+            if (msg != null)
             {
-                var serializer = new BinaryFormatter();
-                histograms = (Dictionary<string, Histogram<object>>)serializer.Deserialize(stream);
+                Console.WriteLine(msg);
             }
-            foreach (var histogram in histograms)
+            Console.WriteLine("generate <schemaFile> [-l <LUIS subscription key>] [-m <modelName>] [-o <outputFile>] [-tf <templateFile>] [-tm <modelName>] [-u]");
+            Console.WriteLine("Take a JSON schema file and use it to generate a LUIS model from a template.");
+            Console.WriteLine("The template can be the included SearchTemplate.json file or can be downloaded from LUIS.");
+            Console.WriteLine("The resulting LUIS model can be saved as a file or automatically uploaded to LUIS.");
+            Console.WriteLine("-l <LUIS subscription key> : LUIS subscription key.");
+            Console.WriteLine("-m <modelName> : Output LUIS model name.  By default will be <schemaFileName>Model.");
+            Console.WriteLine("-o <outputFile> : Output LUIS Json file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
+            Console.WriteLine("-tf <templateFile> : LUIS Template file to modify based on schema.  By default this is SearchTemplate.json.");
+            Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
+            Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");
+            Console.WriteLine("Common examples:");
+            Console.WriteLine("generate <schema> : Generate <schema>Model.json in the directory with <schema> from the SearchTemplate.json.");
+            Console.WriteLine("generate <schema> -l <LUIS key> -u : Update the existing <schemaFileName>Model LUIS model and upload it to LUIS.");
+            System.Environment.Exit(-1);
+        }
+
+        static string NextArg(int i, string[] args)
+        {
+            string arg = null;
+            if (i < args.Length)
             {
+                arg = args[i];
             }
-            */
+            else
+            {
+                Usage();
+            }
+            return arg;
+        }
+
+        public class Parameters
+        {
+            public Parameters(string schemaPath)
+            {
+                SchemaPath = schemaPath;
+                OutputName = Path.GetFileNameWithoutExtension(schemaPath) + "Model";
+            }
+
+            public string SchemaPath;
+            public string TemplatePath;
+            public string TemplateName;
+            public string OutputPath;
+            public string OutputName;
+            public string LUISKey;
+            public bool Upload = false;
+        }
+
+        static void Main(string[] args)
+        {
+            if (args.Count() < 1)
+            {
+                Usage();
+            }
+            var p = new Parameters(args[0]);
+            for (var i = 1; i < args.Count(); ++i)
+            {
+                var arg = args[i];
+                switch (arg.Trim().ToLower())
+                {
+                    case "-l": p.LUISKey = NextArg(++i, args); break;
+                    case "-m": p.OutputName = NextArg(++i, args); break;
+                    case "-o": p.OutputPath = NextArg(++i, args); break;
+                    case "-tf": p.TemplatePath = NextArg(++i, args); break;
+                    case "-tm": p.TemplateName = NextArg(++i, args); break;
+                    case "-u": p.Upload = true; break;
+                    default: Usage($"Unknown parameter {arg}"); break;
+                }
+            }
+            if ((p.Upload || p.TemplateName != null) && p.LUISKey == null)
+            {
+                Usage("You must supply your LUIS subscription key with -l.");
+            }
+
+            if (p.TemplateName == null && p.TemplatePath == null)
+            {
+                p.TemplatePath = "SearchTemplate.json";
+            }
+            else if (p.TemplateName != null && p.TemplatePath != null)
+            {
+                Usage("Can only specify either template file or LUIS model name.");
+            }
+            if (!p.Upload && p.OutputPath == null)
+            {
+                p.OutputPath = Path.Combine(Path.GetDirectoryName(p.SchemaPath), Path.GetFileNameWithoutExtension(p.SchemaPath) + "Model.json");
+            }
+            MainAsync(args, p).Wait();
         }
     }
 }

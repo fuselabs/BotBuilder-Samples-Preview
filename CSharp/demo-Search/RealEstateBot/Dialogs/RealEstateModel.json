@@ -1,7 +1,7 @@
 {
   "luis_schema_version": "1.3.0",
   "name": "RealEstateModel",
-  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json SearchTemplate.json -l bca5f68330234c2f9634610b48eea2da",
+  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json SearchTemplate.json",
   "culture": "en-us",
   "intents": [
     {
