@@ -36,12 +36,11 @@
         public async Task StartSearchDialog(IDialogContext context, IAwaitable<IMessageActivity> input)
         {
             var key = ConfigurationManager.AppSettings["LUISSubscriptionKey"];
-            var appName = "realestatemodel";
 
             // TODO: Remove this
             if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
             var cts = new CancellationTokenSource();
-            var id = await LUISTools.GetOrCreateModelAsync(key, appName, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"), cts.Token);
+            var id = await LUISTools.GetOrCreateModelAsync(key, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"), cts.Token);
             // context.Call(new SearchLanguageDialog(this.searchClient.Schema, key, id), DoneSpec);
             context.Call(new RealEstateSearchDialog(this.searchClient, key, id), this.Done);
         }

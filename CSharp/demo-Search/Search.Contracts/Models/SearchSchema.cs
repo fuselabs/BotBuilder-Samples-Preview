@@ -42,7 +42,7 @@
         {
             using (var output = new StreamWriter(path))
             {
-                output.Write(JsonConvert.SerializeObject(this));
+                output.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
             }
         }
 

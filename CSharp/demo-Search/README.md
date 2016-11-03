@@ -33,11 +33,21 @@ The samples use [Azure Search](https://azure.microsoft.com/en-us/services/search
 The samples include a few different dialogs that are ready to use directly, or can be subtyped to override various pieces of functionality as needed:
 * [SearchSelectRefinerDialog](Search.Dialogs/SearchSelectRefinerDialog.cs) helps users pick a refiner (facet). It's a simple wrapper around a "choice" prompt dialog that can use a shared instance of SearchQueryBuilder to ensure you don't prompt users for a field you already refined on.
 * [SearchRefineDialog](/Search.Dialogs/SearchRefineDialog.cs) allows users to see different values for a given field and select one. This is typically used for filtering later on but can be applied to any case where you want to list distinct values for a given field in the catalog and let the user pick one.
+* [SearchLanguageDialog](/Search.Dialogs/SearchLanguageDialog.cs) allows users to enter in natural language queries. 
 * [SearchDialog](Search.Dialogs/SearchDialog.cs) offers a complete keyword search + refine experience over a search index, and uses the other search dialogs as building blocks. Users can explore the catalog by refining (using facets) and by using keyword search. They can also select items and review their selection. At the end of this dialog a list of one or more selected items is returned. You'll need to subtype this class and at a minimum override GetTopRefiners() (to list refiners (facets) to expore) and ToSearchHit() (to convert your index entries into a common representation that can be rendered).
 
 > You can find these dialogs in the [Search.Dialogs](Search.Dialogs/) project which is ready to reuse in your own bot.
 
 To stitch together multiple instances of these dialogs and have filters and other search options carry over, you can use a shared instance of [SearchQueryBuilder](Search.Contracts/Models/SearchQueryBuilder.cs), which captures all the search-related state.
+
+If you want to apply this to your own Azure search instance you should follow these steps:
+* extract <searchServiceName> <searchIndexName> <searchAdminKey> : this will result in a schema file named <searchIndexName>.json file that defines the schema and some default annotations.
+* generate <schemaFile> -l <LUIS Subscription Key> -u : Generate a LUIS model <schemaFilename>Model by combining a template LUIS model with the schema information and upload it to your LUIS account.
+* Run your application against this LUIS model as in the samples.
+
+At this point you can add additional examples to your LUIS model using the LUIS portal, but you should not modify any of the phrase lists that come from the schema file.  To that you need to add annotations to the schema
+file and then do:
+* generate <schemaFile> -l <LUIS Subscription Key> -tm <LUIS Model Name> -u : This will download the existing <LUIS Model name>, modify it with the information from <schemaFile> and then upload it again.
 
 ### Samples
 

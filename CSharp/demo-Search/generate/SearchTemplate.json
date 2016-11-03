@@ -381,7 +381,7 @@
       ]
     },
     {
-      "text": "no more than 4 bedooms and and at most 2 propertyName",
+      "text": "no more than 4 propertyName and and at most 2 propertyName",
       "intent": "Filter",
       "entities": [
         {
@@ -453,7 +453,7 @@
       ]
     },
     {
-      "text": "between 3-4 bedooms and at least 3 propertyName",
+      "text": "between 3-4 propertyName and at least 3 propertyName",
       "intent": "Filter",
       "entities": [
         {
@@ -561,7 +561,7 @@
       ]
     },
     {
-      "text": "at most 3 propertyName and 1 propertyNameroom",
+      "text": "at most 3 propertyName and 1 propertyName",
       "intent": "Filter",
       "entities": [
         {
@@ -602,7 +602,7 @@
       ]
     },
     {
-      "text": "find me a 2 propertyName with at least 1 propertyNameroom",
+      "text": "find me a 2 propertyName with at least 1 propertyName",
       "intent": "Filter",
       "entities": [
         {

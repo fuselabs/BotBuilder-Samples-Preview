@@ -1,7 +1,7 @@
 {
   "luis_schema_version": "1.3.0",
   "name": "RealEstateModel",
-  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json SearchTemplate.json",
+  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -l bca5f68330234c2f9634610b48eea2da -o ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -u -ut",
   "culture": "en-us",
   "intents": [
     {
@@ -49,14 +49,14 @@
     {
       "name": "Properties",
       "mode": true,
-      "words": "bed,beds,bedroom,bedrooms,baths,bath,bathroom,bathrooms,sqft,sq feet,square feet,days on market,price,cost",
+      "words": "bed,beds,bedroom,bedrooms,baths,bath,bathroom,bathrooms,sqft,sq feet,square feet,days on market,price,cost,costs",
       "activated": true
     },
     {
       "name": "type",
       "mode": true,
       "activated": true,
-      "words": "home,houses,apartments"
+      "words": "home,homes,house,houses,apartment,apartments,condo,condos"
     }
   ],
   "regex_features": [
@@ -390,7 +390,7 @@
       ]
     },
     {
-      "text": "no more than 4 bedooms and and at most 2 propertyName",
+      "text": "no more than 4 propertyName and and at most 2 propertyName",
       "intent": "Filter",
       "entities": [
         {
@@ -462,7 +462,7 @@
       ]
     },
     {
-      "text": "between 3-4 bedooms and at least 3 propertyName",
+      "text": "between 3-4 propertyName and at least 3 propertyName",
       "intent": "Filter",
       "entities": [
         {
@@ -570,7 +570,7 @@
       ]
     },
     {
-      "text": "at most 3 propertyName and 1 propertyNameroom",
+      "text": "at most 3 propertyName and 1 propertyName",
       "intent": "Filter",
       "entities": [
         {
@@ -611,7 +611,7 @@
       ]
     },
     {
-      "text": "find me a 2 propertyName with at least 1 propertyNameroom",
+      "text": "find me a 2 propertyName with at least 1 propertyName",
       "intent": "Filter",
       "entities": [
         {

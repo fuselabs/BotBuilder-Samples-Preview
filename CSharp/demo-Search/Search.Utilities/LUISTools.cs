@@ -91,6 +91,14 @@
             return response.IsSuccessStatusCode;
         }
 
+        public enum TrainingStatus
+        {
+            Success = 0,
+            Fail = 1,
+            UpToDate = 2,
+            InProgress = 3,
+        };
+
         public static async Task<bool> TrainModelAsync(string subscriptionKey, string appID, CancellationToken ct)
         {
             var client = new HttpClient();
@@ -105,15 +113,26 @@
             }
             if (response.IsSuccessStatusCode)
             {
-                JObject model;
+                bool isTrained = false;
                 do
                 {
                     System.Threading.Thread.Sleep(1000);
-                    // TODO: The GET below seems necessary to get training to happen, but the 
-                    // returned value does not include the actual model id being trained...
                     var a = JArray.Parse(await (await client.GetAsync(uri)).Content.ReadAsStringAsync());
-                    model = await GetModelAsync(subscriptionKey, appID, ct);
-                } while (!(bool)model["IsTrained"]);
+                    isTrained = true;
+                    foreach (dynamic model in a)
+                    {
+                        var status = model.Details.StatusId;
+                        if (status == TrainingStatus.Fail)
+                        {
+                            throw new Exception(model.Details.FailureReason);
+                        }
+                        else if (status == TrainingStatus.InProgress)
+                        {
+                            isTrained = false;
+                            break;
+                        }
+                    }
+                } while (!isTrained);
             }
             return response.IsSuccessStatusCode;
         }
@@ -187,9 +206,10 @@
             return model;
         }
 
-        public static async Task<string> CreateModelAsync(string subscriptionKey, string appName, JObject model, CancellationToken ct)
+        public static async Task<string> CreateModelAsync(string subscriptionKey, dynamic model, CancellationToken ct)
         {
             string modelID = null;
+            string appName = (string)model.name;
             var old = await LUISTools.GetModelByNameAsync(subscriptionKey, appName, ct);
             if (old != null)
             {
@@ -222,17 +242,16 @@
         /// Return the LUIS model ID of an existing app or import it from <paramref name="modelPath"/> and return the new ID.
         /// </summary>
         /// <param name="subscriptionKey">LUIS subscription key.</param>
-        /// <param name="appName">Name of app.</param>
         /// <param name="modelPath">Path to the exported LUIS model.</param>
         /// <returns>LUIS Model ID.</returns>
-        public static async Task<string> GetOrCreateModelAsync(string subscriptionKey, string appName, string modelPath, CancellationToken ct)
+        public static async Task<string> GetOrCreateModelAsync(string subscriptionKey, string modelPath, CancellationToken ct)
         {
             string modelID = null;
-            var model = await GetModelByNameAsync(subscriptionKey, appName, ct);
+            dynamic newModel = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(modelPath));
+            var model = await GetModelByNameAsync(subscriptionKey, (string) newModel.name, ct);
             if (model == null)
             {
-                var newModel = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(modelPath));
-                modelID = await CreateModelAsync(subscriptionKey, appName, newModel, ct);
+                modelID = await CreateModelAsync(subscriptionKey, newModel, ct);
             }
             else
             {

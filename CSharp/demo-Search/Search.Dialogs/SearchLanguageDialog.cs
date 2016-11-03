@@ -49,86 +49,6 @@
             }
         }
 
-        public double ParseNumber(string entity, out bool isCurrency)
-        {
-            isCurrency = false;
-            double multiply = 1.0;
-            if (entity.StartsWith("$"))
-            {
-                isCurrency = true;
-                entity = entity.Substring(1);
-            }
-            if (entity.EndsWith("k"))
-            {
-                multiply = 1000.0;
-                entity = entity.Substring(0, entity.Length - 1);
-            }
-            return double.Parse(entity) * multiply;
-        }
-
-        public Range Resolve(CanonicalizerDelegate canonicalizer)
-        {
-            var comparison = new Range { Property = canonicalizer(Property?.Entity) };
-            bool isCurrency;
-            var lower = Lower == null ? double.NegativeInfinity : ParseNumber(Lower.Entity, out isCurrency);
-            var upper = Upper == null ? double.PositiveInfinity : ParseNumber(Upper.Entity, out isCurrency);
-            switch (Operator.Entity)
-            {
-                case ">=":
-                case "+":
-                case "greater than or equal":
-                case "at least":
-                    comparison.IncludeLower = true;
-                    comparison.IncludeUpper = true;
-                    upper = double.PositiveInfinity;
-                    break;
-
-                case ">":
-                case "greater than":
-                    comparison.IncludeLower = false;
-                    comparison.IncludeUpper = true;
-                    upper = double.PositiveInfinity;
-                    break;
-
-                case "-":
-                case "between":
-                case "and":
-                case "or":
-                    comparison.IncludeLower = true;
-                    comparison.IncludeUpper = true;
-                    break;
-
-                case "<=":
-                case "no more than":
-                case "less than or equal":
-                    comparison.IncludeLower = true;
-                    comparison.IncludeUpper = true;
-                    upper = lower;
-                    lower = double.NegativeInfinity;
-                    break;
-
-                case "<":
-                case "less than":
-                    comparison.IncludeLower = true;
-                    comparison.IncludeUpper = false;
-                    upper = lower;
-                    lower = double.NegativeInfinity;
-                    break;
-
-                // This is the case where we just have naked values
-                case "":
-                    comparison.IncludeLower = true;
-                    comparison.IncludeUpper = true;
-                    upper = lower;
-                    break;
-
-                default: throw new ArgumentException($"Unknown operator {Operator.Entity}");
-            }
-            comparison.Lower = lower;
-            comparison.Upper = upper;
-            return comparison;
-        }
-
         private void AddNumber(EntityRecommendation entity)
         {
             if (Lower == null)
@@ -196,7 +116,8 @@
                                select new ComparisonEntity(entity)).ToList();
             var attributes = (from entity in result.Entities
                               where schema.Fields.ContainsKey(entity.Type)
-                              select new FilterExpression(Operator.Equal, schema.Field(entity.Type), entity.Entity));
+                              select new FilterExpression(Operator.Equal, schema.Field(entity.Type),
+                                this.valueCanonicalizers[entity.Type].Canonicalize(entity.Entity)));
             var substrings = result.Entities.UncoveredSubstrings(result.Query);
             foreach (var entity in result.Entities)
             {
@@ -206,12 +127,101 @@
                 }
             }
             var ranges = from comparison in comparisons
-                         select comparison.Resolve((field) => schema.Field(fieldCanonicalizer.Canonicalize(field)));
+                         let range = Resolve(comparison)
+                         where range != null
+                         select range;
             var filter = ranges.GenerateFilterExpression(Operator.And);
             filter = attributes.GenerateFilterExpression(Operator.And, filter);
-            var spec = new SearchSpec { Filter = filter };
+            var spec = new SearchSpec { Text = string.Join(" ", substrings), Filter = filter };
             context.Done(spec);
             return Task.CompletedTask;
+        }
+
+        private double ParseNumber(string entity, out bool isCurrency)
+        {
+            isCurrency = false;
+            double multiply = 1.0;
+            if (entity.StartsWith("$"))
+            {
+                isCurrency = true;
+                entity = entity.Substring(1);
+            }
+            if (entity.EndsWith("k"))
+            {
+                multiply = 1000.0;
+                entity = entity.Substring(0, entity.Length - 1);
+            }
+            return double.Parse(entity) * multiply;
+        }
+
+        private Range Resolve(ComparisonEntity c)
+        {
+            Range range = null;
+            var propertyName = this.fieldCanonicalizer.Canonicalize(c.Property?.Entity);
+            if (propertyName != null)
+            {
+                range = new Range { Property = schema.Field(propertyName) };
+                bool isCurrency;
+                var lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
+                var upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+                if (c.Operator == null)
+                {
+                    // This is the case where we just have naked values
+                    range.IncludeLower = true;
+                    range.IncludeUpper = true;
+                    upper = lower;
+                }
+                else
+                {
+                    switch (c.Operator.Entity)
+                    {
+                        case ">=":
+                        case "+":
+                        case "greater than or equal":
+                        case "at least":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = true;
+                            upper = double.PositiveInfinity;
+                            break;
+
+                        case ">":
+                        case "greater than":
+                            range.IncludeLower = false;
+                            range.IncludeUpper = true;
+                            upper = double.PositiveInfinity;
+                            break;
+
+                        case "-":
+                        case "between":
+                        case "and":
+                        case "or":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = true;
+                            break;
+
+                        case "<=":
+                        case "no more than":
+                        case "less than or equal":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = true;
+                            upper = lower;
+                            lower = double.NegativeInfinity;
+                            break;
+
+                        case "<":
+                        case "less than":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = false;
+                            upper = lower;
+                            lower = double.NegativeInfinity;
+                            break;
+                        default: throw new ArgumentException($"Unknown operator {c.Operator.Entity}");
+                    }
+                }
+                range.Lower = lower;
+                range.Upper = upper;
+            }
+            return range;
         }
     }
 
@@ -251,14 +261,14 @@
                         {
                             // Remove from end
                             ranges.RemoveAt(i);
-                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value - 1 });
+                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value });
                             ++i;
                         }
                         else if (range.start < entity.StartIndex && range.end > entity.EndIndex)
                         {
                             // Split
                             ranges.RemoveAt(i);
-                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value - 1 });
+                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value });
                             ranges.Insert(++i, new { start = entity.EndIndex.Value + 1, end = range.end });
                             ++i;
                         }
@@ -277,7 +287,11 @@
             var substrings = new List<string>();
             foreach (var range in ranges)
             {
-                substrings.Add(originalText.Substring(range.start, range.end - range.start));
+                var str = originalText.Substring(range.start, range.end - range.start).Trim();
+                if (!string.IsNullOrEmpty(str))
+                {
+                    substrings.Add(str);
+                }
             }
             return substrings;
         }

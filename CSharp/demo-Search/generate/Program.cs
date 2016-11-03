@@ -1,17 +1,17 @@
-﻿using Search.Utilities;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Search.Models;
-using Newtonsoft.Json;
-using System.Threading;
-
-namespace Search.Generate
+﻿namespace Search.Generate
 {
+    using Search.Utilities;
+    using Newtonsoft.Json.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Search.Models;
+    using Newtonsoft.Json;
+    using System.Threading;
+
     class Program
     {
         const string propertyName = "propertyname";
@@ -82,16 +82,20 @@ namespace Search.Generate
 
         static void AddNamed(dynamic model, string feature, dynamic entry)
         {
-            JArray newArray = new JArray();
-            foreach(dynamic val in model[feature])
+            bool add = true;
+            foreach (dynamic val in model[feature])
             {
-                if (val.name != entry.name)
+                if (val.name == entry.name)
                 {
-                    newArray.Add(val);
+                    val.Replace(entry);
+                    add = false;
+                    break;
                 }
             }
-            newArray.Add(entry);
-            model[feature] = newArray;
+            if (add)
+            {
+                model[feature].Add(entry);
+            }
         }
 
         static void AddAttribute(dynamic model, SearchField field)
@@ -118,7 +122,20 @@ namespace Search.Generate
             attribute.endPos = text.Count() - 1;
             entities.Add(attribute);
             newUtterance.entities = entities;
-            model.utterances.Add(newUtterance);
+            bool add = true;
+            foreach(var child in model.utterances)
+            {
+                if (child.text == newUtterance.text)
+                {
+                    child.Replace(newUtterance);
+                    add = false;
+                    break;
+                }
+            }
+            if (add)
+            {
+                model.utterances.Add(newUtterance);
+            }
         }
 
         static void ReplacePropertyNames(dynamic model)
@@ -193,6 +210,11 @@ namespace Search.Generate
             {
                 Console.WriteLine($"Reading template from {p.TemplatePath}");
                 template = JObject.Parse(File.ReadAllText(p.TemplatePath));
+                if (p.UploadTemplate)
+                {
+                    Console.WriteLine($"Uploading template {template.name} to LUIS");
+                    await LUISTools.CreateModelAsync(p.LUISKey, template, cts.Token);
+                }
             }
             else
             {
@@ -235,7 +257,8 @@ namespace Search.Generate
             if (p.Upload)
             {
                 Console.WriteLine($"Uploading {p.OutputName} to LUIS");
-                await LUISTools.CreateModelAsync(p.LUISKey, p.OutputName, template, cts.Token);
+                var id = await LUISTools.CreateModelAsync(p.LUISKey, template, cts.Token);
+                Console.WriteLine($"New LUIS app key is {id}");
             }
         }
 
@@ -245,7 +268,7 @@ namespace Search.Generate
             {
                 Console.WriteLine(msg);
             }
-            Console.WriteLine("generate <schemaFile> [-l <LUIS subscription key>] [-m <modelName>] [-o <outputFile>] [-tf <templateFile>] [-tm <modelName>] [-u]");
+            Console.WriteLine("generate <schemaFile> [-l <LUIS subscription key>] [-m <modelName>] [-o <outputFile>] [-tf <templateFile>] [-tm <modelName>] [-u] [-ut]");
             Console.WriteLine("Take a JSON schema file and use it to generate a LUIS model from a template.");
             Console.WriteLine("The template can be the included SearchTemplate.json file or can be downloaded from LUIS.");
             Console.WriteLine("The resulting LUIS model can be saved as a file or automatically uploaded to LUIS.");
@@ -255,7 +278,8 @@ namespace Search.Generate
             Console.WriteLine("-tf <templateFile> : LUIS Template file to modify based on schema.  By default this is SearchTemplate.json.");
             Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
             Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");
-            Console.WriteLine("Common examples:");
+            Console.WriteLine("-ut: Upload template to LUIS.  Must also specify -l.");
+            Console.WriteLine("Common usage:");
             Console.WriteLine("generate <schema> : Generate <schema>Model.json in the directory with <schema> from the SearchTemplate.json.");
             Console.WriteLine("generate <schema> -l <LUIS key> -u : Update the existing <schemaFileName>Model LUIS model and upload it to LUIS.");
             System.Environment.Exit(-1);
@@ -290,6 +314,7 @@ namespace Search.Generate
             public string OutputName;
             public string LUISKey;
             public bool Upload = false;
+            public bool UploadTemplate = false;
         }
 
         static void Main(string[] args)
@@ -310,10 +335,11 @@ namespace Search.Generate
                     case "-tf": p.TemplatePath = NextArg(++i, args); break;
                     case "-tm": p.TemplateName = NextArg(++i, args); break;
                     case "-u": p.Upload = true; break;
+                    case "-ut": p.UploadTemplate = true; break;
                     default: Usage($"Unknown parameter {arg}"); break;
                 }
             }
-            if ((p.Upload || p.TemplateName != null) && p.LUISKey == null)
+            if ((p.Upload || p.TemplateName != null || p.UploadTemplate) && p.LUISKey == null)
             {
                 Usage("You must supply your LUIS subscription key with -l.");
             }

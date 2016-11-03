@@ -1,17 +1,17 @@
-﻿using Microsoft.Azure.Search;
-using Microsoft.Azure.Search.Models;
-using Search.Utilities;
-using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using Search.Models;
-
-namespace Search.Extract
+﻿namespace Search.Extract
 {
+    using Microsoft.Azure.Search;
+    using Microsoft.Azure.Search.Models;
+    using Search.Utilities;
+    using System;
+    using System.Runtime.Serialization.Formatters.Binary;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using Search.Models;
+
     class Program
     {
         static int Apply(SearchIndexClient client, string valueField, string idField, string text, SearchParameters sp, Action<int, SearchResult> function,
@@ -88,31 +88,6 @@ namespace Search.Extract
             return total;
         }
 
-        static int Apply(SearchIndexClient client, string order, string text, SearchParameters sp, Action<int, SearchResult> function,
-            int max = int.MaxValue,
-            int page = 1000)
-        {
-            // Use order to set orderby and keep value to skip through--what if someting has > 1000 values?
-            sp.Skip = 0;
-            sp.Top = page;
-            var search = client.Documents.Search(text, sp);
-            var results = search.Results;
-            while (sp.Skip < max && results.Any())
-            {
-                foreach (var result in results)
-                {
-                    function(sp.Skip.Value, result);
-                    ++sp.Skip;
-                    if (sp.Skip == max)
-                    {
-                        break;
-                    }
-                }
-                results = client.Documents.Search(text, sp).Results;
-            }
-            return sp.Skip.Value;
-        }
-
         static void Process(int count,
             SearchResult result,
             IEnumerable<string> fields, Dictionary<string, Histogram<object>> histograms)
@@ -141,41 +116,89 @@ namespace Search.Extract
             }
         }
 
+        static void Usage(string msg = null)
+        {
+            Console.WriteLine("extract <serviceName> <indexName> <adminKey> [-f <facetList>] [-g <histogramPath>] [-h <histogramPath>] [-o <outputPath>]");
+            Console.WriteLine("Generate <indexName>.json schema file.");
+            Console.WriteLine("-f <facetList>: Comma seperated list of facet names for histogram.  By default all schema facets.");
+            Console.WriteLine("-g <histogramPath>: Generate an <indexName>-histogram.bin file with histogram information from index.");
+            Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.");
+            Console.WriteLine("-o <outputFile>: Where to put generated schema and histogram files.");
+            Environment.Exit(-1);
+        }
+
+        static string NextArg(int i, string[] args)
+        {
+            string arg = null;
+            if (i < args.Length)
+            {
+                arg = args[i];
+            }
+            else
+            {
+                Usage();
+            }
+            return arg;
+        }
+
         static void Main(string[] args)
         {
-            var searchServiceName = ConfigurationManager.AppSettings["SearchServiceName"];
-            var queryApiKey = ConfigurationManager.AppSettings["SearchCredentials"];
-            var indexClient = new SearchIndexClient(searchServiceName, "listings", new SearchCredentials(queryApiKey));
-            // Cannot handle location yet
-            var facets = new string[] { "beds", "baths", "sqft", "daysOnMarket", "status", "source", "street", "type", "city", "district", "region", "zipcode", "countryCode", "price" };
-            var values = new string[] { "description" };
-            var path = ".";
-            var histograms = new Dictionary<string, Histogram<object>>();
-            var valueCount = new Dictionary<string, List<string>>();
-            var sp = new SearchParameters();
-            var timer = Stopwatch.StartNew();
-            var results = Apply(indexClient, "price", "listingId", null, sp,
-                (count, result) =>
-                {
-                    Process(count, result, facets, histograms);
-                }
-                // , 1000
-                );
-            /*
-            var results = Apply(indexClient, "zipcode", null, sp,
-                (count, result) =>
-                {
-                    Process(count, result, facets, facetCount, values, valueCount);
-                }
-                // , 20
-                );
-                */
-            Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
-            using (var stream = new FileStream(Path.Combine(path, "-histograms.bin"), FileMode.Create))
+            if (args.Length < 3)
             {
-                var serializer = new BinaryFormatter();
-                serializer.Serialize(stream, histograms);
+                Usage();
             }
+            var serviceName = args[0];
+            var indexName = args[1];
+            var adminKey = args[2];
+            string[] facets = null;
+            string generatePath = null;
+            string histogramPath = null;
+            string schemaPath = indexName + ".json";
+            for (var i = 3; i < args.Length; ++i)
+            {
+                var arg = args[i];
+                switch (arg)
+                {
+                    case "-f": facets = NextArg(++i, args).Split(',').ToArray<string>(); break;
+                    case "-g": generatePath = NextArg(++i, args); break;
+                    case "-h": histogramPath = NextArg(++i, args); break;
+                    case "-o": schemaPath = NextArg(++i, args); break;
+                    default: Usage($"{arg} is not understood."); break;
+                }
+            }
+            var schema = Search.Azure.SearchTools.GetIndexSchema(serviceName, adminKey, indexName);
+            if (generatePath != null)
+            {
+                var indexClient = new SearchIndexClient(serviceName, indexName, new SearchCredentials(adminKey));
+                if (facets == null)
+                {
+                    facets = (from field in schema.Fields.Values where field.IsFacetable select field.Name).ToArray();
+                }
+                var sortable = schema.Fields.Values.First((f) => f.IsSortable);
+                var id = schema.Fields.Values.First((f) => f.IsKey);
+                var path = ".";
+                var histograms = new Dictionary<string, Histogram<object>>();
+                var sp = new SearchParameters();
+                var timer = Stopwatch.StartNew();
+                var results = Apply(indexClient, sortable.Name, id.Name, null, sp,
+                    (count, result) =>
+                    {
+                        Process(count, result, facets, histograms);
+                    }
+                    // , 1000
+                    );
+                Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
+                using (var stream = new FileStream(Path.Combine(path, "-histograms.bin"), FileMode.Create))
+                {
+                    var serializer = new BinaryFormatter();
+                    serializer.Serialize(stream, histograms);
+                }
+            }
+            if (histogramPath != null)
+            {
+                // TODO: Use histogram to infer some schema information
+            }
+            schema.Save(schemaPath);
         }
     }
 }

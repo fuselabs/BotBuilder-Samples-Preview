@@ -193,12 +193,12 @@
       },
       "valueSynonyms": [
       {
-        "canonical":"house", 
-        "alternatives":["home","houses"]
+        "canonical":"House", 
+        "alternatives":["home","homes", "house", "houses"]
       },
       {
-        "canonical":"apartment",
-        "alternatives":["apartments"]
+        "canonical":"Apartment",
+        "alternatives":["apartment", "apartments", "condo", "condos"]
       }]
     },
     "city": {
@@ -261,7 +261,7 @@
       "filterPreference": 0,
       "nameSynonyms": {
         "canonical": "region",
-        "alternatives": ["region"]
+        "alternatives": ["region", "area"]
       },
       "valueSynonyms": []
     },
@@ -277,7 +277,7 @@
       "filterPreference": 0,
       "nameSynonyms": {
         "canonical": "zipcode",
-        "alternatives": ["zip code", "zip"]
+        "alternatives": ["zip code", "zip", "zipcode"]
       },
       "valueSynonyms": []
     },
@@ -293,7 +293,7 @@
       "filterPreference": 0,
       "nameSynonyms": {
         "canonical": "countryCode",
-        "alternatives": ["country", "countery code"]
+        "alternatives": ["country", "country code"]
       },
       "valueSynonyms": []
     },
@@ -325,7 +325,7 @@
       "filterPreference": 5,
       "nameSynonyms": {
         "canonical": "price",
-        "alternatives": ["price", "cost"]
+        "alternatives": ["price", "cost", "costs"]
       },
       "valueSynonyms": []
     },

@@ -172,7 +172,7 @@
             {
                 Top = queryBuilder.HitsPerPage,
                 Skip = queryBuilder.PageNumber * queryBuilder.HitsPerPage,
-                SearchMode = SearchMode.All
+                SearchMode = SearchMode.Any
             };
 
             if (facet != null)
