@@ -12,7 +12,7 @@
         {
         }
 
-        public SearchSpec Spec;
+        public SearchSpec Spec = new SearchSpec();
 
         public int PageNumber { get; set; }
 

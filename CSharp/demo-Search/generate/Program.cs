@@ -274,7 +274,7 @@
             Console.WriteLine("The resulting LUIS model can be saved as a file or automatically uploaded to LUIS.");
             Console.WriteLine("-l <LUIS subscription key> : LUIS subscription key.");
             Console.WriteLine("-m <modelName> : Output LUIS model name.  By default will be <schemaFileName>Model.");
-            Console.WriteLine("-o <outputFile> : Output LUIS Json file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
+            Console.WriteLine("-o <outputFile> : Output LUIS JSON file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
             Console.WriteLine("-tf <templateFile> : LUIS Template file to modify based on schema.  By default this is SearchTemplate.json.");
             Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
             Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");

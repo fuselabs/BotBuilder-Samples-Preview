@@ -72,10 +72,6 @@
     {
         private const int DefaultHitPerPage = 5;
 
-        public string SearchText { get; set; }
-
-        public int PageNumber { get; set; }
-
         public int HitsPerPage { get; set; } = DefaultHitPerPage;
 
         protected SearchSchema schema;
@@ -134,6 +130,42 @@
             filter = attributes.GenerateFilterExpression(Operator.And, filter);
             var spec = new SearchSpec { Text = string.Join(" ", substrings), Filter = filter };
             context.Done(spec);
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("NextPage")]
+        public Task NextPage(IDialogContext context, LuisResult result)
+        {
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("Refine")]
+        public Task Refine(IDialogContext context, LuisResult result)
+        {
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("List")]
+        public Task List(IDialogContext context, LuisResult result)
+        {
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("StartOver")]
+        public Task StartOver(IDialogContext context, LuisResult result)
+        {
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("Quit")]
+        public Task Quit(IDialogContext context, LuisResult result)
+        {
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("Done")]
+        public Task Done(IDialogContext context, LuisResult result)
+        {
             return Task.CompletedTask;
         }
 

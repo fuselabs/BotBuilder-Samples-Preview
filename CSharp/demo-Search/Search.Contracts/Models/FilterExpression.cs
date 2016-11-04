@@ -1,6 +1,7 @@
 ﻿namespace Search.Models
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
@@ -43,6 +44,48 @@
             return new FilterExpression(Operator, values);
         }
 
+        // Remove all references to the same field
+        public FilterExpression Remove(FilterExpression expression)
+        {
+            FilterExpression filter = null;
+            foreach(var field in expression.Fields())
+            {
+                filter = Remove(field);
+            }
+            return filter;
+        }
+
+        public IEnumerable<SearchField> Fields()
+        {
+            return AllFields().Distinct();
+        }
+
+        private IEnumerable<SearchField> AllFields()
+        {
+            if (Operator == Operator.And
+                || Operator == Operator.Or
+                || Operator == Operator.Not)
+            {
+                foreach(FilterExpression child in Values)
+                {
+                    foreach(var field in child.Fields())
+                    {
+                        yield return field;
+                    }
+                }
+            }
+            else 
+            {
+                foreach(var value in Values)
+                {
+                    if (value is SearchField)
+                    {
+                        yield return value as SearchField;
+                    }
+                }
+            }
+        }
+
         public FilterExpression Remove(SearchField field)
         {
             FilterExpression result = null;
@@ -63,7 +106,7 @@
             }
             else
             {
-                if (Values.All((v) => (v as SearchField).Name != field.Name))
+                if (Values.All((v) => v is SearchField ? (v as SearchField).Name != field.Name : true))
                 {
                     result = this;
                 }

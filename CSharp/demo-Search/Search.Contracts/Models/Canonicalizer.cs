@@ -45,7 +45,7 @@ namespace Search.Models
         {
             string canonical = null;
             Synonyms synonyms;
-            if (map.TryGetValue(Normalize(source), out synonyms))
+            if (source != null && map.TryGetValue(Normalize(source), out synonyms))
             {
                 canonical = synonyms.Canonical;
             }

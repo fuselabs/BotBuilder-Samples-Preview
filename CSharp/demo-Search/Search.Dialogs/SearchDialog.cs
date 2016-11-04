@@ -9,40 +9,351 @@
     using Microsoft.Bot.Connector;
     using Search.Models;
     using Search.Services;
+    using Microsoft.Bot.Builder.Luis.Models;
+    using Microsoft.Bot.Builder.Luis;
+    using System.Text;
 
     public delegate SearchField CanonicalizerDelegate(string propertyName);
-        
+
     [Serializable]
-    public abstract class SearchDialog : IDialog<IList<SearchHit>>
+    public class Button
     {
+        public Button(string label, string message = null)
+        {
+            Label = label;
+            Message = message ?? label;
+        }
+
+        public string Label;
+        public string Message;
+    }
+
+    [Serializable]
+    public class Prompts
+    {
+        // Prompts
+        public string Initial = "What would you like to find?";
+        public string Result = "Refine your search";
+        public string ChooseRefiner = "What facet would you like to refine by?";
+        public string NotUnderstood = "I did not understand what you said";
+
+        // Buttons
+        public Button Browse = new Button("Browse");
+        public Button Quit = new Button("Quit");
+        public Button Finished = new Button("Finished");
+        public Button List = new Button("List");
+        public Button NextPage = new Button("Next Page");
+
+        // Status
+        public string Filter = "Filter: ";
+        public string Keywords = "Keywords: ";
+        public string Sort = "Sort: ";
+        public string Page = "Page: ";
+        public string Count = "Total results: ";
+        public string Ascending = "Ascending";
+        public string Descending = "Descending";
+    }
+
+    [Serializable]
+    public class SearchDialog : LuisDialog<IList<SearchHit>>
+    {
+        protected readonly Prompts Prompts;
         protected readonly ISearchClient SearchClient;
-        protected readonly string Key;
-        protected readonly string Model;
         protected readonly SearchQueryBuilder QueryBuilder;
+        protected readonly PromptStyler PromptStyler;
         protected readonly PromptStyler HitStyler;
         protected readonly bool MultipleSelection;
         private readonly IList<SearchHit> selected = new List<SearchHit>();
-
+        protected readonly Canonicalizer FieldCanonicalizer;
+        protected readonly Dictionary<string, Canonicalizer> ValueCanonicalizers;
         private bool firstPrompt = true;
         private IList<SearchHit> found;
 
-        public SearchDialog(ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null, PromptStyler searchHitStyler = null, bool multipleSelection = false)
+        public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null,
+            PromptStyler promptStyler = null,
+            PromptStyler searchHitStyler = null,
+            bool multipleSelection = false)
+            : base(new LuisService(new LuisModelAttribute(model, key)))
         {
+            SetField.NotNull(out this.Prompts, nameof(Prompts), prompts);
             SetField.NotNull(out this.SearchClient, nameof(searchClient), searchClient);
-            SetField.NotNull(out this.Key, nameof(Key), key);
-            SetField.NotNull(out this.Model, nameof(Model), model);
             this.QueryBuilder = queryBuilder ?? new SearchQueryBuilder();
             this.HitStyler = searchHitStyler ?? new SearchHitStyler();
+            this.PromptStyler = promptStyler ?? new PromptStyler();
             this.MultipleSelection = multipleSelection;
+            FieldCanonicalizer = new Canonicalizer();
+            ValueCanonicalizers = new Dictionary<string, Canonicalizer>();
+            foreach (var field in searchClient.Schema.Fields.Values)
+            {
+                FieldCanonicalizer.Add(field.NameSynonyms);
+                ValueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
+            }
         }
 
-        public Task StartAsync(IDialogContext context)
+        protected async Task PromptAsync(IDialogContext context, string prompt, params Button[] buttons)
         {
-            return this.InitialPrompt(context);
+            var msg = context.MakeMessage();
+            this.PromptStyler.Apply(ref msg, prompt, (from button in buttons select button.Label).ToList(), (from button in buttons select button.Message).ToList());
+            await context.PostAsync(msg);
         }
 
-        public async Task Search(IDialogContext context, SearchSpec spec)
+        public override Task StartAsync(IDialogContext context)
         {
+            context.Wait(Intro);
+            return Task.CompletedTask;
+        }
+
+        public async Task Intro(IDialogContext context, IAwaitable<IMessageActivity> message)
+        {
+            await PromptAsync(context, Prompts.Initial, Prompts.Browse, Prompts.Quit);
+            context.Wait(MessageReceived);
+        }
+
+        [LuisIntent("")]
+        public async Task None(IDialogContext context, LuisResult result)
+        {
+            await context.PostAsync("I'm sorry. I didn't understand you.");
+            context.Wait(MessageReceived);
+        }
+
+        [LuisIntent("Filter")]
+        public async Task ProcessComparison(IDialogContext context, LuisResult result)
+        {
+            bool isCurrency;
+            var entities = (from entity in result.Entities where entity.Type != "Number" || !double.IsNaN(ParseNumber(entity.Entity, out isCurrency)) select entity).ToList();
+            var comparisons = (from entity in entities
+                               where entity.Type == "Comparison"
+                               select new ComparisonEntity(entity)).ToList();
+            var attributes = (from entity in entities
+                              where this.SearchClient.Schema.Fields.ContainsKey(entity.Type)
+                              select new FilterExpression(Operator.Equal, this.SearchClient.Schema.Field(entity.Type),
+                                this.ValueCanonicalizers[entity.Type].Canonicalize(entity.Entity)));
+            var substrings = entities.UncoveredSubstrings(result.Query);
+            foreach (var entity in entities)
+            {
+                foreach (var comparison in comparisons)
+                {
+                    comparison.AddEntity(entity);
+                }
+            }
+            var ranges = from comparison in comparisons
+                         let range = Resolve(comparison)
+                         where range != null
+                         select range;
+            var filter = ranges.GenerateFilterExpression(Operator.And);
+            filter = attributes.GenerateFilterExpression(Operator.And, filter);
+            if (this.QueryBuilder.Spec.Filter != null)
+            {
+                this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter.Remove(filter), filter, Operator.And);
+            }
+            else
+            {
+                this.QueryBuilder.Spec.Filter = filter;
+            }
+            if (this.QueryBuilder.Spec.Text != null)
+            {
+                substrings = new string[] { this.QueryBuilder.Spec.Text }.Union(substrings);
+            }
+            this.QueryBuilder.Spec.Text = string.Join(" ", substrings);
+            await Search(context);
+        }
+
+        [LuisIntent("NextPage")]
+        public async Task NextPage(IDialogContext context, LuisResult result)
+        {
+            this.QueryBuilder.PageNumber++;
+            await Search(context);
+        }
+
+        [LuisIntent("Refine")]
+        public Task Refine(IDialogContext context, LuisResult result)
+        {
+            // TODO: Implement
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("List")]
+        public Task List(IDialogContext context, LuisResult result)
+        {
+            // TODO: Implement
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("StartOver")]
+        public async Task StartOver(IDialogContext context, LuisResult result)
+        {
+            this.QueryBuilder.Reset();
+            await StartAsync(context);
+        }
+
+        [LuisIntent("Quit")]
+        public Task Quit(IDialogContext context, LuisResult result)
+        {
+            context.Done<IList<SearchHit>>(null);
+            return Task.CompletedTask;
+        }
+
+        [LuisIntent("Done")]
+        public Task Done(IDialogContext context, LuisResult result)
+        {
+            context.Done(found);
+            return Task.CompletedTask;
+        }
+
+        private double ParseNumber(string entity, out bool isCurrency)
+        {
+            isCurrency = false;
+            double multiply = 1.0;
+            if (entity.StartsWith("$"))
+            {
+                isCurrency = true;
+                entity = entity.Substring(1);
+            }
+            if (entity.EndsWith("k"))
+            {
+                multiply = 1000.0;
+                entity = entity.Substring(0, entity.Length - 1);
+            }
+            double result;
+            if (double.TryParse(entity, out result))
+            {
+                result *= multiply;
+            }
+            else
+            {
+                result = double.NaN;
+            }
+            return result;
+        }
+
+        private Range Resolve(ComparisonEntity c)
+        {
+            Range range = null;
+            var propertyName = this.FieldCanonicalizer.Canonicalize(c.Property?.Entity);
+            if (propertyName != null)
+            {
+                range = new Range { Property = this.SearchClient.Schema.Field(propertyName) };
+                bool isCurrency;
+                var lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
+                var upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+                if (c.Operator == null)
+                {
+                    // This is the case where we just have naked values
+                    range.IncludeLower = true;
+                    range.IncludeUpper = true;
+                    upper = lower;
+                }
+                else
+                {
+                    switch (c.Operator.Entity)
+                    {
+                        case ">=":
+                        case "+":
+                        case "greater than or equal":
+                        case "at least":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = true;
+                            upper = double.PositiveInfinity;
+                            break;
+
+                        case ">":
+                        case "greater than":
+                            range.IncludeLower = false;
+                            range.IncludeUpper = true;
+                            upper = double.PositiveInfinity;
+                            break;
+
+                        case "-":
+                        case "between":
+                        case "and":
+                        case "or":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = true;
+                            break;
+
+                        case "<=":
+                        case "no more than":
+                        case "less than or equal":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = true;
+                            upper = lower;
+                            lower = double.NegativeInfinity;
+                            break;
+
+                        case "<":
+                        case "less than":
+                            range.IncludeLower = true;
+                            range.IncludeUpper = false;
+                            upper = lower;
+                            lower = double.NegativeInfinity;
+                            break;
+                        default: throw new ArgumentException($"Unknown operator {c.Operator.Entity}");
+                    }
+                }
+                range.Lower = lower;
+                range.Upper = upper;
+            }
+            return range;
+        }
+
+        private string SearchDescription()
+        {
+            var builder = new StringBuilder();
+            var filter = this.QueryBuilder.Spec.Filter;
+            var text = this.QueryBuilder.Spec.Text;
+            var sorts = this.QueryBuilder.Spec.Sort;
+            if (filter != null)
+            {
+                builder.Append(Prompts.Filter);
+                builder.AppendLine(filter.ToString());
+                builder.AppendLine();
+            }
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                builder.AppendLine($"{Prompts.Keywords}{text}");
+                builder.AppendLine();
+            }
+            if (sorts.Count() > 0)
+            {
+                builder.Append(Prompts.Sort);
+                var prefix = "";
+                foreach (var sort in sorts)
+                {
+                    var dir = sort.Direction == SortDirection.Ascending ? Prompts.Ascending : Prompts.Descending;
+                    builder.Append($"{prefix}{sort.Field} {dir}");
+                    prefix = ", ";
+                }
+                builder.AppendLine();
+                builder.AppendLine();
+            }
+            builder.AppendLine($"{Prompts.Page}{this.QueryBuilder.PageNumber}");
+            return builder.ToString();
+        }
+
+        public async Task Search(IDialogContext context)
+        {
+            // TODO: Implement
+            // 1) Show the current query including page number
+            // 2) Show the results
+            // 3) New prompt and goto message received
+            var response = await this.ExecuteSearchAsync();
+            if (response.Results.Count() == 0)
+            {
+                // TODO: No results ,what would you like to change?
+                await PromptAsync(context, Prompts.Result, Prompts.Browse, Prompts.List, Prompts.Finished, Prompts.Quit);
+            }
+            else
+            {
+                var message = context.MakeMessage();
+                this.found = response.Results.ToList();
+                this.HitStyler.Apply(
+                    ref message,
+                    SearchDescription(),
+                    (IReadOnlyList<SearchHit>)this.found);
+                await context.PostAsync(message);
+                await PromptAsync(context, Prompts.Result, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished, Prompts.Quit);
+            }
+            /*
             var text = spec.Text;
 
             if (this.MultipleSelection && text != null && text.ToLowerInvariant() == "list")
@@ -65,7 +376,7 @@
                     this.HitStyler.Apply(
                         ref message,
                         "Here are a few good options I found:",
-                        (IReadOnlyList<SearchHit>) this.found);
+                        (IReadOnlyList<SearchHit>)this.found);
                     await context.PostAsync(message);
                     await context.PostAsync(
                         this.MultipleSelection ?
@@ -74,26 +385,16 @@
                     context.Wait(this.ActOnSearchResults);
                 }
             }
+            */
+            context.Wait(MessageReceived);
         }
 
-        protected virtual async Task InitialPrompt(IDialogContext context)
+        protected async Task<GenericSearchResult> ExecuteSearchAsync()
         {
-            string prompt = "What would you like to search for?";
-
-            if (!this.firstPrompt)
-            {
-                prompt = "What else would you like to search for?";
-                if (this.MultipleSelection)
-                {
-                    prompt += " You can also *list* all items you've added so far.";
-                }
-            }
-
-            this.firstPrompt = false;
-            await context.PostAsync(prompt);
-            context.Call(new SearchLanguageDialog(this.SearchClient.Schema, this.Key, this.Model), this.InitialSearch);
+            return await this.SearchClient.SearchAsync(this.QueryBuilder);
         }
 
+        /*
         protected async Task InitialSearch(IDialogContext context, IAwaitable<SearchSpec> spec)
         {
             await this.Search(context, await spec);
@@ -114,7 +415,7 @@
             }
             else
             {
-                this.HitStyler.Apply(ref message, "Here's what you've added to your list so far.", (IReadOnlyList<SearchHit>) this.selected);
+                this.HitStyler.Apply(ref message, "Here's what you've added to your list so far.", (IReadOnlyList<SearchHit>)this.selected);
                 await context.PostAsync(message);
             }
         }
@@ -198,11 +499,6 @@
             await this.Search(context, this.QueryBuilder.Spec);
         }
 
-        protected async Task<GenericSearchResult> ExecuteSearchAsync()
-        {
-            return await this.SearchClient.SearchAsync(this.QueryBuilder);
-        }
-
         protected abstract string[] GetTopRefiners();
 
         private async Task ShouldRetry(IDialogContext context, IAwaitable<bool> input)
@@ -240,7 +536,7 @@
 
                 case "more":
                     this.QueryBuilder.PageNumber++;
-                    await this.Search(context, null);
+                    await this.Search(context, this.QueryBuilder.Spec);
                     break;
 
                 case "refine":
@@ -261,5 +557,6 @@
                     break;
             }
         }
+    */
     }
 }

@@ -18,11 +18,6 @@
         {
         }
 
-        protected override string[] GetTopRefiners()
-        {
-            return TopRefiners;
-        }
-
         [Serializable]
         public class JobStyler : PromptStyler
         {

@@ -19,7 +19,7 @@
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-            builder.RegisterType<IntroDialog>()
+            builder.RegisterType<RealEstateSearchDialog>()
               .As<IDialog<object>>()
               .InstancePerDependency();
 

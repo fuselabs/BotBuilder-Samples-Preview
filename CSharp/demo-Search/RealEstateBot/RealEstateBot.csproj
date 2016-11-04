@@ -139,7 +139,6 @@
     <Compile Include="RealEstateMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Dialogs\RealEstateSearchDialog.cs" />
-    <Compile Include="Dialogs\IntroDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
