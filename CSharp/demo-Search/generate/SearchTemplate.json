@@ -58,7 +58,7 @@
     {
       "name": "Operators",
       "mode": true,
-      "words": "at least,no more than,between,no less than,-,+,at most",
+      "words": "at least,no more than,between,no less than,-,+,at most,less than,more than",
       "activated": true
     },
     {

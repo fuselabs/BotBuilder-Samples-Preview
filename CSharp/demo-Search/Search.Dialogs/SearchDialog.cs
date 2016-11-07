@@ -36,6 +36,8 @@
         public string Result = "Refine your search";
         public string ChooseRefiner = "What facet would you like to refine by?";
         public string NotUnderstood = "I did not understand what you said";
+        public string UnknownItem = "That is not an item in the current results.";
+        public string AddedToList = " was added to your list.";
 
         // Buttons
         public Button Browse = new Button("Browse");
@@ -63,11 +65,14 @@
         protected readonly PromptStyler PromptStyler;
         protected readonly PromptStyler HitStyler;
         protected readonly bool MultipleSelection;
-        private readonly IList<SearchHit> selected = new List<SearchHit>();
-        protected readonly Canonicalizer FieldCanonicalizer;
-        protected readonly Dictionary<string, Canonicalizer> ValueCanonicalizers;
-        private bool firstPrompt = true;
-        private IList<SearchHit> found;
+        private readonly IList<SearchHit> Selected = new List<SearchHit>();
+        private IList<SearchHit> Found;
+
+        [NonSerialized]
+        protected Canonicalizer FieldCanonicalizer;
+
+        [NonSerialized]
+        protected Dictionary<string, Canonicalizer> ValueCanonicalizers;
 
         public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null,
             PromptStyler promptStyler = null,
@@ -81,13 +86,6 @@
             this.HitStyler = searchHitStyler ?? new SearchHitStyler();
             this.PromptStyler = promptStyler ?? new PromptStyler();
             this.MultipleSelection = multipleSelection;
-            FieldCanonicalizer = new Canonicalizer();
-            ValueCanonicalizers = new Dictionary<string, Canonicalizer>();
-            foreach (var field in searchClient.Schema.Fields.Values)
-            {
-                FieldCanonicalizer.Add(field.NameSynonyms);
-                ValueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
-            }
         }
 
         protected async Task PromptAsync(IDialogContext context, string prompt, params Button[] buttons)
@@ -109,18 +107,57 @@
             context.Wait(MessageReceived);
         }
 
+        protected override IntentRecommendation BestIntentFrom(LuisResult result)
+        {
+            var best = (from intent in result.Intents
+                        let score = intent.Score ?? 0.0
+                        where score > 0.3
+                        orderby score descending
+                        select intent).FirstOrDefault();
+            if (best == null)
+            {
+                best = new IntentRecommendation("Filter", 0.0);
+            }
+            return best;
+        }
+
+        protected override async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
+        {
+            var message = await item;
+            var text = message.Text.Trim();
+            if (text.StartsWith("ID:"))
+            {
+                var id = text.Substring(3).Trim();
+                await this.AddSelectedItem(context, id);
+            }
+            else
+            {
+                await base.MessageReceived(context, item);
+            }
+        }
+
         [LuisIntent("")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("I'm sorry. I didn't understand you.");
+            await PromptAsync(context, Prompts.NotUnderstood);
             context.Wait(MessageReceived);
         }
 
         [LuisIntent("Filter")]
-        public async Task ProcessComparison(IDialogContext context, LuisResult result)
+        public async Task Filter(IDialogContext context, LuisResult result)
         {
+            if (FieldCanonicalizer == null)
+            {
+                FieldCanonicalizer = new Canonicalizer();
+                ValueCanonicalizers = new Dictionary<string, Canonicalizer>();
+                foreach (var field in this.SearchClient.Schema.Fields.Values)
+                {
+                    FieldCanonicalizer.Add(field.NameSynonyms);
+                    ValueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
+                }
+            }
             bool isCurrency;
-            var entities = (from entity in result.Entities where entity.Type != "Number" || !double.IsNaN(ParseNumber(entity.Entity, out isCurrency)) select entity).ToList();
+            var entities = result.Entities == null ? new List<EntityRecommendation>() : (from entity in result.Entities where entity.Type != "Number" || !double.IsNaN(ParseNumber(entity.Entity, out isCurrency)) select entity).ToList();
             var comparisons = (from entity in entities
                                where entity.Type == "Comparison"
                                select new ComparisonEntity(entity)).ToList();
@@ -196,7 +233,7 @@
         [LuisIntent("Done")]
         public Task Done(IDialogContext context, LuisResult result)
         {
-            context.Done(found);
+            context.Done(Found);
             return Task.CompletedTask;
         }
 
@@ -251,6 +288,7 @@
                         case "+":
                         case "greater than or equal":
                         case "at least":
+                        case "no less than":
                             range.IncludeLower = true;
                             range.IncludeUpper = true;
                             upper = double.PositiveInfinity;
@@ -258,6 +296,7 @@
 
                         case ">":
                         case "greater than":
+                        case "more than":
                             range.IncludeLower = false;
                             range.IncludeUpper = true;
                             upper = double.PositiveInfinity;
@@ -332,10 +371,6 @@
 
         public async Task Search(IDialogContext context)
         {
-            // TODO: Implement
-            // 1) Show the current query including page number
-            // 2) Show the results
-            // 3) New prompt and goto message received
             var response = await this.ExecuteSearchAsync();
             if (response.Results.Count() == 0)
             {
@@ -345,11 +380,11 @@
             else
             {
                 var message = context.MakeMessage();
-                this.found = response.Results.ToList();
+                this.Found = response.Results.ToList();
                 this.HitStyler.Apply(
                     ref message,
                     SearchDescription(),
-                    (IReadOnlyList<SearchHit>)this.found);
+                    (IReadOnlyList<SearchHit>)this.Found);
                 await context.PostAsync(message);
                 await PromptAsync(context, Prompts.Result, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished, Prompts.Quit);
             }
@@ -394,6 +429,33 @@
             return await this.SearchClient.SearchAsync(this.QueryBuilder);
         }
 
+        protected virtual async Task AddSelectedItem(IDialogContext context, string selection)
+        {
+            SearchHit hit = this.Found.SingleOrDefault(h => h.Key == selection);
+            if (hit == null)
+            {
+                await PromptAsync(context, this.Prompts.UnknownItem);
+                context.Wait(MessageReceived);
+            }
+            else
+            {
+                if (!this.Selected.Any(h => h.Key == hit.Key))
+                {
+                    this.Selected.Add(hit);
+                }
+
+                if (this.MultipleSelection)
+                {
+                    await PromptAsync(context, $"'{hit.Title}'{this.Prompts.AddedToList}");
+                    context.Wait(MessageReceived);
+                }
+                else
+                {
+                    context.Done(this.Selected);
+                }
+            }
+        }
+
         /*
         protected async Task InitialSearch(IDialogContext context, IAwaitable<SearchSpec> spec)
         {
@@ -417,32 +479,6 @@
             {
                 this.HitStyler.Apply(ref message, "Here's what you've added to your list so far.", (IReadOnlyList<SearchHit>)this.selected);
                 await context.PostAsync(message);
-            }
-        }
-
-        protected virtual async Task AddSelectedItem(IDialogContext context, string selection)
-        {
-            SearchHit hit = this.found.SingleOrDefault(h => h.Key == selection);
-            if (hit == null)
-            {
-                await this.UnkownActionOnResults(context, selection);
-            }
-            else
-            {
-                if (!this.selected.Any(h => h.Key == hit.Key))
-                {
-                    this.selected.Add(hit);
-                }
-
-                if (this.MultipleSelection)
-                {
-                    await context.PostAsync($"'{hit.Title}' was added to your list!");
-                    PromptDialog.Confirm(context, this.ShouldContinueSearching, "Do you want to continue searching and adding more items?");
-                }
-                else
-                {
-                    context.Done(this.selected);
-                }
             }
         }
 

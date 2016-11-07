@@ -19,7 +19,7 @@
                 {
                     Title = h.Title,
                     Images = new[] { new CardImage(h.PictureUrl) },
-                    Buttons = new[] { new CardAction(ActionTypes.ImBack, "Pick this one", value: h.Key) },
+                    Buttons = new[] { new CardAction(ActionTypes.ImBack, "Pick this one", value: $"ID:{h.Key}") },
                     Text = h.Description
                 });
 

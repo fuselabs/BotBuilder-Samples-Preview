@@ -34,7 +34,7 @@
             if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
             var cts = new CancellationTokenSource();
             var id = await LUISTools.GetOrCreateModelAsync(key, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"), cts.Token);
-            context.Call(new SearchDialog(new Prompts(), this.SearchClient, key, id), Done);
+            context.Call(new SearchDialog(new Prompts(), this.SearchClient, key, id, multipleSelection:true), Done);
         }
 
         public async Task Done(IDialogContext context, IAwaitable<IList<SearchHit>> input)

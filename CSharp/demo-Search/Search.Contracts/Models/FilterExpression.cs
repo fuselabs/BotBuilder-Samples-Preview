@@ -48,9 +48,16 @@
         public FilterExpression Remove(FilterExpression expression)
         {
             FilterExpression filter = null;
-            foreach(var field in expression.Fields())
+            if (expression != null)
             {
-                filter = Remove(field);
+                foreach (var field in expression.Fields())
+                {
+                    filter = Remove(field);
+                }
+            }
+            else
+            {
+                filter = this;
             }
             return filter;
         }

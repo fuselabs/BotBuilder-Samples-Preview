@@ -77,7 +77,7 @@
       "filterPreference": 4,
       "nameSynonyms": {
         "canonical": "sqft",
-        "alternatives": ["sqft", "sq feet", "square feet"]
+        "alternatives": ["sqft", "sq feet", "square feet", "square foot", "sq foot"]
       },
       "valueSynonyms": []
     },

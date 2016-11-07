@@ -123,7 +123,7 @@
             entities.Add(attribute);
             newUtterance.entities = entities;
             bool add = true;
-            foreach(var child in model.utterances)
+            foreach (var child in model.utterances)
             {
                 if (child.text == newUtterance.text)
                 {
@@ -140,14 +140,15 @@
 
         static void ReplacePropertyNames(dynamic model)
         {
-            var rand = new Random();
+            // Use a fixed random sequence to minimize random churn
+            var rand = new Random(0);
             var feature = Feature(model, "Properties");
             var words = ((string)feature.words).Split(',');
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
                 var tokens = text.Split(' ').ToList();
-                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" select prop).ToList();
+                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" orderby prop.startPos ascending select prop).ToList();
                 for (var i = 0; i < tokens.Count();)
                 {
                     var token = tokens[i];
@@ -224,6 +225,14 @@
                 {
                     Usage($"Could not download {p.TemplateName} from LUIS.");
                 }
+                if (p.OutputTemplate != null)
+                {
+                    Console.WriteLine($"Writing template to {p.OutputTemplate}");
+                    using (var stream = new StreamWriter(p.OutputTemplate))
+                    {
+                        stream.Write(JsonConvert.SerializeObject(template, Formatting.Indented));
+                    }
+                }
             }
 
             Console.WriteLine($"Generating {p.OutputName} from schema {p.SchemaPath}");
@@ -268,13 +277,14 @@
             {
                 Console.WriteLine(msg);
             }
-            Console.WriteLine("generate <schemaFile> [-l <LUIS subscription key>] [-m <modelName>] [-o <outputFile>] [-tf <templateFile>] [-tm <modelName>] [-u] [-ut]");
+            Console.WriteLine("generate <schemaFile> [-l <LUIS subscription key>] [-m <modelName>] [-o <outputFile>] [-ot <outputTemplate>] [-tf <templateFile>] [-tm <modelName>] [-u] [-ut]");
             Console.WriteLine("Take a JSON schema file and use it to generate a LUIS model from a template.");
             Console.WriteLine("The template can be the included SearchTemplate.json file or can be downloaded from LUIS.");
             Console.WriteLine("The resulting LUIS model can be saved as a file or automatically uploaded to LUIS.");
             Console.WriteLine("-l <LUIS subscription key> : LUIS subscription key.");
             Console.WriteLine("-m <modelName> : Output LUIS model name.  By default will be <schemaFileName>Model.");
             Console.WriteLine("-o <outputFile> : Output LUIS JSON file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
+            Console.WriteLine("-ot <outputFile> : Output template to <outputFile>.");
             Console.WriteLine("-tf <templateFile> : LUIS Template file to modify based on schema.  By default this is SearchTemplate.json.");
             Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
             Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");
@@ -288,7 +298,7 @@
         static string NextArg(int i, string[] args)
         {
             string arg = null;
-            if (i < args.Length)
+            if (i < args.Length && !args[i].StartsWith("-"))
             {
                 arg = args[i];
             }
@@ -312,6 +322,7 @@
             public string TemplateName;
             public string OutputPath;
             public string OutputName;
+            public string OutputTemplate;
             public string LUISKey;
             public bool Upload = false;
             public bool UploadTemplate = false;
@@ -332,6 +343,7 @@
                     case "-l": p.LUISKey = NextArg(++i, args); break;
                     case "-m": p.OutputName = NextArg(++i, args); break;
                     case "-o": p.OutputPath = NextArg(++i, args); break;
+                    case "-ot": p.OutputTemplate = NextArg(++i, args); break;
                     case "-tf": p.TemplatePath = NextArg(++i, args); break;
                     case "-tm": p.TemplateName = NextArg(++i, args); break;
                     case "-u": p.Upload = true; break;
