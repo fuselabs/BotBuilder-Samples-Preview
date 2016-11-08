@@ -8,6 +8,9 @@
       "name": "Done"
     },
     {
+      "name": "Facet"
+    },
+    {
       "name": "Filter"
     },
     {
@@ -31,6 +34,12 @@
   ],
   "entities": [
     {
+      "name": "Attribute"
+    },
+    {
+      "name": "Facet"
+    },
+    {
       "name": "Number"
     },
     {
@@ -47,9 +56,15 @@
     {
       "name": "Comparison",
       "children": [
+        "Property",
         "Number",
-        "Operator",
-        "Property"
+        "Operator"
+      ]
+    },
+    {
+      "name": "Removal",
+      "children": [
+        "Attribute"
       ]
     }
   ],
@@ -67,7 +82,19 @@
     {
       "name": "Properties",
       "mode": true,
-      "words": "bed,beds,bedroom,bedrooms,baths,bath,bathroom,bathrooms,sqft,sq feet,square feet,square foot,sq foot,days on market,price,cost,costs",
+      "words": "beds,bed,bedroom,bedrooms,bathrooms,bath,baths,bathroom,sq feet,sqft,square feet,square foot,sq foot,days on market,price,cost,costs",
+      "activated": true
+    },
+    {
+      "name": "Facets",
+      "mode": true,
+      "words": "beds,bed,bedroom,bedrooms,bathrooms,bath,baths,bathroom,sq feet,sqft,square feet,square foot,sq foot,days on market,status,listing agent,source,street,st,type,city,district,region,area,zip code,zip,zipcode,country,country code,price,cost,costs",
+      "activated": true
+    },
+    {
+      "name": "Attributes",
+      "mode": true,
+      "words": "attributeName,type",
       "activated": true
     },
     {
@@ -80,18 +107,23 @@
   "regex_features": [
     {
       "name": "Number",
-      "pattern": "\\$?(\\+|\\-)?[0-9,]+(.[0-9]+)k?",
+      "pattern": "\\$?[0-9]+",
       "activated": true
     }
   ],
   "utterances": [
     {
-      "text": "at most 3 sq foot",
+      "text": "at least 3 sq foot",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
           "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
@@ -103,22 +135,100 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
         }
       ]
     },
     {
-      "text": "between 3 and 4 days on market",
+      "text": "no more than 3 days on market",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
           "startPos": 4,
           "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "1+ days on market",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "at most 3 sqft",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 bedrooms",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
         },
         {
           "entity": "Operator",
@@ -134,74 +244,54 @@
           "entity": "Number",
           "startPos": 3,
           "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 6
         }
       ]
     },
     {
-      "text": "between 3-4 days on market and at least 3 sq feet",
+      "text": "3-4 sqft",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
-          "startPos": 4,
-          "endPos": 6
+          "startPos": 3,
+          "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 11,
-          "endPos": 12
-        },
-        {
-          "entity": "Operator",
+          "entity": "Comparison",
           "startPos": 0,
-          "endPos": 0
+          "endPos": 3
         },
         {
           "entity": "Operator",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 8,
-          "endPos": 9
-        },
-        {
-          "entity": "Number",
           "startPos": 1,
           "endPos": 1
         },
         {
           "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
+          "startPos": 0,
+          "endPos": 0
         },
         {
           "entity": "Number",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 8,
-          "endPos": 12
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
     {
-      "text": "more than $110k",
+      "text": "at least 43 cost",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
         {
           "entity": "Operator",
           "startPos": 0,
@@ -210,12 +300,111 @@
         {
           "entity": "Number",
           "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "no more than $500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3+ bathroom",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "3 costs",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "parks nearby",
+      "intent": "Filter",
+      "entities": []
+    },
+    {
+      "text": "2-4 bathrooms",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
@@ -223,6 +412,11 @@
       "text": "between 100,000 and 450,000",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
+        },
         {
           "entity": "Operator",
           "startPos": 0,
@@ -237,269 +431,84 @@
           "entity": "Number",
           "startPos": 5,
           "endPos": 7
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 7
         }
       ]
     },
     {
-      "text": "at most 1 bedrooms",
+      "text": "between $100k and $250k",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "3-4 sq feet",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
+          "endPos": 5
         },
         {
           "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
           "startPos": 0,
           "endPos": 0
         },
         {
           "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        }
-      ]
-    },
-    {
-      "text": "3+ cost",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
           "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "at least 43 bathrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
           "endPos": 2
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "parks nearby",
-      "intent": "Filter",
-      "entities": []
-    },
-    {
-      "text": "more",
-      "intent": "NextPage",
-      "entities": []
-    },
-    {
-      "text": "no more than 3 costs",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
+          "entity": "Number",
           "startPos": 4,
-          "endPos": 4
-        },
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "at most 1 bathrooms",
+      "intent": "Filter",
+      "entities": [
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
+          "entity": "Property",
           "startPos": 3,
           "endPos": 3
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 4
-        }
-      ]
-    },
-    {
-      "text": "no more than 4 baths and and at most 2 baths",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 8
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Number",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "start over",
-      "intent": "StartOver",
-      "entities": []
-    },
-    {
-      "text": "1+ bathrooms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
           "entity": "Operator",
-          "startPos": 1,
+          "startPos": 0,
           "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "2-4 square feet",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
         },
         {
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
         }
       ]
     },
     {
-      "text": "find me a 2 bathrooms with at least 1 costs",
+      "text": "more than $110k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "find me a 2 bathroom with at least 1 square feet",
       "intent": "Filter",
       "entities": [
         {
@@ -510,7 +519,17 @@
         {
           "entity": "Property",
           "startPos": 9,
-          "endPos": 9
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 6,
+          "endPos": 10
         },
         {
           "entity": "Operator",
@@ -526,16 +545,108 @@
           "entity": "Number",
           "startPos": 8,
           "endPos": 8
+        }
+      ]
+    },
+    {
+      "text": "no more than 4 bathroom and and at most 2 costs",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 10,
+          "endPos": 10
         },
         {
           "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 7,
+          "endPos": 10
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 8
+        },
+        {
+          "entity": "Number",
           "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 9,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "between 3-4 beds and at least 3 price",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 9
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
           "entity": "Comparison",
           "startPos": 6,
           "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 6,
+          "endPos": 7
+        },
+        {
+          "entity": "Number",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 8,
+          "endPos": 8
         }
       ]
     },
@@ -543,6 +654,52 @@
       "text": "less than 200k",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "start over",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "at most 3 costs and 1 square foot",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 5,
+          "endPos": 7
+        },
         {
           "entity": "Operator",
           "startPos": 0,
@@ -554,34 +711,8 @@
           "endPos": 2
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "between $100k and $250k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
           "entity": "Number",
-          "startPos": 1,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
+          "startPos": 5,
           "endPos": 5
         }
       ]
@@ -591,50 +722,8 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "3 bed",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "at least 3 price",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
           "endPos": 3
         },
         {
@@ -645,61 +734,25 @@
         {
           "entity": "Number",
           "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
           "endPos": 3
         }
       ]
     },
     {
-      "text": "at most 3 costs and 1 square foot",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 7,
-          "endPos": 7
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 6,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 6,
-          "endPos": 7
-        }
-      ]
+      "text": "reset",
+      "intent": "StartOver",
+      "entities": []
     },
     {
       "text": "less than $200,000",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
@@ -708,34 +761,13 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 5
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 5
         }
       ]
     },
     {
-      "text": "no more than $500k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        }
-      ]
+      "text": "saved",
+      "intent": "List",
+      "entities": []
     },
     {
       "text": "refine",
@@ -743,13 +775,54 @@
       "entities": []
     },
     {
-      "text": "quit",
-      "intent": "Quit",
+      "text": "show",
+      "intent": "List",
       "entities": []
     },
     {
-      "text": "done",
+      "text": "propertyname",
+      "intent": "Facet",
+      "entities": []
+    },
+    {
+      "text": "more",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "search again",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "browse",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "finished",
       "intent": "Done",
+      "entities": []
+    },
+    {
+      "text": "any bath",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "so far",
+      "intent": "List",
       "entities": []
     },
     {
@@ -763,13 +836,87 @@
       "entities": []
     },
     {
-      "text": "finished",
+      "text": "done",
       "intent": "Done",
       "entities": []
     },
     {
-      "text": "search again",
-      "intent": "StartOver",
+      "text": "next",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "any days on market",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "no price",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "any number of costs",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "no beds",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "quit",
+      "intent": "Quit",
+      "entities": []
+    },
+    {
+      "text": "stop",
+      "intent": "Quit",
       "entities": []
     },
     {
@@ -778,6 +925,193 @@
       "entities": [
         {
           "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "beds",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bed",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bedroom",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bedrooms",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bathrooms",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bath",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "baths",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bathroom",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "sq feet",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "sqft",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "square feet",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "square foot",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "sq foot",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "days on market",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "price",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "cost",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "costs",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Facet",
           "startPos": 0,
           "endPos": 0
         }

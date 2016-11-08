@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="default.htm" />
+    <Content Include="Dialogs\RealEstateModel.json" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -145,9 +146,6 @@
     <Content Include="Dialogs\RealEstate.json" />
     <None Include="Properties\PublishProfiles\catalogbot - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\catalogbot - Web Deploy.pubxml" />
-    <Content Include="Dialogs\RealEstateModel.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

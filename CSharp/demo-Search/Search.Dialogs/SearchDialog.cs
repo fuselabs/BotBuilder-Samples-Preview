@@ -34,7 +34,8 @@
         // Prompts
         public string Initial = "What would you like to find?";
         public string Result = "Refine your search";
-        public string ChooseRefiner = "What facet would you like to refine by?";
+        public string ChooseRefine = "What facet would you like to refine by?";
+        public string ChooseValue = "What value for {0} would you like to filter by?";
         public string NotUnderstood = "I did not understand what you said";
         public string UnknownItem = "That is not an item in the current results.";
         public string AddedToList = " was added to your list.";
@@ -54,6 +55,9 @@
         public string Count = "Total results: ";
         public string Ascending = "Ascending";
         public string Descending = "Descending";
+
+        // Facets
+        public string Any = "Any number of ";
     }
 
     [Serializable]
@@ -65,6 +69,7 @@
         protected readonly PromptStyler PromptStyler;
         protected readonly PromptStyler HitStyler;
         protected readonly bool MultipleSelection;
+        protected readonly Button[] Refiners;
         private readonly IList<SearchHit> Selected = new List<SearchHit>();
         private IList<SearchHit> Found;
 
@@ -77,7 +82,8 @@
         public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null,
             PromptStyler promptStyler = null,
             PromptStyler searchHitStyler = null,
-            bool multipleSelection = false)
+            bool multipleSelection = false,
+            IEnumerable<Button> refiners = null)
             : base(new LuisService(new LuisModelAttribute(model, key)))
         {
             SetField.NotNull(out this.Prompts, nameof(Prompts), prompts);
@@ -86,6 +92,20 @@
             this.HitStyler = searchHitStyler ?? new SearchHitStyler();
             this.PromptStyler = promptStyler ?? new PromptStyler();
             this.MultipleSelection = multipleSelection;
+            if (refiners == null)
+            {
+                var defaultRefiners = new List<Button>();
+                foreach (var field in this.SearchClient.Schema.Fields.Values)
+                {
+                    if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
+                    {
+                        var button = new Button(field.NameSynonyms.Canonical, field.NameSynonyms.Alternatives.First());
+                        defaultRefiners.Add(button);
+                    }
+                }
+                refiners = defaultRefiners;
+            }
+            Refiners = refiners.ToArray();
         }
 
         protected async Task PromptAsync(IDialogContext context, string prompt, params Button[] buttons)
@@ -143,8 +163,72 @@
             context.Wait(MessageReceived);
         }
 
-        [LuisIntent("Filter")]
-        public async Task Filter(IDialogContext context, LuisResult result)
+        [LuisIntent("Facet")]
+        public async Task Facet(IDialogContext context, LuisResult result)
+        {
+            Canonicalizers();
+            var fieldName = FieldCanonicalizer.Canonicalize(result.Query);
+            if (fieldName == null)
+            {
+                await this.Filter(context, result);
+            }
+            else
+            {
+                // TODO: Specify the facet and pick up the results
+                var search = await this.ExecuteSearchAsync(fieldName);
+                var field = SearchClient.Schema.Field(fieldName);
+                var desc = field.NameSynonyms.Alternatives.First() ?? fieldName;
+                var buttons = new List<Button>();
+                var choices = (from facet in search.Facets[fieldName] orderby facet.Value ascending select facet);
+                if (field.FilterPreference == PreferredFilter.None)
+                {
+                    foreach (var choice in choices)
+                    {
+                        buttons.Add(new Button($"{choice.Value} {desc}", $"{choice.Value} ({choice.Count})"));
+                    }
+                }
+                else if (field.FilterPreference == PreferredFilter.MinValue)
+                {
+                    var total = choices.Sum((choice) => choice.Count);
+                    foreach (var choice in choices)
+                    {
+                        buttons.Add(new Button($"{choice.Value}+ {desc}", $"{choice.Value}+ ({total})"));
+                        total -= choice.Count;
+                    }
+                }
+                else if (field.FilterPreference == PreferredFilter.MaxValue)
+                {
+                    long total = 0;
+                    foreach (var choice in choices)
+                    {
+                        total += choice.Count;
+                        buttons.Add(new Button($"<= {choice.Value} {desc}", $"<= {choice.Value} ({total})"));
+                    }
+                }
+                if (buttons.Any())
+                {
+                    buttons.Add(new Button($"Any number of {desc}", "Any"));
+                    await PromptAsync(context, string.Format(Prompts.ChooseValue, desc), buttons.ToArray());
+                }
+                /* TODO: How to handle these?  
+                else if (field.FilterPreference == PreferredFilter.RangeMin)
+                {
+                    PromptDialog.Number(context, MinRefiner, $"What is the minimum {this.Refiner}?");
+                }
+                else if (field.FilterPreference == PreferredFilter.RangeMax)
+                {
+                    PromptDialog.Number(context, MinRefiner, $"What is the maximum {this.Refiner}?");
+                }
+                else if (field.FilterPreference == PreferredFilter.Range)
+                {
+                    PromptDialog.Number(context, GetRangeMin, $"What is the minimum {this.Refiner}?");
+                }
+                */
+                context.Wait(MessageReceived);
+            }
+        }
+
+        private void Canonicalizers()
         {
             if (FieldCanonicalizer == null)
             {
@@ -156,6 +240,12 @@
                     ValueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
                 }
             }
+        }
+
+        [LuisIntent("Filter")]
+        public async Task Filter(IDialogContext context, LuisResult result)
+        {
+            Canonicalizers();
             bool isCurrency;
             var entities = result.Entities == null ? new List<EntityRecommendation>() : (from entity in result.Entities where entity.Type != "Number" || !double.IsNaN(ParseNumber(entity.Entity, out isCurrency)) select entity).ToList();
             var comparisons = (from entity in entities
@@ -165,7 +255,19 @@
                               where this.SearchClient.Schema.Fields.ContainsKey(entity.Type)
                               select new FilterExpression(Operator.Equal, this.SearchClient.Schema.Field(entity.Type),
                                 this.ValueCanonicalizers[entity.Type].Canonicalize(entity.Entity)));
+            var removals = (from entity in entities where entity.Type == "Attribute" select entity);
             var substrings = entities.UncoveredSubstrings(result.Query);
+            foreach(var removal in removals)
+            {
+                if (this.QueryBuilder.Spec.Filter != null)
+                {
+                    this.QueryBuilder.Spec.Filter = this.QueryBuilder.Spec.Filter.Remove(this.SearchClient.Schema.Field(FieldCanonicalizer.Canonicalize(removal.Entity)));
+                }
+                else
+                {
+                    break;
+                }
+            }
             foreach (var entity in entities)
             {
                 foreach (var comparison in comparisons)
@@ -203,10 +305,10 @@
         }
 
         [LuisIntent("Refine")]
-        public Task Refine(IDialogContext context, LuisResult result)
+        public async Task Refine(IDialogContext context, LuisResult result)
         {
-            // TODO: Implement
-            return Task.CompletedTask;
+            await this.PromptAsync(context, Prompts.ChooseRefine, this.Refiners);
+            context.Wait(MessageReceived);
         }
 
         [LuisIntent("List")]
@@ -326,6 +428,13 @@
                             upper = lower;
                             lower = double.NegativeInfinity;
                             break;
+
+                        case "any":
+                        case "any number of":
+                            upper = double.PositiveInfinity;
+                            lower = double.NegativeInfinity;
+                            break;
+
                         default: throw new ArgumentException($"Unknown operator {c.Operator.Entity}");
                     }
                 }
@@ -424,9 +533,9 @@
             context.Wait(MessageReceived);
         }
 
-        protected async Task<GenericSearchResult> ExecuteSearchAsync()
+        protected async Task<GenericSearchResult> ExecuteSearchAsync(string facet = null)
         {
-            return await this.SearchClient.SearchAsync(this.QueryBuilder);
+            return await this.SearchClient.SearchAsync(this.QueryBuilder, facet);
         }
 
         protected virtual async Task AddSelectedItem(IDialogContext context, string selection)

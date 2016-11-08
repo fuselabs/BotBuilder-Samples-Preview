@@ -15,6 +15,7 @@
     class Program
     {
         const string propertyName = "propertyname";
+        const string attributeName = "attributename";
 
         static void Clear(dynamic model)
         {
@@ -136,54 +137,120 @@
             {
                 model.utterances.Add(newUtterance);
             }
+
+            var attributed = ((JArray)model.model_features).First((dynamic token) => token.name == "Attributes");
+            var builder = new StringBuilder((string)attributed.words);
+            foreach (var alt in field.NameSynonyms.Alternatives)
+            {
+                builder.Append(',');
+                builder.Append(alt);
+            }
+            attributed.words = builder.ToString();
+        }
+
+        static void ExpandFacetExamples(dynamic model)
+        {
+            var rand = new Random(0);
+            var facetFeature = Feature(model, "Facets");
+            var facetNames = ((string)facetFeature.words).Split(',');
+            foreach (var utterance in model.utterances)
+            {
+                var entities = (JArray)utterance.entities;
+                if (entities.Any() && ((dynamic)entities.First()).entity == "Facet")
+                {
+                    model.utterances.Remove(utterance);
+                    break;
+                }
+            }
+            foreach(var facet in facetNames)
+            {
+                dynamic entity = new JObject();
+                entity.entity = "Facet";
+                entity.startPos = 0;
+                entity.endPos = facet.Split(' ').Count() - 1;
+
+                dynamic utterance = new JObject();
+                utterance.text = facet;
+                utterance.intent = "Facet";
+                utterance.entities = new JArray(entity);
+                model.utterances.Add(utterance);
+            }
+        }
+
+        static void ReplaceToken(dynamic utterance, List<string> tokens, int i, string replacement, dynamic property)
+        {
+            var wordTokens = replacement.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            tokens.RemoveAt(i);
+            tokens.InsertRange(i, wordTokens);
+            i += wordTokens.Length;
+            var offset = wordTokens.Count() - 1;
+            if (offset > 0)
+            {
+                foreach (var entity in utterance.entities)
+                {
+                    if (entity.startPos > property.startPos)
+                    {
+                        entity.startPos += offset;
+                    }
+                    if (entity.endPos >= property.startPos)
+                    {
+                        entity.endPos += offset;
+                    }
+                }
+            }
         }
 
         static void ReplacePropertyNames(dynamic model)
         {
             // Use a fixed random sequence to minimize random churn
             var rand = new Random(0);
-            var feature = Feature(model, "Properties");
-            var words = ((string)feature.words).Split(',');
+            var propertyFeature = Feature(model, "Properties");
+            var propertyNames = ((string)propertyFeature.words).Split(',');
+            var attributeFeature = Feature(model, "Attributes");
+            var attributeNames = ((string)attributeFeature.words).Split(',');
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
                 var tokens = text.Split(' ').ToList();
-                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" orderby prop.startPos ascending select prop).ToList();
-                for (var i = 0; i < tokens.Count();)
+                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" || prop.entity == "Attribute" orderby prop.startPos ascending select prop).ToList();
+                if (properties.Any())
                 {
-                    var token = tokens[i];
-                    if (token == propertyName)
+                    for (var i = 0; i < tokens.Count();)
                     {
-                        var word = words[rand.Next(words.Length)];
-                        var wordTokens = word.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        tokens.RemoveAt(i);
-                        tokens.InsertRange(i, wordTokens);
-                        i += wordTokens.Length;
-                        var offset = wordTokens.Count() - 1;
-                        if (offset > 0)
+                        var token = tokens[i];
+                        string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributeNames : null));
+                        if (choices != null)
                         {
-                            var property = properties.First();
+                            var word = choices[rand.Next(choices.Length)];
+                            ReplaceToken(utterance, tokens, i, word, properties.First());
                             properties.RemoveAt(0);
-                            foreach (var entity in utterance.entities)
-                            {
-                                if (entity.startPos > property.startPos)
-                                {
-                                    entity.startPos += offset;
-                                }
-                                if (entity.endPos >= property.startPos)
-                                {
-                                    entity.endPos += offset;
-                                }
-                            }
+                        }
+                        else
+                        {
+                            ++i;
                         }
                     }
-                    else
-                    {
-                        ++i;
-                    }
+                    utterance.text = string.Join(" ", tokens);
                 }
-                utterance.text = string.Join(" ", tokens);
             }
+        }
+
+        static void AddFacets(dynamic model, SearchSchema schema)
+        {
+            var builder = new StringBuilder();
+            var prefix = "";
+            foreach (var facet in schema.Facets)
+            {
+                var field = schema.Field(facet);
+                foreach (var alt in field.NameSynonyms.Alternatives)
+                {
+                    builder.Append($"{prefix}{alt}");
+                    prefix = ",";
+                }
+            }
+            var facets = ((JArray)model.model_features).First((dynamic token) => token.name == "Facets");
+            facets.words = builder.ToString();
+            ExpandFacetExamples(model);
         }
 
         static async Task<string> ModelID(string subscription, string appName, CancellationToken ct)
@@ -253,6 +320,7 @@
                 }
             }
             ReplacePropertyNames(template);
+            AddFacets(template, schema);
 
             if (p.OutputPath != null)
             {

@@ -8,6 +8,9 @@
       "name": "Done"
     },
     {
+      "name": "Facet"
+    },
+    {
       "name": "Filter"
     },
     {
@@ -31,21 +34,27 @@
   ],
   "entities": [
     {
+      "name": "Property"
+    },
+    {
       "name": "Number"
     },
     {
       "name": "Operator"
-    },
-    {
-      "name": "Property"
     }
   ],
   "composites": [
     {
       "name": "Comparison",
       "children": [
+        "Property",
         "Number",
-        "Operator",
+        "Operator"
+      ]
+    },
+    {
+      "name": "Removal",
+      "children": [
         "Property"
       ]
     }
@@ -71,18 +80,23 @@
   "regex_features": [
     {
       "name": "Number",
-      "pattern": "\\$?(\\+|\\-)?[0-9,]+(.[0-9]+)k?",
+      "pattern": "\\$?[0-9]+",
       "activated": true
     }
   ],
   "utterances": [
     {
-      "text": "at most 3 propertyname",
+      "text": "at least 3 propertyname",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
           "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -94,11 +108,84 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "no more than 3 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "1+ propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "at most 3 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
@@ -112,6 +199,11 @@
           "endPos": 4
         },
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 0
@@ -124,140 +216,6 @@
         {
           "entity": "Number",
           "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        }
-      ]
-    },
-    {
-      "text": "between 3-4 propertyname and at least 3 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Operator",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 6,
-          "endPos": 7
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 8,
-          "endPos": 8
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 6,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "more than $110k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "between 100,000 and 450,000",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 5,
-          "endPos": 7
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 7
-        }
-      ]
-    },
-    {
-      "text": "at most 1 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
           "endPos": 3
         }
       ]
@@ -272,35 +230,9 @@
           "endPos": 3
         },
         {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "3+ propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
         },
         {
           "entity": "Operator",
@@ -313,8 +245,8 @@
           "endPos": 0
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Number",
+          "startPos": 2,
           "endPos": 2
         }
       ]
@@ -329,6 +261,11 @@
           "endPos": 3
         },
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
@@ -337,31 +274,16 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
         }
       ]
     },
     {
-      "text": "parks nearby",
-      "intent": "Filter",
-      "entities": []
-    },
-    {
-      "text": "more",
-      "intent": "NextPage",
-      "entities": []
-    },
-    {
-      "text": "no more than 3 propertyname",
+      "text": "no more than $500k",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
@@ -372,73 +294,22 @@
         {
           "entity": "Number",
           "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
           "endPos": 4
         }
       ]
     },
     {
-      "text": "no more than 4 propertyname and and at most 2 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 8
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Number",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "start over",
-      "intent": "StartOver",
-      "entities": []
-    },
-    {
-      "text": "1+ propertyname",
+      "text": "3+ propertyname",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
           "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 2
         },
         {
@@ -450,13 +321,34 @@
           "entity": "Number",
           "startPos": 0,
           "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "3 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 2
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
+    },
+    {
+      "text": "parks nearby",
+      "intent": "Filter",
+      "entities": []
     },
     {
       "text": "2-4 propertyname",
@@ -468,6 +360,11 @@
           "endPos": 3
         },
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
           "entity": "Operator",
           "startPos": 1,
           "endPos": 1
@@ -481,10 +378,104 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "between 100,000 and 450,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Number",
+          "startPos": 1,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 5,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "between $100k and $250k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Number",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 4,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "at most 1 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         },
         {
           "entity": "Comparison",
           "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "more than $110k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
           "endPos": 3
         }
       ]
@@ -504,6 +495,16 @@
           "endPos": 9
         },
         {
+          "entity": "Comparison",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 6,
+          "endPos": 9
+        },
+        {
           "entity": "Operator",
           "startPos": 6,
           "endPos": 7
@@ -517,16 +518,108 @@
           "entity": "Number",
           "startPos": 8,
           "endPos": 8
+        }
+      ]
+    },
+    {
+      "text": "no more than 4 propertyname and and at most 2 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 10,
+          "endPos": 10
         },
         {
           "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 7,
+          "endPos": 10
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 8
+        },
+        {
+          "entity": "Number",
           "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 9,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "between 3-4 propertyname and at least 3 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 9
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
           "entity": "Comparison",
           "startPos": 6,
           "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 6,
+          "endPos": 7
+        },
+        {
+          "entity": "Number",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Number",
+          "startPos": 8,
+          "endPos": 8
         }
       ]
     },
@@ -535,98 +628,9 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "between $100k and $250k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Number",
-          "startPos": 1,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 5
-        }
-      ]
-    },
-    {
-      "text": "less than $200k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "3 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "at least 3 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
         },
         {
           "entity": "Operator",
@@ -637,13 +641,13 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
         }
       ]
+    },
+    {
+      "text": "start over",
+      "intent": "StartOver",
+      "entities": []
     },
     {
       "text": "at most 3 propertyname and 1 propertyname",
@@ -660,21 +664,6 @@
           "endPos": 6
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Number",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 5,
-          "endPos": 5
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
@@ -683,13 +672,59 @@
           "entity": "Comparison",
           "startPos": 5,
           "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Number",
+          "startPos": 5,
+          "endPos": 5
         }
       ]
+    },
+    {
+      "text": "less than $200k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Number",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "reset",
+      "intent": "StartOver",
+      "entities": []
     },
     {
       "text": "less than $200,000",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
         {
           "entity": "Operator",
           "startPos": 0,
@@ -699,34 +734,24 @@
           "entity": "Number",
           "startPos": 2,
           "endPos": 5
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 5
         }
       ]
     },
     {
-      "text": "no more than $500k",
-      "intent": "Filter",
+      "text": "propertyname",
+      "intent": "Facet",
       "entities": [
         {
-          "entity": "Operator",
+          "entity": "Property",
           "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Number",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
+          "endPos": 0
         }
       ]
+    },
+    {
+      "text": "saved",
+      "intent": "List",
+      "entities": []
     },
     {
       "text": "refine",
@@ -734,13 +759,54 @@
       "entities": []
     },
     {
-      "text": "quit",
-      "intent": "Quit",
+      "text": "show",
+      "intent": "List",
       "entities": []
     },
     {
-      "text": "done",
+      "text": "propertyname",
+      "intent": "Facet",
+      "entities": []
+    },
+    {
+      "text": "more",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "search again",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "browse",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "finished",
       "intent": "Done",
+      "entities": []
+    },
+    {
+      "text": "any propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "so far",
+      "intent": "List",
       "entities": []
     },
     {
@@ -754,13 +820,87 @@
       "entities": []
     },
     {
-      "text": "finished",
+      "text": "done",
       "intent": "Done",
       "entities": []
     },
     {
-      "text": "search again",
-      "intent": "StartOver",
+      "text": "next",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "any propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "no propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "any number of propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "no propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "quit",
+      "intent": "Quit",
+      "entities": []
+    },
+    {
+      "text": "stop",
+      "intent": "Quit",
       "entities": []
     }
   ]

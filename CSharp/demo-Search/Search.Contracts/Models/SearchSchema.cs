@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     [Serializable]
     public class SearchSchema
@@ -15,6 +16,8 @@
         public string DefaultNumericProperty { get; set; }
 
         public string DefaultGeoProperty { get; set; }
+
+        public List<string> FacetsOverride = null;
 
         public List<SearchFragment> Fragments = new List<SearchFragment>();
 
@@ -31,6 +34,19 @@
         public SearchField Field(string name)
         {
             return fields[name];
+        }
+
+        public IEnumerable<string> Facets
+        {
+            get
+            {
+                var facets = FacetsOverride;
+                if (FacetsOverride == null)
+                {
+                    return (from field in Fields.Values where field.IsFacetable select field.Name);
+                }
+                return FacetsOverride;
+            }
         }
 
         public IReadOnlyDictionary<string, SearchField> Fields

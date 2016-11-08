@@ -348,7 +348,10 @@
                 var uppercmp = (range.IncludeUpper ? Operator.LessThanOrEqual : Operator.LessThan);
                 if (double.IsNegativeInfinity(range.Lower))
                 {
-                    filter = FilterExpression.Combine(filter, new FilterExpression(uppercmp, range.Property, range.Upper), connector);
+                    if (!double.IsPositiveInfinity(range.Upper))
+                    {
+                        filter = FilterExpression.Combine(filter, new FilterExpression(uppercmp, range.Property, range.Upper), connector);
+                    }
                 }
                 else if (double.IsPositiveInfinity(range.Upper))
                 {

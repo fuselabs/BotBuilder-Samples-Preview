@@ -29,7 +29,7 @@
       "filterPreference": 1,
       "nameSynonyms": {
         "canonical": "beds",
-        "alternatives": ["bed", "beds", "bedroom", "bedrooms"]
+        "alternatives": ["beds", "bed", "bedroom", "bedrooms"]
       },
       "valueSynonyms": []
     },
@@ -45,7 +45,7 @@
       "filterPreference": 1,
       "nameSynonyms": {
         "canonical": "baths",
-        "alternatives": ["baths", "bath", "bathroom", "bathrooms"]
+        "alternatives": ["bathrooms", "bath", "baths", "bathroom"]
       },
       "valueSynonyms": []
     },
@@ -77,7 +77,7 @@
       "filterPreference": 4,
       "nameSynonyms": {
         "canonical": "sqft",
-        "alternatives": ["sqft", "sq feet", "square feet", "square foot", "sq foot"]
+        "alternatives": ["sq feet", "sqft", "square feet", "square foot", "sq foot"]
       },
       "valueSynonyms": []
     },
@@ -125,7 +125,7 @@
       "filterPreference": 0,
       "nameSynonyms": {
         "canonical": "source",
-        "alternatives": ["source", "listing agent"]
+        "alternatives": ["listing agent", "source"]
       },
       "valueSynonyms": []
     },
@@ -189,7 +189,7 @@
       "filterPreference": 0,
       "nameSynonyms": {
         "canonical": "type",
-        "alternatives": []
+        "alternatives": ["type"]
       },
       "valueSynonyms": [
       {
