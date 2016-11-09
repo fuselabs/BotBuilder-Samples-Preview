@@ -30,8 +30,13 @@
 
         public async Task<GenericSearchResult> SearchAsync(SearchQueryBuilder queryBuilder, string refiner)
         {
+            var oldFilter = queryBuilder.Spec.Filter;
+            if (refiner != null)
+            {
+                queryBuilder.Spec.Filter = queryBuilder.Spec.Filter.Remove(this.Schema.Field(refiner));
+            }
             var documentSearchResult = await this.searchClient.Documents.SearchAsync(queryBuilder.Spec.Text, BuildParameters(queryBuilder, refiner));
-
+            queryBuilder.Spec.Filter = oldFilter;
             return this.mapper.Map(documentSearchResult);
         }
 

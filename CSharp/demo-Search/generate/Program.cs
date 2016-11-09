@@ -15,7 +15,6 @@
     class Program
     {
         const string propertyName = "propertyname";
-        const string attributeName = "attributename";
 
         static void Clear(dynamic model)
         {
@@ -138,25 +137,24 @@
                 model.utterances.Add(newUtterance);
             }
 
-            var attributed = ((JArray)model.model_features).First((dynamic token) => token.name == "Attributes");
-            var builder = new StringBuilder((string)attributed.words);
+            var properties = ((JArray)model.model_features).First((dynamic token) => token.name == "Properties");
+            var builder = new StringBuilder((string)properties.words);
             foreach (var alt in field.NameSynonyms.Alternatives)
             {
                 builder.Append(',');
                 builder.Append(alt);
             }
-            attributed.words = builder.ToString();
+            properties.words = builder.ToString();
         }
 
         static void ExpandFacetExamples(dynamic model)
         {
             var rand = new Random(0);
-            var facetFeature = Feature(model, "Facets");
+            var facetFeature = Feature(model, "Properties");
             var facetNames = ((string)facetFeature.words).Split(',');
             foreach (var utterance in model.utterances)
             {
-                var entities = (JArray)utterance.entities;
-                if (entities.Any() && ((dynamic)entities.First()).entity == "Facet")
+                if (utterance.intent == "Facet")
                 {
                     model.utterances.Remove(utterance);
                     break;
@@ -165,7 +163,7 @@
             foreach(var facet in facetNames)
             {
                 dynamic entity = new JObject();
-                entity.entity = "Facet";
+                entity.entity = "Property";
                 entity.startPos = 0;
                 entity.endPos = facet.Split(' ').Count() - 1;
 
@@ -206,19 +204,17 @@
             var rand = new Random(0);
             var propertyFeature = Feature(model, "Properties");
             var propertyNames = ((string)propertyFeature.words).Split(',');
-            var attributeFeature = Feature(model, "Attributes");
-            var attributeNames = ((string)attributeFeature.words).Split(',');
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
                 var tokens = text.Split(' ').ToList();
-                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" || prop.entity == "Attribute" orderby prop.startPos ascending select prop).ToList();
+                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" orderby prop.startPos ascending select prop).ToList();
                 if (properties.Any())
                 {
                     for (var i = 0; i < tokens.Count();)
                     {
                         var token = tokens[i];
-                        string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributeNames : null));
+                        string[] choices = (token == propertyName ? propertyNames : null);
                         if (choices != null)
                         {
                             var word = choices[rand.Next(choices.Length)];
@@ -233,24 +229,6 @@
                     utterance.text = string.Join(" ", tokens);
                 }
             }
-        }
-
-        static void AddFacets(dynamic model, SearchSchema schema)
-        {
-            var builder = new StringBuilder();
-            var prefix = "";
-            foreach (var facet in schema.Facets)
-            {
-                var field = schema.Field(facet);
-                foreach (var alt in field.NameSynonyms.Alternatives)
-                {
-                    builder.Append($"{prefix}{alt}");
-                    prefix = ",";
-                }
-            }
-            var facets = ((JArray)model.model_features).First((dynamic token) => token.name == "Facets");
-            facets.words = builder.ToString();
-            ExpandFacetExamples(model);
         }
 
         static async Task<string> ModelID(string subscription, string appName, CancellationToken ct)
@@ -320,7 +298,7 @@
                 }
             }
             ReplacePropertyNames(template);
-            AddFacets(template, schema);
+            ExpandFacetExamples(template);
 
             if (p.OutputPath != null)
             {
@@ -337,7 +315,7 @@
                 var id = await LUISTools.CreateModelAsync(p.LUISKey, template, cts.Token);
                 Console.WriteLine($"New LUIS app key is {id}");
             }
-        }
+      }
 
         static void Usage(string msg = null)
         {

@@ -255,17 +255,25 @@
                               where this.SearchClient.Schema.Fields.ContainsKey(entity.Type)
                               select new FilterExpression(Operator.Equal, this.SearchClient.Schema.Field(entity.Type),
                                 this.ValueCanonicalizers[entity.Type].Canonicalize(entity.Entity)));
-            var removals = (from entity in entities where entity.Type == "Attribute" select entity);
+            var removals = (from entity in entities where entity.Type == "Removal" select entity);
             var substrings = entities.UncoveredSubstrings(result.Query);
             foreach(var removal in removals)
             {
-                if (this.QueryBuilder.Spec.Filter != null)
+                foreach (var entity in entities)
                 {
-                    this.QueryBuilder.Spec.Filter = this.QueryBuilder.Spec.Filter.Remove(this.SearchClient.Schema.Field(FieldCanonicalizer.Canonicalize(removal.Entity)));
-                }
-                else
-                {
-                    break;
+                    if (entity.Type == "Property"
+                        && entity.StartIndex >= removal.StartIndex
+                        && entity.EndIndex <= removal.EndIndex)
+                    {
+                        if (this.QueryBuilder.Spec.Filter != null)
+                        {
+                            this.QueryBuilder.Spec.Filter = this.QueryBuilder.Spec.Filter.Remove(this.SearchClient.Schema.Field(FieldCanonicalizer.Canonicalize(entity.Entity)));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
             }
             foreach (var entity in entities)
