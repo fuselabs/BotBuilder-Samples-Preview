@@ -22,6 +22,11 @@ namespace Search.Models
             return Name;
         }
 
+        public string Description()
+        {
+            return NameSynonyms.Alternatives.First();
+        }
+
         public string Name;
         public Type Type = typeof(string);
         public bool IsFacetable;

@@ -29,7 +29,7 @@
         public async Task<GenericSearchResult> SearchAsync(SearchQueryBuilder queryBuilder, string refiner)
         {
             var oldFilter = queryBuilder.Spec.Filter;
-            if (refiner != null)
+            if (refiner != null && oldFilter != null)
             {
                 queryBuilder.Spec.Filter = queryBuilder.Spec.Filter.Remove(this.Schema.Field(refiner));
             }

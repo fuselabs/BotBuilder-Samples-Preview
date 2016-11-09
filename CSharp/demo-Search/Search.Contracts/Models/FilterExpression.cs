@@ -121,7 +121,7 @@
             return result;
         }
 
-        public static FilterExpression Combine(FilterExpression child1, FilterExpression child2, Operator combination)
+        public static FilterExpression Combine(FilterExpression child1, FilterExpression child2, Operator combination = Operator.And)
         {
             FilterExpression filter;
             if (child1 != null)

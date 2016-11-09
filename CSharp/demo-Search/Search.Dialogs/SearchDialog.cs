@@ -32,25 +32,28 @@
     public class Prompts
     {
         // Prompts
-        public string Initial = "What would you like to find?";
-        public string Result = "Refine your search";
-        public string ChooseRefine = "What facet would you like to refine by?";
-        public string ChooseValue = "What value for {0} would you like to filter by?";
-        public string NotUnderstood = "I did not understand what you said";
-        public string UnknownItem = "That is not an item in the current results.";
-        public string AddedToList = "{0} was added to your list.";
-        public string RemovedFromList = "{0} was removed from your list.";
-        public string ListSofar = "Here is what you have selected so far.";
-        public string NotAdded = "You have not added anything yet.";
+        public string InitialPrompt = "What would you like to find?";
+        public string RefinePrompt = "Refine your search";
+        public string FacetPrompt = "What facet would you like to refine by?";
+        public string FacetValuePrompt = "What value for {0} would you like to filter by?";
+        public string NotUnderstoodPrompt = "I did not understand what you said";
+        public string UnknownItemPrompt = "That is not an item in the current results.";
+        public string AddedToListPrompt = "{0} was added to your list.";
+        public string RemovedFromListPrompt = "{0} was removed from your list.";
+        public string ListPrompt = "Here is what you have selected so far.";
+        public string NotAddedPrompt = "You have not added anything yet.";
+        public string MinimumPrompt = "What is the minimum value for {0}?";
+        public string MaximumPrompt = "What is the maximum value for {0}?";
 
         // Buttons
         public Button Browse = new Button("Browse");
-        public Button Quit = new Button("Quit");
-        public Button Finished = new Button("Finished");
-        public Button List = new Button("List");
         public Button NextPage = new Button("Next Page");
+        public Button List = new Button("List");
         public Button Add = new Button("Add to List", "ADD:{0}");
         public Button Remove = new Button("Remove from List", "REMOVE:{0}");
+        public Button Quit = new Button("Quit");
+        public Button Finished = new Button("Finished");
+        public Button StartOver = new Button("Start Over");
 
         // Status
         public string Filter = "Filter: ";
@@ -75,6 +78,8 @@
         protected readonly ISearchHitStyler HitStyler;
         protected readonly bool MultipleSelection;
         protected readonly Button[] Refiners;
+        protected Button[] LastButtons = null;
+        protected string Refiner = null;
         private readonly IList<SearchHit> Selected = new List<SearchHit>();
         private IList<SearchHit> Found;
 
@@ -104,8 +109,8 @@
                 {
                     if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
                     {
-                        var button = new Button(field.NameSynonyms.Canonical, field.NameSynonyms.Alternatives.First());
-                        defaultRefiners.Add(button);
+                        var label = field.Description();
+                        defaultRefiners.Add(new Button(label));
                     }
                 }
                 refiners = defaultRefiners;
@@ -117,6 +122,7 @@
         {
             var msg = context.MakeMessage();
             this.PromptStyler.Apply(ref msg, prompt, (from button in buttons select button.Label).ToList(), (from button in buttons select button.Message).ToList());
+            LastButtons = buttons;
             await context.PostAsync(msg);
         }
 
@@ -128,7 +134,7 @@
 
         public async Task Intro(IDialogContext context, IAwaitable<IMessageActivity> message)
         {
-            await PromptAsync(context, Prompts.Initial, Prompts.Browse, Prompts.Quit);
+            await PromptAsync(context, Prompts.InitialPrompt, Prompts.Browse, Prompts.Quit);
             context.Wait(MessageReceived);
         }
 
@@ -169,7 +175,7 @@
         [LuisIntent("")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            await PromptAsync(context, Prompts.NotUnderstood);
+            await PromptAsync(context, Prompts.NotUnderstoodPrompt, LastButtons);
             context.Wait(MessageReceived);
         }
 
@@ -177,19 +183,19 @@
         public async Task Facet(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
-            var fieldName = FieldCanonicalizer.Canonicalize(result.Query);
-            if (fieldName == null)
+            this.Refiner = FieldCanonicalizer.Canonicalize(result.Query);
+            if (this.Refiner == null)
             {
                 await this.Filter(context, result);
             }
             else
             {
                 // TODO: Specify the facet and pick up the results
-                var search = await this.ExecuteSearchAsync(fieldName);
-                var field = SearchClient.Schema.Field(fieldName);
-                var desc = field.NameSynonyms.Alternatives.First() ?? fieldName;
+                var search = await this.ExecuteSearchAsync(this.Refiner);
+                var field = SearchClient.Schema.Field(this.Refiner);
+                var desc = field.Description();
                 var buttons = new List<Button>();
-                var choices = (from facet in search.Facets[fieldName] orderby facet.Value ascending select facet);
+                var choices = (from facet in search.Facets[this.Refiner] orderby facet.Value ascending select facet);
                 if (field.FilterPreference == PreferredFilter.None)
                 {
                     foreach (var choice in choices)
@@ -218,24 +224,54 @@
                 if (buttons.Any())
                 {
                     buttons.Add(new Button($"Any number of {desc}", "Any"));
-                    await PromptAsync(context, string.Format(Prompts.ChooseValue, desc), buttons.ToArray());
+                    await PromptAsync(context, string.Format(Prompts.FacetValuePrompt, desc), buttons.ToArray());
+                    context.Wait(MessageReceived);
                 }
-                /* TODO: How to handle these?  
                 else if (field.FilterPreference == PreferredFilter.RangeMin)
                 {
-                    PromptDialog.Number(context, MinRefiner, $"What is the minimum {this.Refiner}?");
+                    PromptDialog.Number(context, MinValue, string.Format(this.Prompts.MinimumPrompt, desc));
                 }
                 else if (field.FilterPreference == PreferredFilter.RangeMax)
                 {
-                    PromptDialog.Number(context, MinRefiner, $"What is the maximum {this.Refiner}?");
+                    PromptDialog.Number(context, MaxValue, string.Format(this.Prompts.MaximumPrompt, desc));
                 }
                 else if (field.FilterPreference == PreferredFilter.Range)
                 {
-                    PromptDialog.Number(context, GetRangeMin, $"What is the minimum {this.Refiner}?");
+                    PromptDialog.Number(context, RangeMin, string.Format(this.Prompts.MinimumPrompt, this.Refiner));
                 }
-                */
-                context.Wait(MessageReceived);
             }
+        }
+
+        private async Task MinValue(IDialogContext context, IAwaitable<double> input)
+        {
+            var number = await input;
+            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter, 
+                new FilterExpression(Operator.GreaterThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
+            await Search(context);
+        }
+
+        private async Task MaxValue(IDialogContext context, IAwaitable<double> input)
+        {
+            var number = await input;
+            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter, 
+                new FilterExpression(Operator.LessThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
+            await Search(context);
+        }
+
+        private async Task RangeMin(IDialogContext context, IAwaitable<double> input)
+        {
+            var number = await input;
+            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter,
+                new FilterExpression(Operator.GreaterThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
+            PromptDialog.Number(context, RangeMax, string.Format(this.Prompts.MaximumPrompt, this.Refiner));
+        }
+
+        private async Task RangeMax(IDialogContext context, IAwaitable<double> input)
+        {
+            var number = await input;
+            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter,
+                new FilterExpression(Operator.LessThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
+            await Search(context);
         }
 
         private void Canonicalizers()
@@ -325,7 +361,7 @@
         [LuisIntent("Refine")]
         public async Task Refine(IDialogContext context, LuisResult result)
         {
-            await this.PromptAsync(context, Prompts.ChooseRefine, this.Refiners);
+            await this.PromptAsync(context, Prompts.FacetPrompt, this.Refiners);
             context.Wait(MessageReceived);
         }
 
@@ -339,13 +375,14 @@
         {
             if (this.Selected.Count == 0)
             {
-                await this.PromptAsync(context, this.Prompts.NotAdded);
+                await this.PromptAsync(context, this.Prompts.NotAddedPrompt, LastButtons);
             }
             else
             {
                 var message = context.MakeMessage();
-                this.HitStyler.Show(ref message, (IReadOnlyList<SearchHit>)this.Selected, this.Prompts.ListSofar, this.Prompts.Remove);
+                this.HitStyler.Show(ref message, (IReadOnlyList<SearchHit>)this.Selected, this.Prompts.ListPrompt, this.Prompts.Remove);
                 await context.PostAsync(message);
+                await PromptAsync(context, this.Prompts.RefinePrompt, this.Prompts.Finished, this.Prompts.Quit, this.Prompts.StartOver, this.Prompts.Browse);
             }
             context.Wait(MessageReceived);
         }
@@ -354,7 +391,7 @@
         public async Task StartOver(IDialogContext context, LuisResult result)
         {
             this.QueryBuilder.Reset();
-            await StartAsync(context);
+            await Search(context);
         }
 
         [LuisIntent("Quit")]
@@ -516,7 +553,7 @@
             if (response.Results.Count() == 0)
             {
                 // TODO: No results ,what would you like to change?
-                await PromptAsync(context, Prompts.Result, Prompts.Browse, Prompts.List, Prompts.Finished, Prompts.Quit);
+                await PromptAsync(context, Prompts.RefinePrompt, Prompts.Browse, Prompts.List, Prompts.Finished, Prompts.Quit, Prompts.StartOver);
             }
             else
             {
@@ -529,41 +566,8 @@
                     this.Prompts.Add
                     );
                 await context.PostAsync(message);
-                await PromptAsync(context, Prompts.Result, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished, Prompts.Quit);
+                await PromptAsync(context, Prompts.RefinePrompt, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished, Prompts.Quit, Prompts.StartOver);
             }
-            /*
-            var text = spec.Text;
-
-            if (this.MultipleSelection && text != null && text.ToLowerInvariant() == "list")
-            {
-                await this.ListAddedSoFar(context);
-                await this.InitialPrompt(context);
-            }
-            else
-            {
-                this.QueryBuilder.Spec = spec;
-                var response = await this.ExecuteSearchAsync();
-                if (response.Results.Count() == 0)
-                {
-                    await this.NoResultsConfirmRetry(context);
-                }
-                else
-                {
-                    var message = context.MakeMessage();
-                    this.found = response.Results.ToList();
-                    this.HitStyler.Apply(
-                        ref message,
-                        "Here are a few good options I found:",
-                        (IReadOnlyList<SearchHit>)this.found);
-                    await context.PostAsync(message);
-                    await context.PostAsync(
-                        this.MultipleSelection ?
-                        "You can select one or more to add to your list, *list* what you've selected so far, *refine* these results, see *more* or search *again*." :
-                        "You can select one, *refine* these results, see *more* or search *again*.");
-                    context.Wait(this.ActOnSearchResults);
-                }
-            }
-            */
             context.Wait(MessageReceived);
         }
 
@@ -577,7 +581,7 @@
             SearchHit hit = this.Found.SingleOrDefault(h => h.Key == selection);
             if (hit == null)
             {
-                await PromptAsync(context, this.Prompts.UnknownItem);
+                await PromptAsync(context, this.Prompts.UnknownItemPrompt);
                 context.Wait(MessageReceived);
             }
             else
@@ -589,7 +593,7 @@
 
                 if (this.MultipleSelection)
                 {
-                    await PromptAsync(context, string.Format(this.Prompts.AddedToList, hit.Title));
+                    await PromptAsync(context, string.Format(this.Prompts.AddedToListPrompt, hit.Title));
                     context.Wait(MessageReceived);
                 }
                 else
@@ -604,154 +608,15 @@
             SearchHit hit = this.Found.SingleOrDefault(h => h.Key == selection);
             if (hit == null)
             {
-                await PromptAsync(context, this.Prompts.UnknownItem);
+                await PromptAsync(context, this.Prompts.UnknownItemPrompt);
                 context.Wait(MessageReceived);
             }
             else
             {
-                await PromptAsync(context, string.Format(this.Prompts.RemovedFromList, hit.Title));
+                await PromptAsync(context, string.Format(this.Prompts.RemovedFromListPrompt, hit.Title));
                 this.Selected.Remove(hit);
                 await ShowList(context);
             }
         }
-
-        /*
-        protected async Task InitialSearch(IDialogContext context, IAwaitable<SearchSpec> spec)
-        {
-            await this.Search(context, await spec);
-        }
-
-        protected virtual Task NoResultsConfirmRetry(IDialogContext context)
-        {
-            PromptDialog.Confirm(context, this.ShouldRetry, "Sorry, I didn't find any matches. Do you want to retry your search?");
-            return Task.CompletedTask;
-        }
-
-        protected virtual async Task ListAddedSoFar(IDialogContext context)
-        {
-            var message = context.MakeMessage();
-            if (this.selected.Count == 0)
-            {
-                await context.PostAsync("You have not added anything yet.");
-            }
-            else
-            {
-                this.HitStyler.Apply(ref message, "Here's what you've added to your list so far.", (IReadOnlyList<SearchHit>)this.selected);
-                await context.PostAsync(message);
-            }
-        }
-
-        protected virtual async Task UnkownActionOnResults(IDialogContext context, string action)
-        {
-            await context.PostAsync("Not sure what you mean. You can search *again*, *refine*, *list* or select one of the items above. Or are you *done*?");
-            context.Wait(this.ActOnSearchResults);
-        }
-
-        protected virtual async Task ShouldContinueSearching(IDialogContext context, IAwaitable<bool> input)
-        {
-            try
-            {
-                bool shouldContinue = await input;
-                if (shouldContinue)
-                {
-                    await this.InitialPrompt(context);
-                }
-                else
-                {
-                    context.Done(this.selected);
-                }
-            }
-            catch (TooManyAttemptsException)
-            {
-                context.Done(this.selected);
-            }
-        }
-
-        protected void SelectRefiner(IDialogContext context)
-        {
-            var dialog = new SearchSelectRefinerDialog(this.GetTopRefiners(), this.QueryBuilder);
-            context.Call(dialog, this.Refine);
-        }
-
-        protected async Task Refine(IDialogContext context, IAwaitable<string> input)
-        {
-            string refiner = await input;
-
-            if (!string.IsNullOrWhiteSpace(refiner))
-            {
-                var dialog = new SearchRefineDialog(this.SearchClient, refiner, this.QueryBuilder.Spec.Filter);
-                context.Call(dialog, this.ResumeFromRefine);
-            }
-            else
-            {
-                await this.Search(context, null);
-            }
-        }
-
-        protected async Task ResumeFromRefine(IDialogContext context, IAwaitable<FilterExpression> filter)
-        {
-            this.QueryBuilder.Spec.Filter = await filter;
-            await this.Search(context, this.QueryBuilder.Spec);
-        }
-
-        protected abstract string[] GetTopRefiners();
-
-        private async Task ShouldRetry(IDialogContext context, IAwaitable<bool> input)
-        {
-            try
-            {
-                bool retry = await input;
-                if (retry)
-                {
-                    await this.InitialPrompt(context);
-                }
-                else
-                {
-                    context.Done<IList<SearchHit>>(null);
-                }
-            }
-            catch (TooManyAttemptsException)
-            {
-                context.Done<IList<SearchHit>>(null);
-            }
-        }
-
-        private async Task ActOnSearchResults(IDialogContext context, IAwaitable<IMessageActivity> input)
-        {
-            var activity = await input;
-            var choice = activity.Text;
-
-            switch (choice.ToLowerInvariant())
-            {
-                case "again":
-                case "reset":
-                    this.QueryBuilder.Reset();
-                    await this.InitialPrompt(context);
-                    break;
-
-                case "more":
-                    this.QueryBuilder.PageNumber++;
-                    await this.Search(context, this.QueryBuilder.Spec);
-                    break;
-
-                case "refine":
-                    this.SelectRefiner(context);
-                    break;
-
-                case "list":
-                    await this.ListAddedSoFar(context);
-                    context.Wait(this.ActOnSearchResults);
-                    break;
-
-                case "done":
-                    context.Done(this.selected);
-                    break;
-
-                default:
-                    await this.AddSelectedItem(context, choice);
-                    break;
-            }
-        }
-    */
     }
 }

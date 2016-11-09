@@ -43,7 +43,15 @@
                 var facets = FacetsOverride;
                 if (FacetsOverride == null)
                 {
-                    return (from field in Fields.Values where field.IsFacetable select field.Name);
+                    return (from field in Fields.Values
+                            where field.IsFacetable
+                            // Facet types supported 
+                            && (field.Type == typeof(string)
+                            || field.Type == typeof(double)
+                            || field.Type == typeof(Int32)
+                            || field.Type == typeof(Int64)
+                            || field.Type == typeof(string[]))
+                            select field.Name);
                 }
                 return FacetsOverride;
             }
