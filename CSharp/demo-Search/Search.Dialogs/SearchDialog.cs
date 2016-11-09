@@ -38,7 +38,9 @@
         public string ChooseValue = "What value for {0} would you like to filter by?";
         public string NotUnderstood = "I did not understand what you said";
         public string UnknownItem = "That is not an item in the current results.";
-        public string AddedToList = " was added to your list.";
+        public string AddedToList = "{0} was added to your list.";
+        public string ListSofar = "Here is what you have selected so far.";
+        public string NotAdded = "You have not added anything yet.";
 
         // Buttons
         public Button Browse = new Button("Browse");
@@ -257,7 +259,7 @@
                                 this.ValueCanonicalizers[entity.Type].Canonicalize(entity.Entity)));
             var removals = (from entity in entities where entity.Type == "Removal" select entity);
             var substrings = entities.UncoveredSubstrings(result.Query);
-            foreach(var removal in removals)
+            foreach (var removal in removals)
             {
                 foreach (var entity in entities)
                 {
@@ -320,10 +322,20 @@
         }
 
         [LuisIntent("List")]
-        public Task List(IDialogContext context, LuisResult result)
+        public async Task List(IDialogContext context, LuisResult result)
         {
-            // TODO: Implement
-            return Task.CompletedTask;
+            if (this.Selected.Count == 0)
+            {
+                await this.PromptAsync(context, this.Prompts.NotAdded);
+            }
+            else
+            {
+                var message = context.MakeMessage();
+                this.HitStyler.Apply(ref message, this.Prompts.ListSofar,
+                    (IReadOnlyList<SearchHit>)this.Selected);
+                await context.PostAsync(message);
+            }
+            context.Wait(MessageReceived);
         }
 
         [LuisIntent("StartOver")]
@@ -563,7 +575,7 @@
 
                 if (this.MultipleSelection)
                 {
-                    await PromptAsync(context, $"'{hit.Title}'{this.Prompts.AddedToList}");
+                    await PromptAsync(context, string.Format(this.Prompts.AddedToList, hit.Title));
                     context.Wait(MessageReceived);
                 }
                 else

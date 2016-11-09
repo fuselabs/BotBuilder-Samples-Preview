@@ -3,13 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Azure.Search;
     using Microsoft.Azure.Search.Models;
     using Search.Models;
     using Search.Services;
-    using Microsoft.Spatial;
 
     public class AzureSearchClient : ISearchClient
     {
