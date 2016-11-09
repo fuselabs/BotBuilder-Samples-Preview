@@ -39,6 +39,7 @@
         public string NotUnderstood = "I did not understand what you said";
         public string UnknownItem = "That is not an item in the current results.";
         public string AddedToList = "{0} was added to your list.";
+        public string RemovedFromList = "{0} was removed from your list.";
         public string ListSofar = "Here is what you have selected so far.";
         public string NotAdded = "You have not added anything yet.";
 
@@ -48,6 +49,8 @@
         public Button Finished = new Button("Finished");
         public Button List = new Button("List");
         public Button NextPage = new Button("Next Page");
+        public Button Add = new Button("Add to List", "ADD:{0}");
+        public Button Remove = new Button("Remove from List", "REMOVE:{0}");
 
         // Status
         public string Filter = "Filter: ";
@@ -62,14 +65,14 @@
         public string Any = "Any number of ";
     }
 
-    [Serializable]
+[Serializable]
     public class SearchDialog : LuisDialog<IList<SearchHit>>
     {
         protected readonly Prompts Prompts;
         protected readonly ISearchClient SearchClient;
         protected readonly SearchQueryBuilder QueryBuilder;
         protected readonly PromptStyler PromptStyler;
-        protected readonly PromptStyler HitStyler;
+        protected readonly ISearchHitStyler HitStyler;
         protected readonly bool MultipleSelection;
         protected readonly Button[] Refiners;
         private readonly IList<SearchHit> Selected = new List<SearchHit>();
@@ -83,7 +86,7 @@
 
         public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null,
             PromptStyler promptStyler = null,
-            PromptStyler searchHitStyler = null,
+            ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
             IEnumerable<Button> refiners = null)
             : base(new LuisService(new LuisModelAttribute(model, key)))
@@ -147,10 +150,15 @@
         {
             var message = await item;
             var text = message.Text.Trim();
-            if (text.StartsWith("ID:"))
+            if (text.StartsWith("ADD:"))
             {
-                var id = text.Substring(3).Trim();
+                var id = text.Substring(4).Trim();
                 await this.AddSelectedItem(context, id);
+            }
+            else if (text.StartsWith("REMOVE:"))
+            {
+                var id = text.Substring(7).Trim();
+                await this.RemoveSelectedItem(context, id);
             }
             else
             {
@@ -324,6 +332,11 @@
         [LuisIntent("List")]
         public async Task List(IDialogContext context, LuisResult result)
         {
+            await ShowList(context);
+        }
+
+        private async Task ShowList(IDialogContext context)
+        {
             if (this.Selected.Count == 0)
             {
                 await this.PromptAsync(context, this.Prompts.NotAdded);
@@ -331,8 +344,7 @@
             else
             {
                 var message = context.MakeMessage();
-                this.HitStyler.Apply(ref message, this.Prompts.ListSofar,
-                    (IReadOnlyList<SearchHit>)this.Selected);
+                this.HitStyler.Show(ref message, (IReadOnlyList<SearchHit>)this.Selected, this.Prompts.ListSofar, this.Prompts.Remove);
                 await context.PostAsync(message);
             }
             context.Wait(MessageReceived);
@@ -510,10 +522,12 @@
             {
                 var message = context.MakeMessage();
                 this.Found = response.Results.ToList();
-                this.HitStyler.Apply(
+                this.HitStyler.Show(
                     ref message,
+                    (IReadOnlyList<SearchHit>)this.Found,
                     SearchDescription(),
-                    (IReadOnlyList<SearchHit>)this.Found);
+                    this.Prompts.Add
+                    );
                 await context.PostAsync(message);
                 await PromptAsync(context, Prompts.Result, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished, Prompts.Quit);
             }
@@ -582,6 +596,22 @@
                 {
                     context.Done(this.Selected);
                 }
+            }
+        }
+
+        protected virtual async Task RemoveSelectedItem(IDialogContext context, string selection)
+        {
+            SearchHit hit = this.Found.SingleOrDefault(h => h.Key == selection);
+            if (hit == null)
+            {
+                await PromptAsync(context, this.Prompts.UnknownItem);
+                context.Wait(MessageReceived);
+            }
+            else
+            {
+                await PromptAsync(context, string.Format(this.Prompts.RemovedFromList, hit.Title));
+                this.Selected.Remove(hit);
+                await ShowList(context);
             }
         }
 

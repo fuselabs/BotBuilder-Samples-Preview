@@ -7,29 +7,37 @@
     using Microsoft.Bot.Connector;
     using Search.Models;
 
-    [Serializable]
-    public class SearchHitStyler : PromptStyler
+    public interface ISearchHitStyler
     {
-        public override void Apply<T>(ref IMessageActivity message, string prompt, IReadOnlyList<T> options, IReadOnlyList<string> descriptions)
+        void Show(ref IMessageActivity message, IReadOnlyList<SearchHit> hits, string prompt = null, params Button[] buttons);
+    }
+
+    [Serializable]
+    public class SearchHitStyler: ISearchHitStyler
+    {
+        public void Show(ref IMessageActivity message, IReadOnlyList<SearchHit> hits, string prompt = null, params Button[] buttons)
         {
-            var hits = options as IList<SearchHit>;
             if (hits != null)
             {
-                var cards = hits.Select(h => new ThumbnailCard
+                var cards = hits.Select(h =>
                 {
-                    Title = h.Title,
-                    Images = new[] { new CardImage(h.PictureUrl) },
-                    Buttons = new[] { new CardAction(ActionTypes.ImBack, "Pick this one", value: $"ID:{h.Key}") },
-                    Text = h.Description
+                    var actions = new List<CardAction>();
+                    foreach(var button in buttons)
+                    {
+                        actions.Add(new CardAction(ActionTypes.ImBack, button.Label, value:string.Format(button.Message, h.Key)));
+                    }
+                    return new ThumbnailCard
+                    {
+                        Title = h.Title,
+                        Images = new[] { new CardImage(h.PictureUrl) },
+                        Buttons = actions.ToArray(),
+                        Text = h.Description
+                    };
                 });
 
                 message.AttachmentLayout = AttachmentLayoutTypes.Carousel;
                 message.Attachments = cards.Select(c => c.ToAttachment()).ToList();
                 message.Text = prompt;
-            }
-            else
-            {
-                base.Apply<T>(ref message, prompt, options, descriptions);
             }
         }
     }
