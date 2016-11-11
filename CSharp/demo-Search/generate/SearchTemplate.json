@@ -63,9 +63,7 @@
       ]
     }
   ],
-  "bing_entities": [
-    "geography"
-  ],
+  "bing_entities": [],
   "actions": [],
   "model_features": [
     {

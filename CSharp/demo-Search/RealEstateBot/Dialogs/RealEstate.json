@@ -1,7 +1,6 @@
 {
-  "FacetsOverride": null,
   "Fragments": [],
-  "DefaultCurrencyProperty": null,
+  "DefaultCurrencyProperty": "price",
   "DefaultNumericProperty": null,
   "DefaultGeoProperty": null,
   "Fields": {
@@ -36,7 +35,7 @@
       "NameSynonyms": {
         "Canonical": "beds",
         "Alternatives": [
-          "beds", "bed", "bedroom", "bedrooms"
+          "Bedrooms", "bed", "bedroom", "beds"
         ]
       },
       "ValueSynonyms": []
@@ -54,7 +53,7 @@
       "NameSynonyms": {
         "Canonical": "baths",
         "Alternatives": [
-          "bathrooms",
+          "Bathrooms",
           "bath",
           "baths",
           "bathroom"
@@ -93,9 +92,9 @@
       "NameSynonyms": {
         "Canonical": "sqft",
         "Alternatives": [
+          "Square Feet",
           "sq feet",
           "sqft",
-          "square feet",
           "square foot",
           "sq foot"
         ]
@@ -115,7 +114,7 @@
       "NameSynonyms": {
         "Canonical": "daysOnMarket",
         "Alternatives": [
-          "days On Market"
+          "Days On Market"
         ]
       },
       "ValueSynonyms": []
@@ -133,10 +132,23 @@
       "NameSynonyms": {
         "Canonical": "status",
         "Alternatives": [
-          "status"
+          "Status"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [
+        {
+          "canonical": "active",
+          "alternatives": [ "active", "unsold" ]
+        },
+        {
+          "canonical": "pending",
+          "alternatives": [ "pending", "selling" ]
+        },
+        {
+          "canonical": "sold",
+          "alternatives":  ["sold"]
+        }
+      ]
     },
     "source": {
       "Name": "source",
@@ -151,7 +163,7 @@
       "NameSynonyms": {
         "Canonical": "source",
         "Alternatives": [
-          "source", "listing agent"
+          "Listing Agent", "source"
         ]
       },
       "ValueSynonyms": []
@@ -169,7 +181,6 @@
       "NameSynonyms": {
         "Canonical": "number",
         "Alternatives": [
-          "number"
         ]
       },
       "ValueSynonyms": []
@@ -183,11 +194,11 @@
       "IsRetrievable": true,
       "IsSearchable": true,
       "IsSortable": false,
-      "FilterPreference": 0,
+      "FilterPreference": 1,
       "NameSynonyms": {
         "Canonical": "street",
         "Alternatives": [
-          "street", "st"
+          "Street", "st"
         ]
       },
       "ValueSynonyms": []
@@ -223,7 +234,7 @@
       "NameSynonyms": {
         "Canonical": "type",
         "Alternatives": [
-          "type"
+          "Type"
         ]
       },
       "ValueSynonyms": [
@@ -250,7 +261,7 @@
       "NameSynonyms": {
         "Canonical": "city",
         "Alternatives": [
-          "city"
+          "City"
         ]
       },
       "ValueSynonyms": []
@@ -284,7 +295,7 @@
       "NameSynonyms": {
         "Canonical": "district",
         "Alternatives": [
-          "district"
+          "District"
         ]
       },
       "ValueSynonyms": []
@@ -302,7 +313,7 @@
       "NameSynonyms": {
         "Canonical": "region",
         "Alternatives": [
-          "region", "area"
+          "State", "region", "area"
         ]
       },
       "ValueSynonyms": []
@@ -319,7 +330,7 @@
       "FilterPreference": 1,
       "NameSynonyms": {
         "Canonical": "zipcode",
-        "Alternatives": [ "zip code", "zip", "zipcode" ]
+        "Alternatives": [ "Zip Code", "zip", "zipcode" ]
       },
       "ValueSynonyms": []
     },
@@ -372,7 +383,7 @@
       "NameSynonyms": {
         "Canonical": "price",
         "Alternatives": [
-          "price", "cost", "costs"
+          "Price", "cost", "costs"
         ]
       },
       "ValueSynonyms": []

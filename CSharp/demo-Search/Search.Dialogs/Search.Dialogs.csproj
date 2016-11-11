@@ -111,6 +111,10 @@
       <Project>{FF10CD6A-2BE1-4520-A01F-769C396906CB}</Project>
       <Name>Search.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Search.Utilities\Search.Utilities.csproj">
+      <Project>{A9AF656A-82C5-4309-A573-C9AF4BFD49C2}</Project>
+      <Name>Search.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

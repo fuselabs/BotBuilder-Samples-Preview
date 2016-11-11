@@ -51,5 +51,18 @@ namespace Search.Azure
                 FilterPreference = (field.IsFacetable ? PreferredFilter.Facet : PreferredFilter.None)
             };
         }
+
+        public static bool IsNumeric(this Type type)
+        {
+            return type == typeof(Byte)
+                || type == typeof(UInt16)
+                || type == typeof(Int16)
+                || type == typeof(UInt32)
+                || type == typeof(Int32)
+                || type == typeof(UInt64)
+                || type == typeof(Int64)
+                || type == typeof(float)
+                || type == typeof(double);
+        }
     }
 }

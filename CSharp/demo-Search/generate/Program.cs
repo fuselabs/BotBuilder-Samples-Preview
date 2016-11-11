@@ -11,6 +11,7 @@
     using Search.Models;
     using Newtonsoft.Json;
     using System.Threading;
+    using Azure;
 
     class Program
     {
@@ -291,9 +292,7 @@
                 {
                     AddAttribute(template, field);
                 }
-                else if (field.Type == typeof(Int32)
-                    || field.Type == typeof(Int64)
-                    || field.Type == typeof(double)
+                else if (field.Type.IsNumeric()
                     || (field.IsFacetable
                         && (field.Type == typeof(string)
                             || field.Type == typeof(string[]))))

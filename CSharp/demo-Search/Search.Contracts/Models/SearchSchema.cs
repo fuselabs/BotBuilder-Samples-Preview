@@ -17,8 +17,6 @@
 
         public string DefaultGeoProperty { get; set; }
 
-        public List<string> FacetsOverride = null;
-
         public List<SearchFragment> Fragments = new List<SearchFragment>();
 
         public void AddField(SearchField field)
@@ -34,28 +32,6 @@
         public SearchField Field(string name)
         {
             return fields[name];
-        }
-
-        [JsonIgnore]
-        public IEnumerable<string> Facets
-        {
-            get
-            {
-                var facets = FacetsOverride.AsEnumerable();
-                if (FacetsOverride == null)
-                {
-                    facets = (from field in Fields.Values
-                              where (field.IsFilterable
-                                    // Facet types supported 
-                                    && (field.Type == typeof(string)
-                                        || field.Type == typeof(double)
-                                        || field.Type == typeof(Int32)
-                                        || field.Type == typeof(Int64)
-                                        || field.Type == typeof(string[])))
-                              select field.Name);
-                }
-                return facets;
-            }
         }
 
         public IReadOnlyDictionary<string, SearchField> Fields
