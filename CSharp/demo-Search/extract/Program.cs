@@ -124,6 +124,7 @@
             Console.WriteLine("-g <histogramPath>: Generate an <indexName>-histogram.bin file with histogram information from index.");
             Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.");
             Console.WriteLine("-o <outputFile>: Where to put generated schema and histogram files.");
+            Console.WriteLine("-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
             Environment.Exit(-1);
         }
 
@@ -154,6 +155,7 @@
             string generatePath = null;
             string histogramPath = null;
             string schemaPath = indexName + ".json";
+            int samples = int.MaxValue;
             for (var i = 3; i < args.Length; ++i)
             {
                 var arg = args[i];
@@ -163,6 +165,7 @@
                     case "-g": generatePath = NextArg(++i, args); break;
                     case "-h": histogramPath = NextArg(++i, args); break;
                     case "-o": schemaPath = NextArg(++i, args); break;
+                    case "-s": samples = int.Parse(NextArg(++i, args)); break;
                     default: Usage($"{arg} is not understood."); break;
                 }
             }
@@ -184,11 +187,11 @@
                     (count, result) =>
                     {
                         Process(count, result, facets, histograms);
-                    }
-                    // , 1000
+                    },
+                    samples
                     );
                 Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
-                using (var stream = new FileStream(Path.Combine(path, "-histograms.bin"), FileMode.Create))
+                using (var stream = new FileStream(generatePath, FileMode.Create))
                 {
                     var serializer = new BinaryFormatter();
                     serializer.Serialize(stream, histograms);
