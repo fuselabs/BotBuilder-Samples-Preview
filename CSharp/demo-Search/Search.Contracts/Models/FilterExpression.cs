@@ -47,17 +47,13 @@
         // Remove all references to the same field
         public FilterExpression Remove(FilterExpression expression)
         {
-            FilterExpression filter = null;
+            FilterExpression filter = this;
             if (expression != null)
             {
                 foreach (var field in expression.Fields())
                 {
-                    filter = Remove(field);
+                    filter = filter.Remove(field);
                 }
-            }
-            else
-            {
-                filter = this;
             }
             return filter;
         }
