@@ -196,7 +196,13 @@
             }
             if (histogramPath != null)
             {
-                // TODO: Use histogram to infer some schema information
+                Dictionary<string, Histogram<object>> histograms;
+                using (var stream = new FileStream(histogramPath, FileMode.Open))
+                {
+                    var deserializer = new BinaryFormatter();
+                    histograms = (Dictionary<string, Histogram<object>>)deserializer.Deserialize(stream);
+                    // TODO: Use histogram to infer some schema information
+                }
             }
             schema.Save(schemaPath);
         }

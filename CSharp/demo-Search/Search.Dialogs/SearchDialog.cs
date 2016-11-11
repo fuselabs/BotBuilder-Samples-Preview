@@ -487,13 +487,28 @@
         private Range Resolve(ComparisonEntity c, string originalText)
         {
             Range range = null;
-            var propertyName = (c.Property == null ? (DefaultProperty ?? this.SearchClient.Schema.DefaultNumericProperty) : this.FieldCanonicalizer.Canonicalize(c.Property.Entity));
+            bool isCurrency = false;
+            object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
+            object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+            string propertyName = c.Property?.Entity;
+            if (propertyName == null)
+            {
+                if (isCurrency)
+                {
+                    propertyName = this.SearchClient.Schema.DefaultCurrencyProperty ?? this.DefaultProperty;
+                }
+                else
+                {
+                    propertyName = this.DefaultProperty;
+                }
+            }
+            else
+            {
+                this.FieldCanonicalizer.Canonicalize(c.Property.Entity);
+            }
             if (propertyName != null)
             {
                 range = new Range { Property = this.SearchClient.Schema.Field(propertyName) };
-                bool isCurrency;
-                object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
-                object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
                 if (lower is double && double.IsNaN((double)lower))
                 {
                     lower = originalText.Substring(c.Lower.StartIndex.Value, c.Lower.EndIndex.Value - c.Lower.StartIndex.Value + 1);
