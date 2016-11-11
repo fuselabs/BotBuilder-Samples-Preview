@@ -15,8 +15,8 @@
     public class Range
     {
         public SearchField Property;
-        public double Lower;
-        public double Upper;
+        public object Lower;
+        public object Upper;
         public bool IncludeLower;
         public bool IncludeUpper;
     }
@@ -41,7 +41,7 @@
                 switch (entity.Type)
                 {
                     case "Currency": AddNumber(entity); break;
-                    case "Number": AddNumber(entity); break;
+                    case "Value": AddNumber(entity); break;
                     case "Dimension": AddNumber(entity); break;
                     case "Operator": Operator = entity; break;
                     case "Property": Property = entity; break;
@@ -194,8 +194,16 @@
             {
                 range = new Range { Property = schema.Field(propertyName) };
                 bool isCurrency;
-                var lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
-                var upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+                object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
+                object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+                if (lower is double && (double) lower == double.NegativeInfinity)
+                {
+                    lower = c.Lower.Entity;
+                }
+                if (upper is double && (double) upper == double.PositiveInfinity)
+                {
+                    upper = c.Upper.Entity;
+                }
                 if (c.Operator == null)
                 {
                     // This is the case where we just have naked values
@@ -346,20 +354,20 @@
             {
                 var lowercmp = (range.IncludeLower ? Operator.GreaterThanOrEqual : Operator.GreaterThan);
                 var uppercmp = (range.IncludeUpper ? Operator.LessThanOrEqual : Operator.LessThan);
-                if (double.IsNegativeInfinity(range.Lower))
+                if (range.Lower is double && double.IsNegativeInfinity((double) range.Lower))
                 {
-                    if (!double.IsPositiveInfinity(range.Upper))
+                    if (!double.IsPositiveInfinity((double) range.Upper))
                     {
                         filter = FilterExpression.Combine(filter, new FilterExpression(uppercmp, range.Property, range.Upper), connector);
                     }
                 }
-                else if (double.IsPositiveInfinity(range.Upper))
+                else if (range.Upper is double && double.IsPositiveInfinity((double) range.Upper))
                 {
                     filter = FilterExpression.Combine(filter, new FilterExpression(lowercmp, range.Property, range.Lower), connector);
                 }
                 else if (range.Lower == range.Upper)
                 {
-                    filter = FilterExpression.Combine(filter, new FilterExpression(Operator.Equal, range.Property, range.Lower), connector);
+                    filter = FilterExpression.Combine(filter, new FilterExpression(range.Lower is string ? Operator.FullText : Operator.Equal, range.Property, range.Lower), connector);
                 }
                 else
                 {
@@ -380,11 +388,11 @@
                 filter.Append($"{seperator}");
                 var lowercmp = (range.IncludeLower ? "ge" : "gt");
                 var uppercmp = (range.IncludeUpper ? "le" : "lt");
-                if (double.IsNegativeInfinity(range.Lower))
+                if (range.Lower is double && double.IsNegativeInfinity((double) range.Lower))
                 {
                     filter.Append($"{range.Property} {uppercmp} {range.Upper}");
                 }
-                else if (double.IsPositiveInfinity(range.Upper))
+                else if (double.IsPositiveInfinity((double) range.Upper))
                 {
                     filter.Append($"{range.Property} {lowercmp} {range.Lower}");
                 }

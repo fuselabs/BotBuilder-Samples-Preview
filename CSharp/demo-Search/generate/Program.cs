@@ -160,7 +160,7 @@
                     break;
                 }
             }
-            foreach(var facet in facetNames)
+            foreach (var facet in facetNames)
             {
                 dynamic entity = new JObject();
                 entity.entity = "Property";
@@ -285,16 +285,20 @@
             AddDescription(template, p.OutputName, args);
             foreach (var field in schema.Fields.Values)
             {
-                if (field.Type == typeof(Int32)
-                    || field.Type == typeof(Int64)
-                    || field.Type == typeof(double))
-                {
-                    AddComparison(template, field);
-                }
-                else if (field.Type == typeof(string)
+                if ((field.Type == typeof(string)
+                    || field.Type == typeof(string[]))
                     && field.ValueSynonyms.Length > 0)
                 {
                     AddAttribute(template, field);
+                }
+                else if (field.Type == typeof(Int32)
+                    || field.Type == typeof(Int64)
+                    || field.Type == typeof(double)
+                    || (field.IsFacetable
+                        && (field.Type == typeof(string)
+                            || field.Type == typeof(string[]))))
+                {
+                    AddComparison(template, field);
                 }
             }
             ReplacePropertyNames(template);
@@ -315,7 +319,7 @@
                 var id = await LUISTools.CreateModelAsync(p.LUISKey, template, cts.Token);
                 Console.WriteLine($"New LUIS app key is {id}");
             }
-      }
+        }
 
         static void Usage(string msg = null)
         {

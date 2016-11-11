@@ -44,6 +44,7 @@
         public string NotAddedPrompt = "You have not added anything yet.";
         public string MinimumPrompt = "What is the minimum value for {0}?";
         public string MaximumPrompt = "What is the maximum value for {0}?";
+        public string NoValuesPrompt = "There are no values to filter by for {0}.";
 
         // Buttons
         public Button Browse = new Button("Browse");
@@ -239,6 +240,11 @@
                 {
                     PromptDialog.Number(context, RangeMin, string.Format(this.Prompts.MinimumPrompt, this.Refiner));
                 }
+                else
+                {
+                    await PromptAsync(context, string.Format(this.Prompts.NoValuesPrompt, this.Refiner));
+                    context.Wait(MessageReceived);
+                }
             }
         }
 
@@ -292,8 +298,7 @@
         public async Task Filter(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
-            bool isCurrency;
-            var entities = result.Entities == null ? new List<EntityRecommendation>() : (from entity in result.Entities where entity.Type != "Number" || !double.IsNaN(ParseNumber(entity.Entity, out isCurrency)) select entity).ToList();
+            var entities = result.Entities ?? new List<EntityRecommendation>();
             var comparisons = (from entity in entities
                                where entity.Type == "Comparison"
                                select new ComparisonEntity(entity)).ToList();
@@ -442,8 +447,16 @@
             {
                 range = new Range { Property = this.SearchClient.Schema.Field(propertyName) };
                 bool isCurrency;
-                var lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
-                var upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+                object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
+                object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
+                if (lower is double && double.IsNaN((double) lower))
+                {
+                    lower = c.Lower.Entity;
+                }
+                if (upper is double && double.IsNaN((double)upper))
+                {
+                    upper = c.Upper.Entity;
+                }
                 if (c.Operator == null)
                 {
                     // This is the case where we just have naked values

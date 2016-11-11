@@ -34,9 +34,6 @@
   ],
   "entities": [
     {
-      "name": "Number"
-    },
-    {
       "name": "Operator"
     },
     {
@@ -44,6 +41,9 @@
     },
     {
       "name": "RemovalOperator"
+    },
+    {
+      "name": "Value"
     }
   ],
   "composites": [
@@ -52,7 +52,7 @@
       "children": [
         "Property",
         "Operator",
-        "Number"
+        "Value"
       ]
     },
     {
@@ -110,7 +110,7 @@
           "endPos": 2
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         },
@@ -136,7 +136,7 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -162,7 +162,7 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -188,12 +188,12 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -219,12 +219,12 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -250,7 +250,7 @@
           "endPos": 4
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 3,
           "endPos": 3
         },
@@ -276,7 +276,7 @@
           "endPos": 2
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         },
@@ -302,7 +302,7 @@
           "endPos": 1
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         }
@@ -323,12 +323,12 @@
           "endPos": 4
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 1,
           "endPos": 1
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 3,
           "endPos": 3
         },
@@ -359,7 +359,7 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -385,7 +385,7 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -421,12 +421,12 @@
           "endPos": 9
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 8,
           "endPos": 8
         },
@@ -447,7 +447,7 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 3
         },
@@ -468,12 +468,12 @@
           "endPos": 5
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 1,
           "endPos": 2
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 4,
           "endPos": 5
         },
@@ -509,12 +509,12 @@
           "endPos": 10
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 9,
           "endPos": 9
         },
@@ -540,12 +540,12 @@
           "endPos": 7
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 1,
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 5,
           "endPos": 7
         },
@@ -566,7 +566,7 @@
           "endPos": 4
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 3,
           "endPos": 4
         },
@@ -602,17 +602,17 @@
           "endPos": 9
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 1,
           "endPos": 1
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 8,
           "endPos": 8
         },
@@ -658,12 +658,12 @@
           "endPos": 6
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 5,
           "endPos": 5
         },
@@ -822,7 +822,7 @@
           "endPos": 5
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 5
         },
@@ -843,7 +843,7 @@
           "endPos": 2
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
@@ -864,7 +864,7 @@
           "endPos": 3
         },
         {
-          "entity": "Number",
+          "entity": "Value",
           "startPos": 2,
           "endPos": 3
         },
@@ -884,6 +884,199 @@
       "text": "quit",
       "intent": "Quit",
       "entities": []
+    },
+    {
+      "text": "propertyname less than 500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "propertyname more than 10",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "propertyname between 3 and 4",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "propertyname is at least 4",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "aword bword propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "pword qdef propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "rword propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "eword fword gword propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
     }
   ]
 }

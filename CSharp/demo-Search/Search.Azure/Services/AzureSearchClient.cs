@@ -8,6 +8,7 @@
     using Microsoft.Azure.Search.Models;
     using Search.Models;
     using Search.Services;
+    using System.Text;
 
     public class AzureSearchClient : ISearchClient
     {
@@ -33,7 +34,9 @@
             {
                 queryBuilder.Spec.Filter = queryBuilder.Spec.Filter.Remove(this.Schema.Field(refiner));
             }
-            var documentSearchResult = await this.searchClient.Documents.SearchAsync(queryBuilder.Spec.Text, BuildParameters(queryBuilder, refiner));
+            string search;
+            var parameters = BuildSearch(queryBuilder, refiner, out search);
+            var documentSearchResult = await this.searchClient.Documents.SearchAsync(search, parameters);
             queryBuilder.Spec.Filter = oldFilter;
             return this.mapper.Map(documentSearchResult);
         }
@@ -45,57 +48,6 @@
                 schema.AddField(SearchTools.ToSearchField(field));
             }
         }
-
-        /*
-         * TODO: Remove this
-        private static string ToFilter(SearchField field, FilterExpression expression)
-        {
-            string filter = "";
-            if (expression.Values.Length > 0)
-            {
-                var constant = Constant(expression.Values[0]);
-                string op = null;
-                bool connective = false;
-                switch (expression.Operator)
-                {
-                    case Operator.LessThan: op = "lt"; break;
-                    case Operator.LessThanOrEqual: op = "le"; break;
-                    case Operator.Equal: op = "eq"; break;
-                    case Operator.GreaterThan: op = "gt"; break;
-                    case Operator.GreaterThanOrEqual: op = "ge"; break;
-                    case Operator.Or: op = "or"; connective = true; break;
-                    case Operator.And: op = "and"; connective = true; break;
-                }
-                if (connective)
-                {
-                    var builder = new StringBuilder();
-                    var seperator = string.Empty;
-                    builder.Append('(');
-                    foreach (var child in expression.Values)
-                    {
-                        builder.Append(seperator);
-                        builder.Append(ToFilter(field, (FilterExpression)child));
-                        seperator = $" {op} ";
-                    }
-                    builder.Append(')');
-                    filter = builder.ToString();
-                }
-                if (field.Type == typeof(string[]))
-                {
-                    if (expression.Operator != Operator.Equal)
-                    {
-                        throw new NotSupportedException();
-                    }
-                    filter = $"{field.Name}/any(z: z eq {constant})";
-                }
-                else
-                {
-                    filter = $"{field.Name} {op} {constant}";
-                }
-            }
-            return filter;
-        }
-        */
 
         public static string Constant(object value)
         {
@@ -111,65 +63,97 @@
             return constant;
         }
 
-        private string BuildFilter(FilterExpression expression)
+        // Azure search only supports full text in a seperate tree combined with AND of the filter.
+        // We extract all of the FullText operators found in the tree along AND paths only.
+        private FilterExpression ExtractFullText(FilterExpression expression, List<FilterExpression> searchExpression)
         {
-            string filter = "";
-            string op = null;
-            switch(expression.Operator)
+            FilterExpression filter = null;
+            if (expression != null)
             {
-                case Operator.And:
-                    {
-                        var left = BuildFilter((FilterExpression)expression.Values[0]);
-                        var right = BuildFilter((FilterExpression)expression.Values[1]);
-                        filter = $"({left}) and ({right})";
-                        break;
-                    }
-                case Operator.Or:
-                    {
-                        var left = BuildFilter((FilterExpression)expression.Values[0]);
-                        var right = BuildFilter((FilterExpression)expression.Values[1]);
-                        filter = $"({left}) or ({right})";
-                        break;
-                    }
-                case Operator.Not:
-                    {
-                        var child = BuildFilter((FilterExpression)expression.Values[0]);
-                        filter = $"not ({child})";
-                        break;
-                    }
-                case Operator.FullText:
-                    // TODO: What is the right thing here?
-                    break;
-
-                case Operator.LessThan: op = "lt"; break;
-                case Operator.LessThanOrEqual: op = "le"; break;
-                case Operator.Equal: op = "eq"; break;
-                case Operator.GreaterThanOrEqual: op = "ge"; break;
-                case Operator.GreaterThan: op = "gt"; break;
-                default:
-                    break;
-            }
-            if (op != null)
-            {
-                var field = (SearchField)expression.Values[0];
-                var value = Constant(expression.Values[1]);
-                if (field.Type == typeof(string[]))
+                switch (expression.Operator)
                 {
-                    if (expression.Operator != Operator.Equal)
-                    {
-                        throw new NotSupportedException();
-                    }
-                    filter = $"{field.Name}/any(z: z eq {value})";
-                }
-                else
-                {
-                    filter = $"{field.Name} {op} {value}";
+                    case Operator.And:
+                        {
+                            var left = ExtractFullText((FilterExpression)expression.Values[0], searchExpression);
+                            var right = ExtractFullText((FilterExpression)expression.Values[1], searchExpression);
+                            filter = FilterExpression.Combine(left, right);
+                        }
+                        break;
+                    case Operator.FullText:
+                        {
+                            searchExpression.Add(expression);
+                            filter = null;
+                        }
+                        break;
+                    default:
+                        filter = expression;
+                        break;
                 }
             }
             return filter;
         }
 
-        private SearchParameters BuildParameters(SearchQueryBuilder queryBuilder, string facet)
+        private string BuildFilter(FilterExpression expression)
+        {
+            string filter = null;
+            if (expression != null)
+            {
+                string op = null;
+                switch (expression.Operator)
+                {
+                    case Operator.And:
+                        {
+                            var left = BuildFilter((FilterExpression)expression.Values[0]);
+                            var right = BuildFilter((FilterExpression)expression.Values[1]);
+                            filter = $"({left}) and ({right})";
+                            break;
+                        }
+                    case Operator.Or:
+                        {
+                            var left = BuildFilter((FilterExpression)expression.Values[0]);
+                            var right = BuildFilter((FilterExpression)expression.Values[1]);
+                            filter = $"({left}) or ({right})";
+                            break;
+                        }
+                    case Operator.Not:
+                        {
+                            var child = BuildFilter((FilterExpression)expression.Values[0]);
+                            filter = $"not ({child})";
+                            break;
+                        }
+                    case Operator.FullText:
+                        throw new ArgumentException("Cannot handle complex full text expressions.");
+
+                    case Operator.LessThan: op = "lt"; break;
+                    case Operator.LessThanOrEqual: op = "le"; break;
+                    case Operator.Equal: op = "eq"; break;
+                    case Operator.GreaterThanOrEqual: op = "ge"; break;
+                    case Operator.GreaterThan: op = "gt"; break;
+                    default:
+                        break;
+                }
+                if (op != null)
+                {
+                    var field = (SearchField)expression.Values[0];
+                    var value = Constant(expression.Values[1]);
+                    if (field.Type == typeof(string[]))
+                    {
+                        if (expression.Operator != Operator.Equal)
+                        {
+                            throw new NotSupportedException();
+                        }
+                        filter = $"{field.Name}/any(z: z eq {value})";
+                    }
+                    else
+                    {
+                        filter = $"{field.Name} {op} {value}";
+                    }
+                }
+            }
+            return filter;
+        }
+
+        private SearchParameters BuildSearch(SearchQueryBuilder queryBuilder, string facet, out string search)
         {
             SearchParameters parameters = new SearchParameters
             {
@@ -183,15 +167,31 @@
                 parameters.Facets = new List<string> { facet };
             }
 
-            if (queryBuilder.Spec.Filter != null)
-            {
-                parameters.Filter = BuildFilter(queryBuilder.Spec.Filter);
-            }
-            else
-            {
-                parameters.Filter = null;
-            }
+            var searchExpressions = new List<FilterExpression>();
+            var filter = ExtractFullText(queryBuilder.Spec.Filter, searchExpressions);
+            parameters.QueryType = QueryType.Full;
+            parameters.Filter = BuildFilter(filter);
+            search = BuildSearchFilter(queryBuilder.Spec.Text, searchExpressions);
             return parameters;
+        }
+
+        private string BuildSearchFilter(string text, IList<FilterExpression> expressions)
+        {
+            var builder = new StringBuilder();
+            string prefix = "";
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                builder.Append($"{text} ");
+                prefix = " AND ";
+            }
+            foreach(var expression in expressions)
+            {
+                var property = (SearchField) expression.Values[0];
+                var value = EscapeFilterString((string)expression.Values[1]);
+                builder.Append($"{prefix}{property.Name}:'{value}'");
+                prefix = " AND ";
+            }
+            return builder.ToString();
         }
 
         private static string EscapeFilterString(string s)
