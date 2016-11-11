@@ -1077,6 +1077,37 @@
           "endPos": 2
         }
       ]
+    },
+    {
+      "text": "between 200 and 400 propertyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
     }
   ]
 }

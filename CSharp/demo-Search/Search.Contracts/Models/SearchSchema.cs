@@ -36,24 +36,25 @@
             return fields[name];
         }
 
+        [JsonIgnore]
         public IEnumerable<string> Facets
         {
             get
             {
-                var facets = FacetsOverride;
+                var facets = FacetsOverride.AsEnumerable();
                 if (FacetsOverride == null)
                 {
-                    return (from field in Fields.Values
-                            where field.IsFacetable
-                            // Facet types supported 
-                            && (field.Type == typeof(string)
-                            || field.Type == typeof(double)
-                            || field.Type == typeof(Int32)
-                            || field.Type == typeof(Int64)
-                            || field.Type == typeof(string[]))
-                            select field.Name);
+                    facets = (from field in Fields.Values
+                              where (field.IsFilterable
+                                    // Facet types supported 
+                                    && (field.Type == typeof(string)
+                                        || field.Type == typeof(double)
+                                        || field.Type == typeof(Int32)
+                                        || field.Type == typeof(Int64)
+                                        || field.Type == typeof(string[])))
+                              select field.Name);
                 }
-                return FacetsOverride;
+                return facets;
             }
         }
 

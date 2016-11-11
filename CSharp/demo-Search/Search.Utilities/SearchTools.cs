@@ -47,7 +47,8 @@ namespace Search.Azure
                 IsKey = field.IsKey,
                 IsRetrievable = field.IsRetrievable,
                 IsSearchable = field.IsSearchable,
-                IsSortable = field.IsSortable
+                IsSortable = field.IsSortable,
+                FilterPreference = (field.IsFacetable ? PreferredFilter.Facet : PreferredFilter.None)
             };
         }
     }

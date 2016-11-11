@@ -15,6 +15,61 @@
 
     public delegate SearchField CanonicalizerDelegate(string propertyName);
 
+    public class Range
+    {
+        public SearchField Property;
+        public object Lower;
+        public object Upper;
+        public bool IncludeLower;
+        public bool IncludeUpper;
+    }
+
+    class ComparisonEntity
+    {
+        public EntityRecommendation Entity;
+        public EntityRecommendation Operator;
+        public EntityRecommendation Lower;
+        public EntityRecommendation Upper;
+        public EntityRecommendation Property;
+
+        public ComparisonEntity(EntityRecommendation comparison)
+        {
+            Entity = comparison;
+        }
+
+        public void AddEntity(EntityRecommendation entity)
+        {
+            if (entity.Type != "Comparison" && entity.StartIndex >= Entity.StartIndex && entity.EndIndex <= Entity.EndIndex)
+            {
+                switch (entity.Type)
+                {
+                    case "Currency": AddNumber(entity); break;
+                    case "Value": AddNumber(entity); break;
+                    case "Dimension": AddNumber(entity); break;
+                    case "Operator": Operator = entity; break;
+                    case "Property": Property = entity; break;
+                }
+            }
+        }
+
+        private void AddNumber(EntityRecommendation entity)
+        {
+            if (Lower == null)
+            {
+                Lower = entity;
+            }
+            else if (entity.StartIndex < Lower.StartIndex)
+            {
+                Upper = Lower;
+                Lower = entity;
+            }
+            else
+            {
+                Upper = entity;
+            }
+        }
+    }
+
     [Serializable]
     public class Button
     {
@@ -45,6 +100,7 @@
         public string MinimumPrompt = "What is the minimum value for {0}?";
         public string MaximumPrompt = "What is the maximum value for {0}?";
         public string NoValuesPrompt = "There are no values to filter by for {0}.";
+        public string FilterPrompt = "Enter a filter for {0} like \"no more than 4\".";
 
         // Buttons
         public Button Browse = new Button("Browse");
@@ -65,11 +121,12 @@
         public string Ascending = "Ascending";
         public string Descending = "Descending";
 
-        // Facets
-        public string Any = "Any number of ";
+        // Facet messages
+        public string AnyMessage = "Any number of {0}";
+        public string AnyLabel = "Any";
     }
 
-[Serializable]
+    [Serializable]
     public class SearchDialog : LuisDialog<IList<SearchHit>>
     {
         protected readonly Prompts Prompts;
@@ -81,6 +138,8 @@
         protected readonly Button[] Refiners;
         protected Button[] LastButtons = null;
         protected string Refiner = null;
+        protected string DefaultProperty = null;
+
         private readonly IList<SearchHit> Selected = new List<SearchHit>();
         private IList<SearchHit> Found;
 
@@ -191,93 +250,60 @@
             }
             else
             {
-                // TODO: Specify the facet and pick up the results
-                var search = await this.ExecuteSearchAsync(this.Refiner);
                 var field = SearchClient.Schema.Field(this.Refiner);
                 var desc = field.Description();
-                var buttons = new List<Button>();
-                var choices = (from facet in search.Facets[this.Refiner] orderby facet.Value ascending select facet);
-                if (field.FilterPreference == PreferredFilter.None)
+                var anyButton = new Button(string.Format(this.Prompts.AnyLabel, desc), string.Format(this.Prompts.AnyMessage, desc));
+                if (field.FilterPreference == PreferredFilter.Facet
+                    || field.FilterPreference == PreferredFilter.MinValue
+                    || field.FilterPreference == PreferredFilter.MaxValue)
                 {
-                    foreach (var choice in choices)
+                    var search = await this.ExecuteSearchAsync(this.Refiner);
+                    var buttons = new List<Button>();
+                    var choices = (from facet in search.Facets[this.Refiner] orderby facet.Value ascending select facet);
+                    if (field.FilterPreference == PreferredFilter.Facet)
                     {
-                        buttons.Add(new Button($"{choice.Value} {desc}", $"{choice.Value} ({choice.Count})"));
+                        foreach (var choice in choices)
+                        {
+                            buttons.Add(new Button($"{choice.Value} {desc}", $"{choice.Value} ({choice.Count})"));
+                        }
                     }
-                }
-                else if (field.FilterPreference == PreferredFilter.MinValue)
-                {
-                    var total = choices.Sum((choice) => choice.Count);
-                    foreach (var choice in choices)
+                    else if (field.FilterPreference == PreferredFilter.MinValue)
                     {
-                        buttons.Add(new Button($"{choice.Value}+ {desc}", $"{choice.Value}+ ({total})"));
-                        total -= choice.Count;
+                        var total = choices.Sum((choice) => choice.Count);
+                        foreach (var choice in choices)
+                        {
+                            buttons.Add(new Button($"{choice.Value}+ {desc}", $"{choice.Value}+ ({total})"));
+                            total -= choice.Count;
+                        }
                     }
-                }
-                else if (field.FilterPreference == PreferredFilter.MaxValue)
-                {
-                    long total = 0;
-                    foreach (var choice in choices)
+                    else if (field.FilterPreference == PreferredFilter.MaxValue)
                     {
-                        total += choice.Count;
-                        buttons.Add(new Button($"<= {choice.Value} {desc}", $"<= {choice.Value} ({total})"));
+                        long total = 0;
+                        foreach (var choice in choices)
+                        {
+                            total += choice.Count;
+                            buttons.Add(new Button($"<= {choice.Value} {desc}", $"<= {choice.Value} ({total})"));
+                        }
                     }
-                }
-                if (buttons.Any())
-                {
-                    buttons.Add(new Button($"Any number of {desc}", "Any"));
-                    await PromptAsync(context, string.Format(Prompts.FacetValuePrompt, desc), buttons.ToArray());
-                    context.Wait(MessageReceived);
-                }
-                else if (field.FilterPreference == PreferredFilter.RangeMin)
-                {
-                    PromptDialog.Number(context, MinValue, string.Format(this.Prompts.MinimumPrompt, desc));
-                }
-                else if (field.FilterPreference == PreferredFilter.RangeMax)
-                {
-                    PromptDialog.Number(context, MaxValue, string.Format(this.Prompts.MaximumPrompt, desc));
-                }
-                else if (field.FilterPreference == PreferredFilter.Range)
-                {
-                    PromptDialog.Number(context, RangeMin, string.Format(this.Prompts.MinimumPrompt, this.Refiner));
+                    if (buttons.Any())
+                    {
+                        buttons.Add(anyButton);
+                        await PromptAsync(context, string.Format(Prompts.FacetValuePrompt, desc), buttons.ToArray());
+                        context.Wait(MessageReceived);
+                    }
+                    else
+                    {
+                        await PromptAsync(context, string.Format(this.Prompts.NoValuesPrompt, desc));
+                        context.Wait(MessageReceived);
+                    }
                 }
                 else
                 {
-                    await PromptAsync(context, string.Format(this.Prompts.NoValuesPrompt, this.Refiner));
+                    await PromptAsync(context, string.Format(this.Prompts.FilterPrompt, desc), anyButton);
+                    DefaultProperty = this.Refiner;
                     context.Wait(MessageReceived);
                 }
             }
-        }
-
-        private async Task MinValue(IDialogContext context, IAwaitable<double> input)
-        {
-            var number = await input;
-            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter, 
-                new FilterExpression(Operator.GreaterThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
-            await Search(context);
-        }
-
-        private async Task MaxValue(IDialogContext context, IAwaitable<double> input)
-        {
-            var number = await input;
-            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter, 
-                new FilterExpression(Operator.LessThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
-            await Search(context);
-        }
-
-        private async Task RangeMin(IDialogContext context, IAwaitable<double> input)
-        {
-            var number = await input;
-            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter,
-                new FilterExpression(Operator.GreaterThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
-            PromptDialog.Number(context, RangeMax, string.Format(this.Prompts.MaximumPrompt, this.Refiner));
-        }
-
-        private async Task RangeMax(IDialogContext context, IAwaitable<double> input)
-        {
-            var number = await input;
-            this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter,
-                new FilterExpression(Operator.LessThanOrEqual, this.SearchClient.Schema.Field(this.Refiner), number));
-            await Search(context);
         }
 
         private void Canonicalizers()
@@ -353,6 +379,7 @@
                 substrings = new string[] { this.QueryBuilder.Spec.Text }.Union(substrings);
             }
             this.QueryBuilder.Spec.Text = string.Join(" ", substrings);
+            DefaultProperty = null;
             await Search(context);
         }
 
@@ -442,14 +469,14 @@
         private Range Resolve(ComparisonEntity c)
         {
             Range range = null;
-            var propertyName = this.FieldCanonicalizer.Canonicalize(c.Property?.Entity);
+            var propertyName = (c.Property == null ? (DefaultProperty ?? this.SearchClient.Schema.DefaultNumericProperty) : this.FieldCanonicalizer.Canonicalize(c.Property.Entity));
             if (propertyName != null)
             {
                 range = new Range { Property = this.SearchClient.Schema.Field(propertyName) };
                 bool isCurrency;
                 object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
                 object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
-                if (lower is double && double.IsNaN((double) lower))
+                if (lower is double && double.IsNaN((double)lower))
                 {
                     lower = c.Lower.Entity;
                 }
@@ -630,6 +657,150 @@
                 this.Selected.Remove(hit);
                 await ShowList(context);
             }
+        }
+    }
+    public static partial class Extensions
+    {
+        public static IEnumerable<string> UncoveredSubstrings(this IEnumerable<EntityRecommendation> entities, string originalText)
+        {
+            var ranges = new[] { new { start = 0, end = originalText.Length } }.ToList();
+            foreach (var entity in entities)
+            {
+                if (entity.StartIndex.HasValue)
+                {
+                    int i = 0;
+                    while (i < ranges.Count)
+                    {
+                        var range = ranges[i];
+                        if (range.start > entity.EndIndex)
+                        {
+                            break;
+                        }
+                        if (range.start == entity.StartIndex)
+                        {
+                            if (range.end <= entity.EndIndex)
+                            {
+                                // Completely contained 
+                                ranges.RemoveAt(i);
+                            }
+                            else
+                            {
+                                // Remove from start
+                                ranges.RemoveAt(i);
+                                ranges.Insert(i, new { start = entity.EndIndex.Value + 1, end = range.end });
+                                ++i;
+                            }
+                        }
+                        else if (range.end == entity.EndIndex)
+                        {
+                            // Remove from end
+                            ranges.RemoveAt(i);
+                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value });
+                            ++i;
+                        }
+                        else if (range.start < entity.StartIndex && range.end > entity.EndIndex)
+                        {
+                            // Split
+                            ranges.RemoveAt(i);
+                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value });
+                            ranges.Insert(++i, new { start = entity.EndIndex.Value + 1, end = range.end });
+                            ++i;
+                        }
+                        else if (range.start > entity.StartIndex && range.end < entity.EndIndex)
+                        {
+                            // Completely contained
+                            ranges.RemoveAt(i);
+                        }
+                        else
+                        {
+                            ++i;
+                        }
+                    }
+                }
+            }
+            var substrings = new List<string>();
+            foreach (var range in ranges)
+            {
+                var str = originalText.Substring(range.start, range.end - range.start).Trim();
+                if (!string.IsNullOrEmpty(str))
+                {
+                    substrings.Add(str);
+                }
+            }
+            return substrings;
+        }
+
+        public static FilterExpression GenerateFilterExpression(this IEnumerable<FilterExpression> filters, Operator connector = Operator.And, FilterExpression soFar = null)
+        {
+            FilterExpression result = soFar;
+            foreach (var filter in filters)
+            {
+                result = FilterExpression.Combine(result, filter, connector);
+            }
+            return result;
+        }
+
+        public static FilterExpression GenerateFilterExpression(this IEnumerable<Range> ranges, Operator connector, FilterExpression soFar = null)
+        {
+            FilterExpression filter = soFar;
+
+            foreach (var range in ranges)
+            {
+                var lowercmp = (range.IncludeLower ? Operator.GreaterThanOrEqual : Operator.GreaterThan);
+                var uppercmp = (range.IncludeUpper ? Operator.LessThanOrEqual : Operator.LessThan);
+                if (range.Lower is double && double.IsNegativeInfinity((double)range.Lower))
+                {
+                    if (!double.IsPositiveInfinity((double)range.Upper))
+                    {
+                        filter = FilterExpression.Combine(filter, new FilterExpression(uppercmp, range.Property, range.Upper), connector);
+                    }
+                }
+                else if (range.Upper is double && double.IsPositiveInfinity((double)range.Upper))
+                {
+                    filter = FilterExpression.Combine(filter, new FilterExpression(lowercmp, range.Property, range.Lower), connector);
+                }
+                else if (range.Lower == range.Upper)
+                {
+                    filter = FilterExpression.Combine(filter, new FilterExpression(range.Lower is string ? Operator.FullText : Operator.Equal, range.Property, range.Lower), connector);
+                }
+                else
+                {
+                    var child = FilterExpression.Combine(new FilterExpression(lowercmp, range.Property, range.Lower),
+                                        new FilterExpression(uppercmp, range.Property, range.Upper), Operator.And);
+                    filter = FilterExpression.Combine(filter, child, connector);
+                }
+            }
+            return filter;
+        }
+
+        public static string GenerateFilter(this IEnumerable<Range> ranges)
+        {
+            var filter = new StringBuilder();
+            var seperator = "";
+            foreach (var range in ranges)
+            {
+                filter.Append($"{seperator}");
+                var lowercmp = (range.IncludeLower ? "ge" : "gt");
+                var uppercmp = (range.IncludeUpper ? "le" : "lt");
+                if (range.Lower is double && double.IsNegativeInfinity((double)range.Lower))
+                {
+                    filter.Append($"{range.Property} {uppercmp} {range.Upper}");
+                }
+                else if (double.IsPositiveInfinity((double)range.Upper))
+                {
+                    filter.Append($"{range.Property} {lowercmp} {range.Lower}");
+                }
+                else if (range.Lower == range.Upper)
+                {
+                    filter.Append($"{range.Property} eq {range.Lower}");
+                }
+                else
+                {
+                    filter.Append($"({range.Property} {lowercmp} {range.Lower} and {range.Property} {uppercmp} {range.Upper})");
+                }
+                seperator = " and ";
+            }
+            return filter.ToString();
         }
     }
 }

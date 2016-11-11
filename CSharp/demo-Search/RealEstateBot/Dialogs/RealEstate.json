@@ -1,349 +1,397 @@
 {
-  "fragments": [],
-  "fields": {
+  "FacetsOverride": null,
+  "Fragments": [],
+  "DefaultCurrencyProperty": null,
+  "DefaultNumericProperty": null,
+  "DefaultGeoProperty": null,
+  "Fields": {
     "listingId": {
-      "name": "listingId",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": false,
-      "isFilterable": false,
-      "isKey": true,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "listingId",
-        "alternatives": ["listing"]
+      "Name": "listingId",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": false,
+      "IsFilterable": false,
+      "IsKey": true,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": false,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "listingId",
+        "Alternatives": [
+          "listing Id"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "beds": {
-      "name": "beds",
-      "type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 1,
-      "nameSynonyms": {
-        "canonical": "beds",
-        "alternatives": ["beds", "bed", "bedroom", "bedrooms"]
+      "Name": "beds",
+      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 2,
+      "NameSynonyms": {
+        "Canonical": "beds",
+        "Alternatives": [
+          "beds", "bed", "bedroom", "bedrooms"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "baths": {
-      "name": "baths",
-      "type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 1,
-      "nameSynonyms": {
-        "canonical": "baths",
-        "alternatives": ["bathrooms", "bath", "baths", "bathroom"]
+      "Name": "baths",
+      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 2,
+      "NameSynonyms": {
+        "Canonical": "baths",
+        "Alternatives": [
+          "bathrooms",
+          "bath",
+          "baths",
+          "bathroom"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "description": {
-      "name": "description",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": false,
-      "isFilterable": false,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "description",
-        "alternatives": ["description"]
+      "Name": "description",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": false,
+      "IsFilterable": false,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": false,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "description",
+        "Alternatives": [
+          "description"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "sqft": {
-      "name": "sqft",
-      "type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 4,
-      "nameSynonyms": {
-        "canonical": "sqft",
-        "alternatives": ["sq feet", "sqft", "square feet", "square foot", "sq foot"]
+      "Name": "sqft",
+      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "sqft",
+        "Alternatives": [
+          "sq feet",
+          "sqft",
+          "square feet",
+          "square foot",
+          "sq foot"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "daysOnMarket": {
-      "name": "daysOnMarket",
-      "type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 4,
-      "nameSynonyms": {
-        "canonical": "daysOnMarket",
-        "alternatives": ["days on market"]
+      "Name": "daysOnMarket",
+      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "daysOnMarket",
+        "Alternatives": [
+          "days On Market"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "status": {
-      "name": "status",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "status",
-        "alternatives": ["status"]
+      "Name": "status",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": false,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "status",
+        "Alternatives": [
+          "status"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "source": {
-      "name": "source",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "source",
-        "alternatives": ["listing agent", "source"]
+      "Name": "source",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": false,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "source",
+        "Alternatives": [
+          "source", "listing agent"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "number": {
-      "name": "number",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": false,
-      "isFilterable": false,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "number",
-        "alternatives": ["number"]
+      "Name": "number",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": false,
+      "IsFilterable": false,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": false,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "number",
+        "Alternatives": [
+          "number"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "street": {
-      "name": "street",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "street",
-        "alternatives": ["street", "st"]
+      "Name": "street",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": false,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "street",
+        "Alternatives": [
+          "street", "st"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "unit": {
-      "name": "unit",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": false,
-      "isFilterable": false,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "unit",
-        "alternatives": ["unit"]
+      "Name": "unit",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": false,
+      "IsFilterable": false,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": false,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "unit",
+        "Alternatives": [
+          "unit"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "type": {
-      "name": "type",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "type",
-        "alternatives": ["type"]
+      "Name": "type",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": false,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "type",
+        "Alternatives": [
+          "type"
+        ]
       },
-      "valueSynonyms": [
-      {
-        "canonical":"House", 
-        "alternatives":["home","homes", "house", "houses"]
-      },
-      {
-        "canonical":"Apartment",
-        "alternatives":["apartment", "apartments", "condo", "condos"]
-      }]
+      "ValueSynonyms": [
+        {
+          "canonical": "House",
+          "alternatives": [ "home", "homes", "house", "houses" ]
+        },
+        {
+          "canonical": "Apartment",
+          "alternatives": [ "apartment", "apartments", "condo", "condos" ]
+        }
+      ]
     },
     "city": {
-      "name": "city",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "city",
-        "alternatives": ["city"]
+      "Name": "city",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": true,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "city",
+        "Alternatives": [
+          "city"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "cityPhonetic": {
-      "name": "cityPhonetic",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "cityPhonetic",
-        "alternatives": []
+      "Name": "cityPhonetic",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": true,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "cityPhonetic",
+        "Alternatives":  []
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "district": {
-      "name": "district",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "district",
-        "alternatives": ["district"]
+      "Name": "district",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "district",
+        "Alternatives": [
+          "district"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "region": {
-      "name": "region",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "region",
-        "alternatives": ["region", "area"]
+      "Name": "region",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": true,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "region",
+        "Alternatives": [
+          "region", "area"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "zipcode": {
-      "name": "zipcode",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "zipcode",
-        "alternatives": ["zip code", "zip", "zipcode"]
+      "Name": "zipcode",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": true,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "zipcode",
+        "Alternatives": [ "zip code", "zip", "zipcode" ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "countryCode": {
-      "name": "countryCode",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": true,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "countryCode",
-        "alternatives": ["country", "country code"]
+      "Name": "countryCode",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": true,
+      "IsSortable": true,
+      "FilterPreference": 1,
+      "NameSynonyms": {
+        "Canonical": "countryCode",
+        "Alternatives": [
+          "country", "country Code"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "location": {
-      "name": "location",
-      "type": "Microsoft.Spatial.GeographyPoint, Microsoft.Spatial, Version=6.15.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-      "isFacetable": false,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "location",
-        "alternatives": ["location", "located"]
+      "Name": "location",
+      "Type": "Microsoft.Spatial.GeographyPoint, Microsoft.Spatial, Version=6.15.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+      "IsFacetable": false,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "location",
+        "Alternatives": [
+          "location", "located"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "price": {
-      "name": "price",
-      "type": "System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": true,
-      "isFilterable": true,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": true,
-      "filterPreference": 5,
-      "nameSynonyms": {
-        "canonical": "price",
-        "alternatives": ["price", "cost", "costs"]
+      "Name": "price",
+      "Type": "System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": true,
+      "IsFilterable": true,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": true,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "price",
+        "Alternatives": [
+          "price", "cost", "costs"
+        ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     },
     "thumbnail": {
-      "name": "thumbnail",
-      "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-      "isFacetable": false,
-      "isFilterable": false,
-      "isKey": false,
-      "isRetrievable": true,
-      "isSearchable": false,
-      "isSortable": false,
-      "filterPreference": 0,
-      "nameSynonyms": {
-        "canonical": "thumbnail",
-        "alternatives": []
+      "Name": "thumbnail",
+      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "IsFacetable": false,
+      "IsFilterable": false,
+      "IsKey": false,
+      "IsRetrievable": true,
+      "IsSearchable": false,
+      "IsSortable": false,
+      "FilterPreference": 0,
+      "NameSynonyms": {
+        "Canonical": "thumbnail",
+        "Alternatives": [ ]
       },
-      "valueSynonyms": []
+      "ValueSynonyms": []
     }
   }
 }

@@ -80,7 +80,7 @@
     {
       "name": "Properties",
       "mode": true,
-      "words": "beds,bed,bedroom,bedrooms,bathrooms,bath,baths,bathroom,sq feet,sqft,square feet,square foot,sq foot,days on market,status,listing agent,source,street,st,type,city,district,region,area,zip code,zip,zipcode,country,country code,price,cost,costs",
+      "words": "beds,bed,bedroom,bedrooms,bathrooms,bath,baths,bathroom,sq feet,sqft,square feet,square foot,sq foot,days on market,status,source,listing agent,street,st,type,city,district,region,area,zip code,zip,zipcode,country,country code,price,cost,costs",
       "activated": true
     },
     {
@@ -494,28 +494,28 @@
       ]
     },
     {
-      "text": "no more than 4 listing agent and and at most 2 costs",
+      "text": "no more than 4 source and and at most 2 costs",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
           "startPos": 4,
-          "endPos": 5
+          "endPos": 4
         },
         {
           "entity": "Property",
-          "startPos": 11,
-          "endPos": 11
+          "startPos": 10,
+          "endPos": 10
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 5
+          "endPos": 4
         },
         {
           "entity": "Comparison",
-          "startPos": 8,
-          "endPos": 11
+          "startPos": 7,
+          "endPos": 10
         },
         {
           "entity": "Value",
@@ -524,8 +524,8 @@
         },
         {
           "entity": "Value",
-          "startPos": 10,
-          "endPos": 10
+          "startPos": 9,
+          "endPos": 9
         },
         {
           "entity": "Operator",
@@ -534,8 +534,8 @@
         },
         {
           "entity": "Operator",
-          "startPos": 8,
-          "endPos": 9
+          "startPos": 7,
+          "endPos": 8
         }
       ]
     },
@@ -973,28 +973,28 @@
       ]
     },
     {
-      "text": "source is at least 4",
+      "text": "listing agent is at least 4",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Property",
           "startPos": 0,
-          "endPos": 0
+          "endPos": 1
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 4
+          "endPos": 5
         },
         {
           "entity": "Value",
-          "startPos": 4,
-          "endPos": 4
+          "startPos": 5,
+          "endPos": 5
         },
         {
           "entity": "Operator",
-          "startPos": 2,
-          "endPos": 3
+          "startPos": 3,
+          "endPos": 4
         }
       ]
     },
@@ -1079,6 +1079,37 @@
           "entity": "Value",
           "startPos": 0,
           "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "between 200 and 400 bath",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     },
@@ -1259,17 +1290,6 @@
       ]
     },
     {
-      "text": "listing agent",
-      "intent": "Facet",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
       "text": "source",
       "intent": "Facet",
       "entities": [
@@ -1277,6 +1297,17 @@
           "entity": "Property",
           "startPos": 0,
           "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "listing agent",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
         }
       ]
     },

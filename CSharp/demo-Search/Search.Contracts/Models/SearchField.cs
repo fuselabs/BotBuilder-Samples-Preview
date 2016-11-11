@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Search.Models
 {
-    public enum PreferredFilter { None, MinValue, MaxValue, RangeMin, RangeMax, Range };
+    public enum PreferredFilter { None, Facet, MinValue, MaxValue };
 
     [Serializable]
     public class SearchField
