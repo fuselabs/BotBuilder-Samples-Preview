@@ -504,7 +504,7 @@
             }
             else
             {
-                this.FieldCanonicalizer.Canonicalize(c.Property.Entity);
+                propertyName = this.FieldCanonicalizer.Canonicalize(c.Property.Entity);
             }
             if (propertyName != null)
             {

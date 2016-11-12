@@ -156,6 +156,7 @@
             string histogramPath = null;
             string schemaPath = indexName + ".json";
             int samples = int.MaxValue;
+            int uniqueValueThreshold = 5000;
             for (var i = 3; i < args.Length; ++i)
             {
                 var arg = args[i];
@@ -166,6 +167,7 @@
                     case "-h": histogramPath = NextArg(++i, args); break;
                     case "-o": schemaPath = NextArg(++i, args); break;
                     case "-s": samples = int.Parse(NextArg(++i, args)); break;
+                    case "-u": uniqueValueThreshold = int.Parse(NextArg(++i, args)); break;
                     default: Usage($"{arg} is not understood."); break;
                 }
             }
@@ -204,6 +206,18 @@
                 {
                     var deserializer = new BinaryFormatter();
                     histograms = (Dictionary<string, Histogram<object>>)deserializer.Deserialize(stream);
+                    foreach(var histogram in histograms)
+                    {
+                        var field = schema.Field(histogram.Key);
+                        var counts = histogram.Value;
+                        if (counts.Counts().Count() < uniqueValueThreshold
+                            && counts.Values().GetType() == typeof(string))
+                        {
+                            foreach(var value in counts.Pairs())
+                            {
+                            }
+                        }
+                    }
                     // TODO: Use histogram to infer some schema information
                 }
             }
