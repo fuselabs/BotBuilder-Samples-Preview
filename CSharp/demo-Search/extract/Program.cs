@@ -186,7 +186,7 @@
                 var indexClient = new SearchIndexClient(serviceName, indexName, new SearchCredentials(adminKey));
                 if (facets == null)
                 {
-                    facets = (from field in schema.Fields.Values where !field.Type.IsNumeric() && field.IsFilterable select field.Name).ToArray();
+                    facets = (from field in schema.Fields.Values where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable select field.Name).ToArray();
                 }
                 var id = schema.Fields.Values.First((f) => f.IsKey);
                 var histograms = new Dictionary<string, Histogram<object>>();
