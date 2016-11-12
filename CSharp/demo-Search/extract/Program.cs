@@ -11,6 +11,7 @@
     using System.IO;
     using System.Linq;
     using Search.Models;
+    using Azure;
 
     class Program
     {
@@ -125,6 +126,8 @@
             Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.");
             Console.WriteLine("-o <outputFile>: Where to put generated schema and histogram files.");
             Console.WriteLine("-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
+            Console.WriteLine("-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 5000 from LUIS limit.");
+            Console.WriteLine("-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.");
             Environment.Exit(-1);
         }
 
@@ -157,6 +160,7 @@
             string schemaPath = indexName + ".json";
             int samples = int.MaxValue;
             int uniqueValueThreshold = 5000;
+            string sortable = null;
             for (var i = 3; i < args.Length; ++i)
             {
                 var arg = args[i];
@@ -168,24 +172,27 @@
                     case "-o": schemaPath = NextArg(++i, args); break;
                     case "-s": samples = int.Parse(NextArg(++i, args)); break;
                     case "-u": uniqueValueThreshold = int.Parse(NextArg(++i, args)); break;
+                    case "-v": sortable = NextArg(++i, args); break;
                     default: Usage($"{arg} is not understood."); break;
                 }
             }
             var schema = Search.Azure.SearchTools.GetIndexSchema(serviceName, adminKey, indexName);
             if (generatePath != null)
             {
+                if (sortable == null)
+                {
+                    Usage("You must specify a field with -v.");
+                }
                 var indexClient = new SearchIndexClient(serviceName, indexName, new SearchCredentials(adminKey));
                 if (facets == null)
                 {
-                    facets = (from field in schema.Fields.Values where field.IsFacetable select field.Name).ToArray();
+                    facets = (from field in schema.Fields.Values where !field.Type.IsNumeric() && field.IsFilterable select field.Name).ToArray();
                 }
-                var sortable = schema.Fields.Values.First((f) => f.IsSortable);
                 var id = schema.Fields.Values.First((f) => f.IsKey);
-                var path = ".";
                 var histograms = new Dictionary<string, Histogram<object>>();
                 var sp = new SearchParameters();
                 var timer = Stopwatch.StartNew();
-                var results = Apply(indexClient, sortable.Name, id.Name, null, sp,
+                var results = Apply(indexClient, sortable, id.Name, null, sp,
                     (count, result) =>
                     {
                         Process(count, result, facets, histograms);
