@@ -213,22 +213,38 @@
                 {
                     var deserializer = new BinaryFormatter();
                     histograms = (Dictionary<string, Histogram<object>>)deserializer.Deserialize(stream);
-                    foreach(var histogram in histograms)
+                    foreach (var histogram in histograms)
                     {
                         var field = schema.Field(histogram.Key);
                         var counts = histogram.Value;
                         if (counts.Counts().Count() < uniqueValueThreshold
-                            && counts.Values().GetType() == typeof(string))
+                            && counts.Values().First().GetType() == typeof(string))
                         {
-                            foreach(var value in counts.Pairs())
+                            var vals = new List<Synonyms>();
+                            foreach (var value in counts.Pairs())
                             {
+                                var canonical = value.Key as string;
+                                if (!string.IsNullOrWhiteSpace(canonical))
+                                {
+                                    // Remove punctuation and trimming
+                                    var alt = Normalize(canonical);
+                                    var synonyms = new Synonyms(canonical, alt);
+                                    vals.Add(synonyms);
+                                }
                             }
+                            field.ValueSynonyms = vals.ToArray();
                         }
                     }
-                    // TODO: Use histogram to infer some schema information
                 }
             }
             schema.Save(schemaPath);
         }
+
+        public static string Normalize(string original)
+        {
+            var result = original.Trim();
+            return result;
+        }
     }
+
 }

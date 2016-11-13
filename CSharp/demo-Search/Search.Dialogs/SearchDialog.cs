@@ -454,7 +454,7 @@
         [LuisIntent("Done")]
         public Task Done(IDialogContext context, LuisResult result)
         {
-            context.Done(Found);
+            context.Done(Selected);
             return Task.CompletedTask;
         }
 

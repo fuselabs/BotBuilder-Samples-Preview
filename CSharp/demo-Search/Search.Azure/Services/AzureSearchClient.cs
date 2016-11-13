@@ -164,7 +164,7 @@
 
             if (facet != null)
             {
-                parameters.Facets = new List<string> { facet };
+                parameters.Facets = new List<string> { $"{facet},count:100" };
             }
 
             var searchExpressions = new List<FilterExpression>();
