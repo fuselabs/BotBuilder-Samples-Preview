@@ -298,7 +298,7 @@
           "District"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [ ]
     },
     "region": {
       "Name": "region",
@@ -316,7 +316,308 @@
           "State", "region", "area"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [
+        {
+          "Canonical": "ak",
+          "Alternatives": [
+            "Alaska", "ak"
+          ]
+        },
+        {
+          "Canonical": "al",
+          "Alternatives": [
+            "Alabama", "al"
+          ]
+        },
+        {
+          "Canonical": "ar",
+          "Alternatives": [
+            "Arkansas", "ar"
+          ]
+        },
+        {
+          "Canonical": "az",
+          "Alternatives": [
+            "Arizona", "az"
+          ]
+        },
+        {
+          "Canonical": "ca",
+          "Alternatives": [
+            "California", "ca"
+          ]
+        },
+        {
+          "Canonical": "co",
+          "Alternatives": [
+            "Colorado", "co"
+          ]
+        },
+        {
+          "Canonical": "ct",
+          "Alternatives": [
+            "Connecticut", "ct"
+          ]
+        },
+        {
+          "Canonical": "dc",
+          "Alternatives": [
+            "Washington DC", "district of columbia", "dc"
+          ]
+        },
+        {
+          "Canonical": "de",
+          "Alternatives": [
+            "Delaware", "de"
+          ]
+        },
+        {
+          "Canonical": "fl",
+          "Alternatives": [
+            "Florida", "fl"
+          ]
+        },
+        {
+          "Canonical": "ga",
+          "Alternatives": [
+            "Georgia", "ga"
+          ]
+        },
+        {
+          "Canonical": "ia",
+          "Alternatives": [
+            "Iowa", "ia"
+          ]
+        },
+        {
+          "Canonical": "id",
+          "Alternatives": [
+            "Idaho", "id"
+          ]
+        },
+        {
+          "Canonical": "il",
+          "Alternatives": [
+            "Illinois", "il"
+          ]
+        },
+        {
+          "Canonical": "in",
+          "Alternatives": [
+            "Indiana"
+          ]
+        },
+        {
+          "Canonical": "ks",
+          "Alternatives": [
+            "Kansas", "ks"
+          ]
+        },
+        {
+          "Canonical": "ky",
+          "Alternatives": [
+            "Kentucky", "ky"
+          ]
+        },
+        {
+          "Canonical": "la",
+          "Alternatives": [
+            "Louisiana", "la"
+          ]
+        },
+        {
+          "Canonical": "ma",
+          "Alternatives": [
+            "Massachusetts", "ma"
+          ]
+        },
+        {
+          "Canonical": "md",
+          "Alternatives": [
+            "Maryland", "md"
+          ]
+        },
+        {
+          "Canonical": "me",
+          "Alternatives": [
+            "Maine", "me"
+          ]
+        },
+        {
+          "Canonical": "mi",
+          "Alternatives": [
+            "Michigan", "mi"
+          ]
+        },
+        {
+          "Canonical": "mn",
+          "Alternatives": [
+            "Minnesota", "mn"
+          ]
+        },
+        {
+          "Canonical": "mo",
+          "Alternatives": [
+            "Missouri", "mo"
+          ]
+        },
+        {
+          "Canonical": "ms",
+          "Alternatives": [
+            "Mississippi", "ms"
+          ]
+        },
+        {
+          "Canonical": "mt",
+          "Alternatives": [
+            "Montana", "mt"
+          ]
+        },
+        {
+          "Canonical": "nc",
+          "Alternatives": [
+            "North Carolina", "nc"
+          ]
+        },
+        {
+          "Canonical": "nd",
+          "Alternatives": [
+            "North Dakota", "nd"
+          ]
+        },
+        {
+          "Canonical": "ne",
+          "Alternatives": [
+            "Nebraska", "ne"
+          ]
+        },
+        {
+          "Canonical": "nh",
+          "Alternatives": [
+            "New Hampshire", "nh"
+          ]
+        },
+        {
+          "Canonical": "nj",
+          "Alternatives": [
+            "New Jersey", "nj"
+          ]
+        },
+        {
+          "Canonical": "nm",
+          "Alternatives": [
+            "New Mexico", "nm"
+          ]
+        },
+        {
+          "Canonical": "nv",
+          "Alternatives": [
+            "Nevada", "nv"
+          ]
+        },
+        {
+          "Canonical": "ny",
+          "Alternatives": [
+            "New York", "ny"
+          ]
+        },
+        {
+          "Canonical": "oh",
+          "Alternatives": [
+            "Ohio", "oh"
+          ]
+        },
+        {
+          "Canonical": "ok",
+          "Alternatives": [
+            "Oklahoma", "ok"
+          ]
+        },
+        {
+          "Canonical": "or",
+          "Alternatives": [
+            "Oregon", "or"
+          ]
+        },
+        {
+          "Canonical": "pa",
+          "Alternatives": [
+            "Pennsylvania", "pa"
+          ]
+        },
+        {
+          "Canonical": "pr",
+          "Alternatives": [
+            "Puerto Rico", "pr"
+          ]
+        },
+        {
+          "Canonical": "ri",
+          "Alternatives": [
+            "Rhode Island", "ri"
+          ]
+        },
+        {
+          "Canonical": "sc",
+          "Alternatives": [
+            "South Carolina", "sc"
+          ]
+        },
+        {
+          "Canonical": "tn",
+          "Alternatives": [
+            "Tennessee", "tn"
+          ]
+        },
+        {
+          "Canonical": "tx",
+          "Alternatives": [
+            "Texas", "tx"
+          ]
+        },
+        {
+          "Canonical": "ut",
+          "Alternatives": [
+            "Utah", "ut"
+          ]
+        },
+        {
+          "Canonical": "va",
+          "Alternatives": [
+            "Virginia", "va"
+          ]
+        },
+        {
+          "Canonical": "vt",
+          "Alternatives": [
+            "Vermont", "vt"
+          ]
+        },
+        {
+          "Canonical": "wa",
+          "Alternatives": [
+            "Washington", "wa"
+          ]
+        },
+        {
+          "Canonical": "wi",
+          "Alternatives": [
+            "Wisconsin", "wi"
+          ]
+        },
+        {
+          "Canonical": "wv",
+          "Alternatives": [
+            "West Virginia", "wv"
+          ]
+        },
+        {
+          "Canonical": "wy",
+          "Alternatives": [
+            "Wyoming", "wy"
+          ]
+        }
+      ]
     },
     "zipcode": {
       "Name": "zipcode",

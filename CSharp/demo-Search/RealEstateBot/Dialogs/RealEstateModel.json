@@ -50,6 +50,9 @@
     },
     {
       "name": "type"
+    },
+    {
+      "name": "region"
     }
   ],
   "composites": [
@@ -81,7 +84,7 @@
     {
       "name": "Properties",
       "mode": true,
-      "words": "bedrooms,bed,bedroom,beds,bathrooms,bath,baths,bathroom,square feet,sq feet,sqft,square foot,sq foot,days on market,Status,listing agent,source,street,st,Type,city,district,state,region,area,zip code,zip,zipcode,country,country code,price,cost,costs",
+      "words": "bedrooms,bed,bedroom,beds,bathrooms,bath,baths,bathroom,square feet,sq feet,sqft,square foot,sq foot,days on market,Status,listing agent,source,street,st,Type,city,district,State,region,area,zip code,zip,zipcode,country,country code,price,cost,costs",
       "activated": true
     },
     {
@@ -101,6 +104,12 @@
       "mode": true,
       "activated": true,
       "words": "home,homes,house,houses,apartment,apartments,condo,condos"
+    },
+    {
+      "name": "region",
+      "mode": true,
+      "activated": true,
+      "words": "alaska,ak,alabama,al,arkansas,ar,arizona,az,california,ca,colorado,co,connecticut,ct,washington dc,district of columbia,dc,delaware,de,florida,fl,georgia,ga,iowa,ia,idaho,id,illinois,il,indiana,kansas,ks,kentucky,ky,louisiana,la,massachusetts,ma,maryland,md,maine,me,michigan,mi,minnesota,mn,missouri,mo,mississippi,ms,montana,mt,north carolina,nc,north dakota,nd,nebraska,ne,new hampshire,nh,new jersey,nj,new mexico,nm,nevada,nv,new york,ny,ohio,oh,oklahoma,ok,oregon,or,pennsylvania,pa,puerto rico,pr,rhode island,ri,south carolina,sc,tennessee,tn,texas,tx,utah,ut,virginia,va,vermont,vt,washington,wa,wisconsin,wi,west virginia,wv,wyoming,wy"
     }
   ],
   "regex_features": [
@@ -650,7 +659,7 @@
       ]
     },
     {
-      "text": "at most 3 costs and 1 state",
+      "text": "at most 3 costs and 1 State",
       "intent": "Filter",
       "entities": [
         {
@@ -1027,7 +1036,7 @@
       ]
     },
     {
-      "text": "pword qdef state",
+      "text": "pword qdef State",
       "intent": "Filter",
       "entities": [
         {
@@ -1240,11 +1249,1232 @@
       ]
     },
     {
+      "text": "unsold",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "status",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "pending",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "status",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "selling",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "status",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "sold",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "status",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
       "text": "home",
       "intent": "Filter",
       "entities": [
         {
           "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "homes",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "house",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "houses",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "apartment",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "apartments",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "condo",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "condos",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "type",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Alaska",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ak",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Alabama",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "al",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Arkansas",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ar",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Arizona",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "az",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "California",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ca",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Colorado",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "co",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Connecticut",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ct",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Washington DC",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "district of columbia",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "dc",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Delaware",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "de",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Florida",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "fl",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Georgia",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ga",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Iowa",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ia",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Idaho",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "id",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Illinois",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "il",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Indiana",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Kansas",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ks",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Kentucky",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ky",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Louisiana",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "la",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Massachusetts",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ma",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Maryland",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "md",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Maine",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "me",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Michigan",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "mi",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Minnesota",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "mn",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Missouri",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "mo",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Mississippi",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ms",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Montana",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "mt",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "North Carolina",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "nc",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "North Dakota",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "nd",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Nebraska",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ne",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "New Hampshire",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "nh",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "New Jersey",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "nj",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "New Mexico",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "nm",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Nevada",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "nv",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "New York",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "ny",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Ohio",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "oh",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Oklahoma",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ok",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Oregon",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "or",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Pennsylvania",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "pa",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Puerto Rico",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "pr",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Rhode Island",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "ri",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "South Carolina",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "sc",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Tennessee",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "tn",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Texas",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "tx",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Utah",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "ut",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Virginia",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "va",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Vermont",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "vt",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Washington",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "wa",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Wisconsin",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "wi",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "West Virginia",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "wv",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "Wyoming",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "wy",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "region",
           "startPos": 0,
           "endPos": 0
         }
@@ -1493,7 +2723,7 @@
       ]
     },
     {
-      "text": "state",
+      "text": "State",
       "intent": "Facet",
       "entities": [
         {

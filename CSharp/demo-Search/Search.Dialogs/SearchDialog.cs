@@ -8,6 +8,7 @@
     // Add support around locations
     // Values from facets are brittle.  We can fix this by having extract pull out canonical values.
     // Cannot handle street in RealEstate because of the way facet values are handled.
+    // Allow multiple synonyms in canonicalizer and generate a disjunction for query
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -255,6 +256,17 @@
             context.Wait(MessageReceived);
         }
 
+        private string FacetDescription(GenericFacet facet)
+        {
+            var description = (string)facet.Value;
+            Canonicalizer canonicalizer;
+            if (ValueCanonicalizers.TryGetValue(this.Refiner, out canonicalizer))
+            {
+                description = canonicalizer.CanonicalDescription(description);
+            }
+            return description;
+        }
+
         [LuisIntent("Facet")]
         public async Task Facet(IDialogContext context, LuisResult result)
         {
@@ -276,8 +288,11 @@
                     || field.FilterPreference == PreferredFilter.MaxValue)
                 {
                     var search = await this.ExecuteSearchAsync(this.Refiner);
+                    var choices = (from facet in search.Facets[this.Refiner]
+                                   let facetDesc = FacetDescription(facet)
+                                   orderby facetDesc ascending
+                                   select new GenericFacet() { Value = facetDesc, Count = facet.Count });
                     var buttons = new List<Button>();
-                    var choices = (from facet in search.Facets[this.Refiner] orderby facet.Value ascending select facet);
                     if (field.FilterPreference == PreferredFilter.Facet)
                     {
                         foreach (var choice in choices)

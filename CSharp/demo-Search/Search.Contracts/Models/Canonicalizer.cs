@@ -28,7 +28,12 @@ namespace Search.Models
         {
             foreach (var alt in synonyms.Alternatives)
             {
-                map.Add(Normalize(alt), synonyms);
+                var key = Normalize(alt);
+                // TODO: allow multiple synonyms and generate a disjunction for query
+                if (!map.ContainsKey(key))
+                {
+                    map.Add(Normalize(alt), synonyms);
+                }
             }
         }
 
@@ -50,6 +55,21 @@ namespace Search.Models
                 canonical = synonyms.Canonical;
             }
             return canonical;
+        }
+
+        public string CanonicalDescription(string source)
+        {
+            string description = null;
+            Synonyms synonyms;
+            if (source != null && map.TryGetValue(Normalize(source), out synonyms))
+            {
+                description = synonyms.Alternatives.FirstOrDefault();
+            }
+            if (description == null)
+            {
+                description = source;
+            }
+            return description;
         }
     }
 }

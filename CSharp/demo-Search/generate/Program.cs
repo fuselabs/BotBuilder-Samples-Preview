@@ -99,8 +99,70 @@
             }
         }
 
+        static void AddUtterances(dynamic model, IEnumerable<string> choices, string intent, string entity)
+        {
+            var newUtterances = new Dictionary<string, dynamic>();
+            var foundUtterance = new Dictionary<string, bool>();
+            foreach(var choice in choices)
+            {
+                var newUtterance = CreateUtterance(choice, intent, entity);
+                newUtterances.Add(choice, newUtterance);
+                foundUtterance.Add(choice, false);
+            }
+            foreach (var child in model.utterances)
+            {
+                dynamic newUtterance;
+                if (newUtterances.TryGetValue((string) child.text, out newUtterance))
+                {
+                    foundUtterance[newUtterance.text] = true;
+                    child.Replace(newUtterance);
+                }
+            }
+            foreach (var found in foundUtterance)
+            {
+                if (!found.Value)
+                {
+                    model.utterances.Add(newUtterances[found.Key]);
+                }
+            }
+        }
+
+        static dynamic CreateUtterance(string text, string intent, string entity)
+        {
+            dynamic newUtterance = new JObject();
+            var words = text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            newUtterance.text = string.Join(" ", text);
+            newUtterance.intent = intent;
+            var entities = new JArray();
+            dynamic attribute = new JObject();
+            attribute.entity = entity;
+            attribute.startPos = 0;
+            attribute.endPos = words.Count() - 1;
+            entities.Add(attribute);
+            newUtterance.entities = entities;
+            return newUtterance;
+        }
+
+        static string RandomValueAlternative(SearchField field, Random rand)
+        {
+            var alt = field.ValueSynonyms[rand.Next(field.ValueSynonyms.Count())];
+            return alt.Alternatives[rand.Next(alt.Alternatives.Count())];
+        }
+
+        static IEnumerable<string> ValueChoices(SearchField field)
+        {
+            foreach(var synonym in field.ValueSynonyms)
+            {
+                foreach(var alt in synonym.Alternatives)
+                {
+                    yield return alt;
+                }
+            }
+        }
+
         static void AddAttribute(dynamic model, SearchField field)
         {
+            var rand = new Random(0);
             dynamic newFeature = new JObject();
             newFeature.name = field.Name;
             newFeature.mode = true;
@@ -112,31 +174,7 @@
             newEntity.name = field.Name;
             AddNamed(model, "entities", newEntity);
 
-            dynamic newUtterance = new JObject();
-            var text = field.ValueSynonyms[0].Alternatives[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            newUtterance.text = string.Join(" ", text);
-            newUtterance.intent = "Filter";
-            var entities = new JArray();
-            dynamic attribute = new JObject();
-            attribute.entity = field.Name;
-            attribute.startPos = 0;
-            attribute.endPos = text.Count() - 1;
-            entities.Add(attribute);
-            newUtterance.entities = entities;
-            bool add = true;
-            foreach (var child in model.utterances)
-            {
-                if (child.text == newUtterance.text)
-                {
-                    child.Replace(newUtterance);
-                    add = false;
-                    break;
-                }
-            }
-            if (add)
-            {
-                model.utterances.Add(newUtterance);
-            }
+            AddUtterances(model, ValueChoices(field), "Filter", field.Name);
 
             var properties = ((JArray)model.model_features).First((dynamic token) => token.name == "Properties");
             var builder = new StringBuilder((string)properties.words);
