@@ -2,11 +2,11 @@
 {
     // TODO: List of things still to do
     // Switch to built-in currency and numbers 
+    // Improve the filter description by attaching original phrases to query expressions and showing them
+    // Show the total number of matches
     // Add spelling support
-    // Remove noise words from begin/end of keywords
     // Provide a way to reset the keywords
     // Add support around locations
-    // Values from facets are brittle.  We can fix this by having extract pull out canonical values.
     // Cannot handle street in RealEstate because of the way facet values are handled.
     // Allow multiple synonyms in canonicalizer and generate a disjunction for query
     using System;
@@ -22,6 +22,7 @@
     using Microsoft.Bot.Builder.Luis;
     using System.Text;
     using Azure;
+    using Microsoft.Bot.Builder.FormFlow.Advanced;
 
     public delegate SearchField CanonicalizerDelegate(string propertyName);
 
@@ -122,11 +123,12 @@
         public Button StartOver = new Button("Start Over");
 
         // Status
-        public string Filter = "Filter: ";
-        public string Keywords = "Keywords: ";
-        public string Sort = "Sort: ";
-        public string Page = "Page: ";
-        public string Count = "Total results: ";
+        public string Filter = "Filter: {0}";
+        public string Keywords = "Keywords: {0}";
+        public string Sort = "Sort: {0}";
+        public string Page = "Page: {0}";
+        public string Count = "Total results: {0}";
+        public string Selected = "Kept {0} results so far.";
         public string Ascending = "Ascending";
         public string Descending = "Descending";
 
@@ -407,11 +409,7 @@
             {
                 this.QueryBuilder.Spec.Filter = filter;
             }
-            if (this.QueryBuilder.Spec.Text != null)
-            {
-                substrings = new string[] { this.QueryBuilder.Spec.Text }.Union(substrings);
-            }
-            this.QueryBuilder.Spec.Text = string.Join(" ", substrings);
+            this.QueryBuilder.Spec.Phrases = this.QueryBuilder.Spec.Phrases.Union(substrings).ToList();
             DefaultProperty = null;
             await Search(context);
         }
@@ -488,7 +486,8 @@
                 entity = entity.Substring(0, entity.Length - 1);
             }
             double result;
-            if (double.TryParse(entity, out result))
+            var str = entity.Replace(",", "").Replace(" ", "");
+            if (double.TryParse(str, out result))
             {
                 result *= multiply;
             }
@@ -605,33 +604,45 @@
         {
             var builder = new StringBuilder();
             var filter = this.QueryBuilder.Spec.Filter;
-            var text = this.QueryBuilder.Spec.Text;
+            var phrases = this.QueryBuilder.Spec.Phrases;
             var sorts = this.QueryBuilder.Spec.Sort;
-            if (filter != null)
+            if (this.Selected.Any())
             {
-                builder.Append(Prompts.Filter);
-                builder.AppendLine(filter.ToString());
+                builder.AppendLine(string.Format(this.Prompts.Selected, Selected.Count()));
                 builder.AppendLine();
             }
-            if (!string.IsNullOrWhiteSpace(text))
+            if (filter != null)
             {
-                builder.AppendLine($"{Prompts.Keywords}{text}");
+                builder.AppendLine(string.Format(this.Prompts.Filter, filter.ToString()));
+                builder.AppendLine();
+            }
+            if (phrases.Any())
+            {
+                var phraseBuilder = new StringBuilder();
+                var prefix = "";
+                foreach (var phrase in phrases)
+                {
+                    phraseBuilder.Append($"{prefix}\"{phrase}\"");
+                    prefix = " ";
+                }
+                builder.AppendLine(string.Format(this.Prompts.Keywords, phraseBuilder.ToString()));
                 builder.AppendLine();
             }
             if (sorts.Count() > 0)
             {
-                builder.Append(Prompts.Sort);
+                var sortBuilder = new StringBuilder();
                 var prefix = "";
                 foreach (var sort in sorts)
                 {
                     var dir = sort.Direction == SortDirection.Ascending ? this.Prompts.Ascending : this.Prompts.Descending;
-                    builder.Append($"{prefix}{sort.Field} {dir}");
+                    sortBuilder.Append($"{prefix}{sort.Field} {dir}");
                     prefix = ", ";
                 }
-                builder.AppendLine();
+                builder.AppendLine(string.Format(this.Prompts.Sort, sortBuilder.ToString()));
                 builder.AppendLine();
             }
-            builder.AppendLine($"{Prompts.Page}{this.QueryBuilder.PageNumber}");
+            builder.AppendLine(string.Format(this.Prompts.Page, this.QueryBuilder.PageNumber));
+            builder.AppendLine();
             return builder.ToString();
         }
 
@@ -798,16 +809,60 @@
                     }
                 }
             }
-            var substrings = new List<string>();
+            IEnumerable<string> substrings = new List<string>();
             foreach (var range in ranges)
             {
-                var str = originalText.Substring(range.start, range.end - range.start).Trim();
-                if (!string.IsNullOrEmpty(str))
-                {
-                    substrings.Add(str);
-                }
+                var str = originalText.Substring(range.start, range.end - range.start);
+                substrings = substrings.Union(str.Phrases());
             }
             return substrings;
+        }
+
+        // Break string into phrases where noise words or punctuation are breaks
+        private static IEnumerable<string> Phrases(this string str)
+        {
+            var phrase = new StringBuilder();
+            var words = str.Split(' ');
+            foreach (var word in words)
+            {
+                if (!string.IsNullOrEmpty(word))
+                {
+                    if (Language.NoiseResponse(word))
+                    {
+                        if (phrase.Length > 0)
+                        {
+                            yield return phrase.ToString();
+                            phrase = new StringBuilder();
+                        }
+                    }
+                    else if (char.IsPunctuation(word.Last()))
+                    {
+                        int lastPunc = 0;
+                        for (int i = 0; i < word.Length; ++i)
+                        {
+                            if (char.IsPunctuation(word[i]))
+                            {
+                                lastPunc = i;
+                            }
+                        }
+                        phrase.Append(word.Substring(0, lastPunc));
+                        yield return phrase.ToString();
+                        phrase = new StringBuilder();
+                    }
+                    else
+                    {
+                        if (phrase.Length > 0)
+                        {
+                            phrase.Append(' ');
+                        }
+                        phrase.Append(word);
+                    }
+                }
+            }
+            if (phrase.Length > 0)
+            {
+                yield return phrase.ToString();
+            }
         }
 
         public static FilterExpression GenerateFilterExpression(this IEnumerable<FilterExpression> filters, Operator connector = Operator.And, FilterExpression soFar = null)

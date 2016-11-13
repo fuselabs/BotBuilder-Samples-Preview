@@ -240,11 +240,11 @@
       "ValueSynonyms": [
         {
           "canonical": "House",
-          "alternatives": [ "home", "homes", "house", "houses" ]
+          "alternatives": [ "Home", "homes", "house", "houses" ]
         },
         {
           "canonical": "Apartment",
-          "alternatives": [ "apartment", "apartments", "condo", "condos" ]
+          "alternatives": [ "Apartment", "apartments", "condo", "condos" ]
         }
       ]
     },

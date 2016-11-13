@@ -9,7 +9,7 @@ namespace Search.Models
     [Serializable]
     public class SearchSpec
     {
-        public string Text = null;
+        public List<string> Phrases = new List<string>();
         public FilterExpression Filter = null;
         public List<SortKey> Sort = new List<SortKey>();
         public List<string> Selection = new List<string>();
@@ -27,19 +27,19 @@ namespace Search.Models
 
         public void Merge(SearchSpec other, Operator filterCombine)
         {
-            Text = Text ?? "" + " " + other.Text ?? "";
+            this.Phrases = this.Phrases.Union(other.Phrases).ToList();
             if (Filter == null)
             {
-                Filter = other.Filter;
+                this.Filter = other.Filter;
             }
             else if (other.Filter != null)
             {
-                Filter = new FilterExpression(filterCombine, Filter, other.Filter);
+                this.Filter = new FilterExpression(filterCombine, this.Filter, other.Filter);
             }
-            Sort.AddRange(other.Sort);
-            Selection.AddRange(other.Selection);
-            Skip = Merge(Skip, other.Skip);
-            Top = Merge(Top, other.Top);
+            this.Sort.AddRange(other.Sort);
+            this.Selection.AddRange(other.Selection);
+            this.Skip = Merge(this.Skip, other.Skip);
+            this.Top = Merge(this.Top, other.Top);
         }
 
         private int? Merge(int? current, int? newVal)

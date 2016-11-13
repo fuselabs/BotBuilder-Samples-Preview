@@ -171,24 +171,25 @@
             var filter = ExtractFullText(queryBuilder.Spec.Filter, searchExpressions);
             parameters.QueryType = QueryType.Full;
             parameters.Filter = BuildFilter(filter);
-            search = BuildSearchFilter(queryBuilder.Spec.Text, searchExpressions);
+            search = BuildSearchFilter(queryBuilder.Spec.Phrases, searchExpressions);
             return parameters;
         }
 
-        private string BuildSearchFilter(string text, IList<FilterExpression> expressions)
+        private string BuildSearchFilter(IEnumerable<string> phrases, IList<FilterExpression> expressions)
         {
             var builder = new StringBuilder();
             string prefix = "";
-            if (!string.IsNullOrWhiteSpace(text))
+            foreach(var phrase in phrases)
             {
-                builder.Append($"{text} ");
+                builder.Append(prefix);
+                builder.Append(Constant(phrase));
                 prefix = " AND ";
             }
             foreach(var expression in expressions)
             {
                 var property = (SearchField) expression.Values[0];
-                var value = EscapeFilterString((string)expression.Values[1]);
-                builder.Append($"{prefix}{property.Name}:'{value}'");
+                var value = Constant(expression.Values[1]);
+                builder.Append($"{prefix}{property.Name}:{value}");
                 prefix = " AND ";
             }
             return builder.ToString();

@@ -1293,7 +1293,7 @@
       ]
     },
     {
-      "text": "home",
+      "text": "Home",
       "intent": "Filter",
       "entities": [
         {
@@ -1337,7 +1337,7 @@
       ]
     },
     {
-      "text": "apartment",
+      "text": "Apartment",
       "intent": "Filter",
       "entities": [
         {
