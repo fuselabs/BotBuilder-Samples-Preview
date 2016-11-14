@@ -260,11 +260,19 @@
 
         private string FacetDescription(GenericFacet facet)
         {
-            var description = (string)facet.Value;
-            Canonicalizer canonicalizer;
-            if (ValueCanonicalizers.TryGetValue(this.Refiner, out canonicalizer))
+            string description;
+            if (facet.Value is string)
             {
-                description = canonicalizer.CanonicalDescription(description);
+                description = (string)facet.Value;
+                Canonicalizer canonicalizer;
+                if (ValueCanonicalizers.TryGetValue(this.Refiner, out canonicalizer))
+                {
+                    description = canonicalizer.CanonicalDescription(description);
+                }
+            }
+            else
+            {
+                description = facet.Value.ToString();
             }
             return description;
         }
@@ -666,7 +674,8 @@
                 );
             await context.PostAsync(message);
             await PromptAsync(context, prompt, this.Prompts.Browse, this.Prompts.NextPage, this.Prompts.List, this.Prompts.Finished, this.Prompts.Quit, this.Prompts.StartOver);
-            this.LastQueryBuilder = this.QueryBuilder;
+            this.LastQueryBuilder = this.QueryBuilder.DeepCopy();
+            this.LastQueryBuilder.PageNumber = 0;
             context.Wait(MessageReceived);
         }
 

@@ -42,6 +42,19 @@ namespace Search.Models
             this.Top = Merge(this.Top, other.Top);
         }
 
+        public SearchSpec DeepCopy()
+        {
+            return new SearchSpec
+            {
+                Filter = this.Filter?.DeepCopy(),
+                Phrases = this.Phrases.ToList(),
+                Sort = this.Sort.ToList(),
+                Selection = this.Selection.ToList(),
+                Skip = this.Skip,
+                Top = this.Top
+            };
+        }
+
         private int? Merge(int? current, int? newVal)
         {
             int? result = current;

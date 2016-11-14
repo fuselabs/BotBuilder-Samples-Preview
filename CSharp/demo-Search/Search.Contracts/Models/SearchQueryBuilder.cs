@@ -18,6 +18,15 @@
 
         public int HitsPerPage { get; set; } = DefaultHitPerPage;
 
+        public SearchQueryBuilder DeepCopy()
+        {
+            var query = new SearchQueryBuilder();
+            query.Spec = Spec?.DeepCopy();
+            query.HitsPerPage = this.HitsPerPage;
+            query.PageNumber = this.PageNumber;
+            return query;
+        }
+
         public virtual void Reset()
         {
             Spec = new SearchSpec();

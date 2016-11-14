@@ -9,6 +9,7 @@
     using Search.Models;
     using Search.Services;
     using System.Text;
+    using System.Linq;
 
     public class AzureSearchClient : ISearchClient
     {
@@ -183,14 +184,19 @@
             {
                 builder.Append(prefix);
                 builder.Append(Constant(phrase));
-                prefix = " AND ";
+                prefix = " OR ";
             }
-            foreach(var expression in expressions)
+            if (expressions.Any())
             {
-                var property = (SearchField) expression.Values[0];
-                var value = Constant(expression.Values[1]);
-                builder.Append($"{prefix}{property.Name}:{value}");
-                prefix = " AND ";
+                builder.Append("(");
+                foreach (var expression in expressions)
+                {
+                    var property = (SearchField)expression.Values[0];
+                    var value = Constant(expression.Values[1]);
+                    builder.Append($"{prefix}{property.Name}:{value}");
+                    prefix = " AND ";
+                }
+                builder.Append(")");
             }
             return builder.ToString();
         }
