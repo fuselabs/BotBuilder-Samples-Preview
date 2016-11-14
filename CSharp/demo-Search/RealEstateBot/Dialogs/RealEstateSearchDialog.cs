@@ -19,8 +19,8 @@
     public class RealEstateSearchDialog : IDialog
     {
         private static readonly string[] TopRefiners = { "region", "city", "type", "beds", "baths", "price", "daysOnMarket", "sqft" };
-
         private readonly ISearchClient SearchClient;
+        private const string LUISKey = "LUISSubscriptionKey";
 
         public RealEstateSearchDialog(ISearchClient searchClient)
         {
@@ -29,9 +29,12 @@
 
         public async Task StartAsync(IDialogContext context)
         {
-            var key = ConfigurationManager.AppSettings["LUISSubscriptionKey"];
-            // TODO: Remove this
-            if (string.IsNullOrWhiteSpace(key)) key = "bca5f68330234c2f9634610b48eea2da";
+            var key = ConfigurationManager.AppSettings[LUISKey];
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                // For local debugging of the sample without checking in your key
+                key = System.Environment.GetEnvironmentVariable(LUISKey);
+            }
             var cts = new CancellationTokenSource();
             var id = await LUISTools.GetOrCreateModelAsync(key, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestatemodel.json"), cts.Token);
             context.Call(new SearchDialog(new Prompts(), this.SearchClient, key, id, multipleSelection: true,
