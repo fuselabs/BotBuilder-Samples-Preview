@@ -141,6 +141,13 @@
     [Serializable]
     public class SearchDialog : LuisDialog<IList<SearchHit>>
     {
+        protected class CanonicalValue
+        {
+            public SearchField Field;
+            public string Value;
+            public string Description;
+        }
+
         protected readonly Prompts Prompts;
         protected readonly ISearchClient SearchClient;
         protected readonly PromptStyler PromptStyler;
@@ -160,7 +167,7 @@
         protected Canonicalizer FieldCanonicalizer;
 
         [NonSerialized]
-        protected Dictionary<string, Canonicalizer> ValueCanonicalizers;
+        protected Dictionary<string, CanonicalValue> ValueCanonicalizers;
 
         public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model, SearchQueryBuilder queryBuilder = null,
             PromptStyler promptStyler = null,
@@ -264,10 +271,10 @@
             if (facet.Value is string)
             {
                 description = (string)facet.Value;
-                Canonicalizer canonicalizer;
-                if (ValueCanonicalizers.TryGetValue(this.Refiner, out canonicalizer))
+                CanonicalValue value;
+                if (ValueCanonicalizers.TryGetValue(description, out value))
                 {
-                    description = canonicalizer.CanonicalDescription(description);
+                    description = value.Description;
                 }
             }
             else
@@ -354,13 +361,34 @@
             if (FieldCanonicalizer == null)
             {
                 FieldCanonicalizer = new Canonicalizer();
-                ValueCanonicalizers = new Dictionary<string, Canonicalizer>();
+                ValueCanonicalizers = new Dictionary<string, CanonicalValue>();
                 foreach (var field in this.SearchClient.Schema.Fields.Values)
                 {
                     FieldCanonicalizer.Add(field.NameSynonyms);
-                    ValueCanonicalizers[field.Name] = new Canonicalizer(field.ValueSynonyms);
+                    foreach (var synonym in field.ValueSynonyms)
+                    {
+                        foreach(var alt in synonym.Alternatives)
+                        {
+                            ValueCanonicalizers.Add(Normalize(alt), new CanonicalValue { Field = field, Value = synonym.Canonical, Description = synonym.Description });
+                        }
+                    }
                 }
             }
+        }
+
+        private string Normalize(string source)
+        {
+            return source.Trim().ToLower();
+        }
+
+        private CanonicalValue CanonicalAttribute(dynamic entity)
+        {
+            CanonicalValue canonical = null;
+            if (entity.Type != "Attribute" || !ValueCanonicalizers.TryGetValue(Normalize(entity.Entity), out canonical))
+            {
+                canonical = null;
+            }
+            return canonical;
         }
 
         [LuisIntent("Filter")]
@@ -372,9 +400,9 @@
                                where entity.Type == "Comparison"
                                select new ComparisonEntity(entity)).ToList();
             var attributes = (from entity in entities
-                              where this.SearchClient.Schema.Fields.ContainsKey(entity.Type)
-                              select new FilterExpression(Operator.Equal, this.SearchClient.Schema.Field(entity.Type),
-                                this.ValueCanonicalizers[entity.Type].Canonicalize(entity.Entity)));
+                              let canonical = CanonicalAttribute(entity)
+                              where canonical != null
+                              select new FilterExpression(Operator.Equal, canonical.Field, canonical.Value));
             var removals = (from entity in entities where entity.Type == "Removal" select entity);
             var substrings = entities.UncoveredSubstrings(result.Query);
             foreach (var removal in removals)

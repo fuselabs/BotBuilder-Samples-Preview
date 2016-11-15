@@ -1,7 +1,7 @@
 {
   "luis_schema_version": "1.3.0",
   "name": "RealEstateModel",
-  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -l bca5f68330234c2f9634610b48eea2da -o ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -tm SearchTemplate -ot ..\\..\\SearchTemplate.json -u",
+  "desc": "LUIS model generated via the command generate ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -l bca5f68330234c2f9634610b48eea2da -o ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -u -tm SearchTemplate -ot ..\\..\\SearchTemplate.json",
   "culture": "en-us",
   "intents": [
     {
@@ -34,6 +34,9 @@
   ],
   "entities": [
     {
+      "name": "Attribute"
+    },
+    {
       "name": "Operator"
     },
     {
@@ -44,24 +47,15 @@
     },
     {
       "name": "Value"
-    },
-    {
-      "name": "status"
-    },
-    {
-      "name": "type"
-    },
-    {
-      "name": "region"
     }
   ],
   "composites": [
     {
       "name": "Comparison",
       "children": [
+        "Value",
         "Property",
-        "Operator",
-        "Value"
+        "Operator"
       ]
     },
     {
@@ -84,7 +78,7 @@
     {
       "name": "Properties",
       "mode": true,
-      "words": "bedrooms,bed,bedroom,beds,bathrooms,bath,baths,bathroom,square feet,sq feet,sqft,square foot,sq foot,days on market,Status,listing agent,source,street,st,Type,city,district,State,region,area,zip code,zip,zipcode,country,country code,price,cost,costs",
+      "words": "bedrooms,bed,bedroom,beds,bathrooms,bath,baths,bathroom,square feet,sq feet,sqft,square foot,sq foot,days on market,listing agent,source,street,st,city,district,zip code,zip,zipcode,country,country code,price,cost,costs",
       "activated": true
     },
     {
@@ -94,22 +88,10 @@
       "activated": true
     },
     {
-      "name": "status",
+      "name": "Attributes",
       "mode": true,
-      "activated": true,
-      "words": "active,unsold,pending,selling,sold"
-    },
-    {
-      "name": "type",
-      "mode": true,
-      "activated": true,
-      "words": "home,homes,house,houses,apartment,apartments,condo,condos"
-    },
-    {
-      "name": "region",
-      "mode": true,
-      "activated": true,
-      "words": "alaska,ak,alabama,al,arkansas,ar,arizona,az,california,ca,colorado,co,connecticut,ct,washington dc,district of columbia,dc,delaware,de,florida,fl,georgia,ga,iowa,ia,idaho,id,illinois,il,indiana,kansas,ks,kentucky,ky,louisiana,la,massachusetts,ma,maryland,md,maine,me,michigan,mi,minnesota,mn,missouri,mo,mississippi,ms,montana,mt,north carolina,nc,north dakota,nd,nebraska,ne,new hampshire,nh,new jersey,nj,new mexico,nm,nevada,nv,new york,ny,ohio,oh,oklahoma,ok,oregon,or,pennsylvania,pa,puerto rico,pr,rhode island,ri,south carolina,sc,tennessee,tn,texas,tx,utah,ut,virginia,va,vermont,vt,washington,wa,wisconsin,wi,west virginia,wv,wyoming,wy"
+      "words": "active,unsold,pending,selling,sold,Home,homes,house,houses,Apartment,apartments,condo,condos,Alaska,ak,Alabama,al,Arkansas,ar,Arizona,az,California,ca,Colorado,co,Connecticut,ct,Washington DC,district of columbia,dc,Delaware,de,Florida,fl,Georgia,ga,Iowa,ia,Idaho,id,Illinois,il,Indiana,Kansas,ks,Kentucky,ky,Louisiana,la,Massachusetts,ma,Maryland,md,Maine,me,Michigan,mi,Minnesota,mn,Missouri,mo,Mississippi,ms,Montana,mt,North Carolina,nc,North Dakota,nd,Nebraska,ne,New Hampshire,nh,New Jersey,nj,New Mexico,nm,Nevada,nv,New York,ny,Ohio,oh,Oklahoma,ok,Oregon,or,Pennsylvania,pa,Puerto Rico,pr,Rhode Island,ri,South Carolina,sc,Tennessee,tn,Texas,tx,Utah,ut,Virginia,va,Vermont,vt,Washington,wa,Wisconsin,wi,West Virginia,wv,Wyoming,wy",
+      "activated": true
     }
   ],
   "regex_features": [
@@ -121,66 +103,9 @@
   ],
   "utterances": [
     {
-      "text": "3+ region",
+      "text": "2-4 zip code",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "at least 43 zip",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "at least 3 zip code",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -188,32 +113,6 @@
         },
         {
           "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "2-4 st",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         },
@@ -223,6 +122,11 @@
           "endPos": 2
         },
         {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
           "entity": "Operator",
           "startPos": 1,
           "endPos": 1
@@ -230,14 +134,9 @@
       ]
     },
     {
-      "text": "3-4 baths",
+      "text": "at least 3 zipcode",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -245,41 +144,41 @@
         },
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
           "startPos": 2,
           "endPos": 2
         },
         {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
           "entity": "Operator",
-          "startPos": 1,
+          "startPos": 0,
           "endPos": 1
         }
       ]
     },
     {
-      "text": "no more than 3 st",
+      "text": "no more than 3 zip",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
         {
           "entity": "Property",
           "startPos": 4,
           "endPos": 4
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 2
@@ -287,14 +186,9 @@
       ]
     },
     {
-      "text": "1+ country code",
+      "text": "3-4 source",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 3
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -304,6 +198,16 @@
           "entity": "Value",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         },
         {
           "entity": "Operator",
@@ -313,35 +217,61 @@
       ]
     },
     {
-      "text": "3 Status",
+      "text": "at least 43 bath",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
         },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "3+ source",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 1
+          "endPos": 2
         },
         {
           "entity": "Value",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
         }
       ]
     },
     {
-      "text": "between 3 and 4 costs",
+      "text": "between 3 and 4 price",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -358,9 +288,61 @@
           "endPos": 3
         },
         {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "3 sq foot",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "at most 1 costs",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
         }
       ]
     },
@@ -370,14 +352,35 @@
       "entities": []
     },
     {
-      "text": "at most 1 sq feet",
+      "text": "1+ bathroom",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
         },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "at most 3 square feet",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -389,32 +392,11 @@
           "endPos": 2
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "at most 3 sq feet",
-      "intent": "Filter",
-      "entities": [
-        {
           "entity": "Property",
           "startPos": 3,
           "endPos": 4
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
@@ -422,64 +404,43 @@
       ]
     },
     {
-      "text": "find me a 2 listing agent with at least 1 city",
+      "text": "find me a 2 days on market with at least 1 st",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 5
+          "entity": "Comparison",
+          "startPos": 3,
+          "endPos": 6
         },
         {
-          "entity": "Property",
+          "entity": "Comparison",
+          "startPos": 8,
+          "endPos": 11
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
           "startPos": 10,
           "endPos": 10
         },
         {
-          "entity": "Comparison",
-          "startPos": 3,
-          "endPos": 5
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
         },
         {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 10
+          "entity": "Property",
+          "startPos": 11,
+          "endPos": 11
         },
         {
-          "entity": "Value",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 9,
+          "entity": "Operator",
+          "startPos": 8,
           "endPos": 9
-        },
-        {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "more than $110k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
         }
       ]
     },
@@ -510,28 +471,39 @@
       ]
     },
     {
-      "text": "no more than 4 listing agent and and at most 2 costs",
+      "text": "more than $110k",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 5
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 11,
-          "endPos": 11
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 3
         },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "no more than 4 days on market and and at most 2 costs",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 5
+          "endPos": 6
         },
         {
           "entity": "Comparison",
-          "startPos": 8,
-          "endPos": 11
+          "startPos": 9,
+          "endPos": 12
         },
         {
           "entity": "Value",
@@ -540,8 +512,18 @@
         },
         {
           "entity": "Value",
-          "startPos": 10,
-          "endPos": 10
+          "startPos": 11,
+          "endPos": 11
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        },
+        {
+          "entity": "Property",
+          "startPos": 12,
+          "endPos": 12
         },
         {
           "entity": "Operator",
@@ -550,8 +532,8 @@
         },
         {
           "entity": "Operator",
-          "startPos": 8,
-          "endPos": 9
+          "startPos": 9,
+          "endPos": 10
         }
       ]
     },
@@ -603,19 +585,9 @@
       ]
     },
     {
-      "text": "between 3-4 bed and at least 3 country",
+      "text": "between 3-4 bedrooms and at least 3 country code",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 9,
-          "endPos": 9
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -624,7 +596,7 @@
         {
           "entity": "Comparison",
           "startPos": 6,
-          "endPos": 9
+          "endPos": 10
         },
         {
           "entity": "Value",
@@ -640,6 +612,16 @@
           "entity": "Value",
           "startPos": 8,
           "endPos": 8
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 10
         },
         {
           "entity": "Operator",
@@ -659,19 +641,9 @@
       ]
     },
     {
-      "text": "at most 3 costs and 1 State",
+      "text": "at most 3 costs and 1 city",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Property",
-          "startPos": 6,
-          "endPos": 6
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -693,6 +665,16 @@
           "endPos": 5
         },
         {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
           "entity": "Operator",
           "startPos": 0,
           "endPos": 1
@@ -710,13 +692,13 @@
       "entities": []
     },
     {
-      "text": "refine",
-      "intent": "Refine",
+      "text": "saved",
+      "intent": "List",
       "entities": []
     },
     {
-      "text": "saved",
-      "intent": "List",
+      "text": "refine",
+      "intent": "Refine",
       "entities": []
     },
     {
@@ -740,23 +722,23 @@
       "entities": []
     },
     {
-      "text": "any sqft",
+      "text": "any square feet",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
           "entity": "Removal",
           "startPos": 0,
-          "endPos": 1
+          "endPos": 2
         },
         {
           "entity": "RemovalOperator",
           "startPos": 0,
           "endPos": 0
-        },
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
         }
       ]
     },
@@ -771,18 +753,8 @@
       "entities": []
     },
     {
-      "text": "next",
-      "intent": "NextPage",
-      "entities": []
-    },
-    {
       "text": "done",
       "intent": "Done",
-      "entities": []
-    },
-    {
-      "text": "next page",
-      "intent": "NextPage",
       "entities": []
     },
     {
@@ -791,9 +763,19 @@
       "entities": []
     },
     {
-      "text": "no zip",
+      "text": "next page",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "no zipcode",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
         {
           "entity": "Removal",
           "startPos": 0,
@@ -803,18 +785,18 @@
           "entity": "RemovalOperator",
           "startPos": 0,
           "endPos": 0
-        },
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
         }
       ]
     },
     {
-      "text": "any number of zipcode",
+      "text": "any number of country",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
         {
           "entity": "Removal",
           "startPos": 0,
@@ -824,13 +806,13 @@
           "entity": "RemovalOperator",
           "startPos": 0,
           "endPos": 2
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
         }
       ]
+    },
+    {
+      "text": "next",
+      "intent": "NextPage",
+      "entities": []
     },
     {
       "text": "less than $200,000",
@@ -906,97 +888,9 @@
       "entities": []
     },
     {
-      "text": "costs less than 500k",
+      "text": "costs is at least 4",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "bed more than 10",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "region between 3 and 4",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Value",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "street is at least 4",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -1008,6 +902,11 @@
           "endPos": 4
         },
         {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
           "entity": "Operator",
           "startPos": 2,
           "endPos": 3
@@ -1015,107 +914,13 @@
       ]
     },
     {
-      "text": "aword bword price",
+      "text": "bedrooms more than 10",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "pword qdef State",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "rword st",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "eword fword gword bedroom",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "between 200 and 400 baths",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 1,
-          "endPos": 1
         },
         {
           "entity": "Value",
@@ -1123,183 +928,354 @@
           "endPos": 3
         },
         {
-          "entity": "Operator",
+          "entity": "Property",
           "startPos": 0,
           "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "3 Status 2 sq feet",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 2,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "5 costs 8 district",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "1 zip code 1 bed",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 2
-        },
-        {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 3,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "3+ sq foot 2 square foot",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 3
-        },
-        {
-          "entity": "Property",
-          "startPos": 5,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 4,
-          "endPos": 6
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 4,
-          "endPos": 4
         },
         {
           "entity": "Operator",
           "startPos": 1,
-          "endPos": 1
+          "endPos": 2
         }
       ]
     },
     {
-      "text": "2-3 cost 5 source",
+      "text": "pword qdef district",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
           "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "listing agent between 3 and 4",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Value",
           "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Property",
+          "entity": "Value",
           "startPos": 5,
           "endPos": 5
         },
         {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "3+ cost 2 district",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "between 200 and 400 source",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "bedroom less than 500k",
+      "intent": "Filter",
+      "entities": [
+        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
         },
         {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "1 bath 1 sq foot",
+      "intent": "Filter",
+      "entities": [
+        {
           "entity": "Comparison",
-          "startPos": 4,
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 2,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "2-3 square feet 5 costs",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "3 st 2 zip",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "5 bedrooms 8 sqft",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "aword bword sq feet",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "1 cost 2+ listing agent",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 2,
           "endPos": 5
         },
         {
@@ -1313,22 +1289,6 @@
           "endPos": 2
         },
         {
-          "entity": "Value",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "1 region 2+ beds",
-      "intent": "Filter",
-      "entities": [
-        {
           "entity": "Property",
           "startPos": 1,
           "endPos": 1
@@ -1336,27 +1296,7 @@
         {
           "entity": "Property",
           "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 2,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
+          "endPos": 5
         },
         {
           "entity": "Operator",
@@ -1366,9 +1306,29 @@
       ]
     },
     {
-      "text": "at least 1 propertyname, 2+ sq feet",
+      "text": "at least 1 propertyname, 2+ zip code",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 6,
+          "endPos": 8
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 6,
+          "endPos": 6
+        },
         {
           "entity": "Property",
           "startPos": 3,
@@ -1378,26 +1338,6 @@
           "entity": "Property",
           "startPos": 8,
           "endPos": 8
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 6,
-          "endPos": 8
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Value",
-          "startPos": 6,
-          "endPos": 6
         },
         {
           "entity": "Operator",
@@ -1412,28 +1352,18 @@
       ]
     },
     {
-      "text": "4-5 country code 3-4 zip",
+      "text": "4-5 beds 3-4 bathroom",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 4
-        },
-        {
-          "entity": "Property",
-          "startPos": 8,
-          "endPos": 8
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 4
+          "endPos": 3
         },
         {
           "entity": "Comparison",
-          "startPos": 5,
-          "endPos": 8
+          "startPos": 4,
+          "endPos": 7
         },
         {
           "entity": "Value",
@@ -1447,11 +1377,21 @@
         },
         {
           "entity": "Value",
-          "startPos": 5,
-          "endPos": 5
+          "startPos": 4,
+          "endPos": 4
         },
         {
           "entity": "Value",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
           "startPos": 7,
           "endPos": 7
         },
@@ -1462,34 +1402,34 @@
         },
         {
           "entity": "Operator",
-          "startPos": 6,
-          "endPos": 6
+          "startPos": 5,
+          "endPos": 5
         }
       ]
     },
     {
-      "text": "3+propertyname with a zword for less than $900k in yword wword",
+      "text": "between 3 and 4 price attributname for no more than $950k",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 2
+          "endPos": 4
         },
         {
           "entity": "Comparison",
-          "startPos": 7,
+          "startPos": 6,
           "endPos": 10
         },
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
         },
         {
           "entity": "Value",
@@ -1497,50 +1437,9 @@
           "endPos": 10
         },
         {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "between 3 and 4 square foot for no more than $950k",
-      "intent": "Filter",
-      "entities": [
-        {
           "entity": "Property",
           "startPos": 4,
-          "endPos": 5
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 5
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 7,
-          "endPos": 11
-        },
-        {
-          "entity": "Value",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Value",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 11
+          "endPos": 4
         },
         {
           "entity": "Operator",
@@ -1549,20 +1448,15 @@
         },
         {
           "entity": "Operator",
-          "startPos": 7,
-          "endPos": 9
+          "startPos": 6,
+          "endPos": 8
         }
       ]
     },
     {
-      "text": "between $200k and $500k with at least 3 listing agent",
+      "text": "between $200k and $500k attributname with at least 3 zipcode",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 10,
-          "endPos": 11
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -1571,7 +1465,7 @@
         {
           "entity": "Comparison",
           "startPos": 7,
-          "endPos": 11
+          "endPos": 10
         },
         {
           "entity": "Value",
@@ -1587,6 +1481,11 @@
           "entity": "Value",
           "startPos": 9,
           "endPos": 9
+        },
+        {
+          "entity": "Property",
+          "startPos": 10,
+          "endPos": 10
         },
         {
           "entity": "Operator",
@@ -1627,6 +1526,110 @@
       ]
     },
     {
+      "text": "no more than $500,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "3+propertyname with a zword for less than $900k in yword wword",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 7,
+          "endPos": 10
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 9,
+          "endPos": 10
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 8
+        }
+      ]
+    },
+    {
+      "text": "3+ sq feet in Maryland",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "al",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Attribute",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
       "text": "$100k-$800k",
       "intent": "Filter",
       "entities": [
@@ -1653,1266 +1656,178 @@
       ]
     },
     {
-      "text": "no more than $500,000",
+      "text": "between 3 and 4 baths with a ky",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 6
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
         },
         {
           "entity": "Value",
           "startPos": 3,
-          "endPos": 6
+          "endPos": 3
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
         },
         {
           "entity": "Operator",
           "startPos": 0,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "active",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "status",
-          "startPos": 0,
           "endPos": 0
         }
       ]
     },
     {
-      "text": "unsold",
+      "text": "3+ zip code ne",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "status",
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "pending",
-      "intent": "Filter",
-      "entities": [
+        },
         {
-          "entity": "status",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "selling",
-      "intent": "Filter",
-      "entities": [
+          "entity": "Attribute",
+          "startPos": 4,
+          "endPos": 4
+        },
         {
-          "entity": "status",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "sold",
-      "intent": "Filter",
-      "entities": [
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 3
+        },
         {
-          "entity": "status",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Home",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "homes",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "house",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "houses",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Apartment",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "apartments",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "condo",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "condos",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "type",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Alaska",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ak",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Alabama",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "al",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Arkansas",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ar",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Arizona",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "az",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "California",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ca",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Colorado",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "co",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Connecticut",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ct",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Washington DC",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
+          "entity": "Operator",
+          "startPos": 1,
           "endPos": 1
         }
       ]
     },
     {
-      "text": "district of columbia",
+      "text": "a Michigan",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "region",
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "an ca",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "3-4 country code attributname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "3+ country Oklahoma with a mword and an nword oword for less than $2000k in tn",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "dc",
-      "intent": "Filter",
-      "entities": [
+        },
         {
-          "entity": "region",
+          "entity": "Comparison",
+          "startPos": 12,
+          "endPos": 15
+        },
+        {
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Delaware",
-      "intent": "Filter",
-      "entities": [
+        },
         {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "de",
-      "intent": "Filter",
-      "entities": [
+          "entity": "Value",
+          "startPos": 14,
+          "endPos": 15
+        },
         {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Florida",
-      "intent": "Filter",
-      "entities": [
+          "entity": "Attribute",
+          "startPos": 3,
+          "endPos": 3
+        },
         {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "fl",
-      "intent": "Filter",
-      "entities": [
+          "entity": "Attribute",
+          "startPos": 17,
+          "endPos": 17
+        },
         {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Georgia",
-      "intent": "Filter",
-      "entities": [
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        },
         {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ga",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Iowa",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ia",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Idaho",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "id",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Illinois",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "il",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Indiana",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Kansas",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ks",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Kentucky",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ky",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Louisiana",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "la",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Massachusetts",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ma",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Maryland",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "md",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Maine",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "me",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Michigan",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "mi",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Minnesota",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "mn",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Missouri",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "mo",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Mississippi",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ms",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Montana",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "mt",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "North Carolina",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
+          "entity": "Operator",
+          "startPos": 1,
           "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "nc",
-      "intent": "Filter",
-      "entities": [
+        },
         {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "North Dakota",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "nd",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Nebraska",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ne",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "New Hampshire",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "nh",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "New Jersey",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "nj",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "New Mexico",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "nm",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Nevada",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "nv",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "New York",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "ny",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Ohio",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "oh",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Oklahoma",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ok",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Oregon",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "or",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Pennsylvania",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "pa",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Puerto Rico",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "pr",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Rhode Island",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "ri",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "South Carolina",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "sc",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Tennessee",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "tn",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Texas",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "tx",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Utah",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "ut",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Virginia",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "va",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Vermont",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "vt",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Washington",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "wa",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Wisconsin",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "wi",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "West Virginia",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "wv",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "Wyoming",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "wy",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "region",
-          "startPos": 0,
-          "endPos": 0
+          "entity": "Operator",
+          "startPos": 12,
+          "endPos": 13
         }
       ]
     },
@@ -3071,17 +1986,6 @@
       ]
     },
     {
-      "text": "Status",
-      "intent": "Facet",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
       "text": "listing agent",
       "intent": "Facet",
       "entities": [
@@ -3126,17 +2030,6 @@
       ]
     },
     {
-      "text": "Type",
-      "intent": "Facet",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
       "text": "city",
       "intent": "Facet",
       "entities": [
@@ -3149,39 +2042,6 @@
     },
     {
       "text": "district",
-      "intent": "Facet",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "State",
-      "intent": "Facet",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "region",
-      "intent": "Facet",
-      "entities": [
-        {
-          "entity": "Property",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "area",
       "intent": "Facet",
       "entities": [
         {

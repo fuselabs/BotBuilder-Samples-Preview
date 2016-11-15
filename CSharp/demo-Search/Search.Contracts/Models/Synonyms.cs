@@ -13,6 +13,11 @@ namespace Search.Models
 
         public string[] Alternatives { get; set; }
 
+        public string Description
+        {
+            get { return Alternatives.FirstOrDefault(); }
+        }
+
         public Synonyms(string canonical, params string[] alternatives)
         {
             Canonical = canonical;

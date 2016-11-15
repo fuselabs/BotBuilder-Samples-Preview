@@ -137,7 +137,7 @@
             Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.  This can be the just generated histogram.");
             Console.WriteLine("-o <schemaPath>: Where to put generated schema.");
             Console.WriteLine("-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
-            Console.WriteLine("-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 5000 from LUIS limit.");
+            Console.WriteLine("-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 100.  LUIS allows a total of 5000.");
             Console.WriteLine("-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.");
             Environment.Exit(-1);
         }
@@ -170,7 +170,7 @@
             string histogramPath = null;
             string schemaPath = indexName + ".json";
             int samples = int.MaxValue;
-            int uniqueValueThreshold = 5000;
+            int uniqueValueThreshold = 100;
             string sortable = null;
             for (var i = 3; i < args.Length; ++i)
             {

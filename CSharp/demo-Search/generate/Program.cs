@@ -16,11 +16,14 @@
     class Program
     {
         const string propertyName = "propertyname";
+        const string attributeName = "attributename";
 
         static void Clear(dynamic model)
         {
             dynamic properties = Feature(model, "Properties");
             properties.words = "";
+            dynamic attributes = Feature(model, "Attributes");
+            attributes.words = "";
         }
 
         static string Normalize(string word)
@@ -167,28 +170,19 @@
         static void AddAttribute(dynamic model, SearchField field)
         {
             var rand = new Random(0);
-            dynamic newFeature = new JObject();
-            newFeature.name = field.Name;
-            newFeature.mode = true;
-            newFeature.activated = true;
-            newFeature.words = AddValueSynonyms("", field.ValueSynonyms);
-            AddNamed(model, "model_features", newFeature);
-
-            dynamic newEntity = new JObject();
-            newEntity.name = field.Name;
-            AddNamed(model, "entities", newEntity);
-
-            AddUtterances(model, ValueChoices(field), "Filter", field.Name);
-
-            var properties = Feature(model, "Properties");
-            var builder = new StringBuilder((string)properties.words);
+            var attributes = Feature(model, "Attributes");
+            var builder = new StringBuilder((string) attributes.words);
             var prefix = builder.Length > 0 ? "," : "";
-            foreach (var alt in field.NameSynonyms.Alternatives)
+            foreach(var synonym in field.ValueSynonyms)
             {
-                builder.Append(prefix);
-                builder.Append(alt);
+                foreach(var alt in synonym.Alternatives)
+                {
+                    builder.Append(prefix);
+                    builder.Append(alt);
+                    prefix = ",";
+                }
             }
-            properties.words = builder.ToString();
+            attributes.words = builder.ToString();
         }
 
         static void ExpandFacetExamples(dynamic model)
@@ -242,23 +236,23 @@
             }
         }
 
-        static void ReplacePropertyNames(dynamic model)
+        static void ReplaceGenericNames(dynamic model)
         {
             // Use a fixed random sequence to minimize random churn
             var rand = new Random(0);
-            var propertyFeature = Feature(model, "Properties");
-            var propertyNames = ((string)propertyFeature.words).Split(',');
+            var propertyNames = ((string)Feature(model, "Properties").words).Split(',');
+            var attributes = ((string)Feature(model, "Attributes").words).Split(',');
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
                 var tokens = text.Split(' ').ToList();
-                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" orderby prop.startPos ascending select prop).ToList();
+                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" || prop.entity == "Attribute" orderby prop.startPos ascending select prop).ToList();
                 if (properties.Any())
                 {
                     for (var i = 0; i < tokens.Count();)
                     {
                         var token = tokens[i];
-                        string[] choices = (token == propertyName ? propertyNames : null);
+                        string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
                         if (choices != null)
                         {
                             var word = choices[rand.Next(choices.Length)];
@@ -343,7 +337,7 @@
                     AddComparison(template, field);
                 }
             }
-            ReplacePropertyNames(template);
+            ReplaceGenericNames(template);
             ExpandFacetExamples(template);
 
             if (p.OutputPath != null)
