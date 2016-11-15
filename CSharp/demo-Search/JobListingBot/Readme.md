@@ -1,2 +1,2 @@
-﻿extract azs-playground nycjobs <adminKey> -g JobListingBot-histogram.bin -v posting_date -h JobListingBot-histogram.bin -o ..\..\..\JobListingBot\Dialogs\JobListingBot.json -f agency,business_title,civil_service_title,level,salary_frequency,division_work_unit,tags
+﻿extract azs-playground nycjobs <adminKey> -g JobListingBot-histogram.bin -v posting_date -h JobListingBot-histogram.bin -o ..\..\..\JobListingBot\Dialogs\JobListingBot.json -f agency,business_title,civil_service_title,tags
 generate ..\..\..\JobListingBot\Dialogs\JobListingBot.json -l <your LUIS Key> -o ..\..\..\JobListingBot\Dialogs\RealEstateModel.json  -u

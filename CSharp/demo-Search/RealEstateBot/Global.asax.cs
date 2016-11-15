@@ -28,7 +28,7 @@
                .AsImplementedInterfaces()
                .SingleInstance();
 
-            builder.Register((c) => JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\realestate.json"))))
+            builder.Register((c) => JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstate.json"))))
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<AzureSearchClient>()

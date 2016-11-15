@@ -9,6 +9,9 @@
     using Search.Azure.Services;
     using Search.Models;
     using Search.Services;
+    using System.IO;
+    using Newtonsoft.Json;
+    using System.Web;
 
     public class WebApiApplication : System.Web.HttpApplication
     {
@@ -16,7 +19,7 @@
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-            builder.RegisterType<IntroDialog>()
+            builder.RegisterType<JobListingSearchDialog>()
               .As<IDialog<object>>()
               .InstancePerDependency();
 
@@ -24,6 +27,9 @@
                 .Keyed<IMapper<DocumentSearchResult, GenericSearchResult>>(FiberModule.Key_DoNotSerialize)
                 .AsImplementedInterfaces()
                 .SingleInstance();
+
+            builder.Register((c) => JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\JobListing.json"))))
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<AzureSearchClient>()
                 .Keyed<ISearchClient>(FiberModule.Key_DoNotSerialize)

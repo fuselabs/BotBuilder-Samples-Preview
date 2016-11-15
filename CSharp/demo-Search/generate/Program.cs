@@ -19,13 +19,8 @@
 
         static void Clear(dynamic model)
         {
-            foreach (var feature in model.model_features)
-            {
-                if (feature.name == "Properties")
-                {
-                    feature.words = "";
-                }
-            }
+            dynamic properties = Feature(model, "Properties");
+            properties.words = "";
         }
 
         static string Normalize(string word)
@@ -66,7 +61,7 @@
             dynamic match = null;
             foreach (var feature in model.model_features)
             {
-                if (feature.name == "Properties")
+                if (feature.name == name)
                 {
                     match = feature;
                     break;
@@ -185,11 +180,12 @@
 
             AddUtterances(model, ValueChoices(field), "Filter", field.Name);
 
-            var properties = ((JArray)model.model_features).First((dynamic token) => token.name == "Properties");
+            var properties = Feature(model, "Properties");
             var builder = new StringBuilder((string)properties.words);
+            var prefix = builder.Length > 0 ? "," : "";
             foreach (var alt in field.NameSynonyms.Alternatives)
             {
-                builder.Append(',');
+                builder.Append(prefix);
                 builder.Append(alt);
             }
             properties.words = builder.ToString();
