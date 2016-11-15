@@ -12,6 +12,7 @@
     using System.Linq;
     using Search.Models;
     using Azure;
+    using System.Text;
 
     class Program
     {
@@ -79,7 +80,7 @@
                 {
                     sp.Skip += toSkip;
                 }
-                sp.Filter = (originalFilter == null ? "" : $"({originalFilter}) and ") + $"{valueField} ge {lastValue}";
+                sp.Filter = (originalFilter == null ? "" : $"({originalFilter}) and ") + $"{valueField} ge {SearchTools.Constant(lastValue)}";
                 results = client.Documents.Search(text, sp).Results;
             }
             sp.Filter = originalFilter;
@@ -104,7 +105,17 @@
                     {
                         histogram = histograms[field] = new Histogram<object>();
                     }
-                    histogram.Add(value);
+                    if (value is string[])
+                    {
+                        foreach(var val in value as string[])
+                        {
+                            histogram.Add(val);
+                        }
+                    }
+                    else
+                    {
+                        histogram.Add(value);
+                    }
                 }
             }
             if ((count % 100) == 0)
@@ -122,9 +133,9 @@
             Console.WriteLine("extract <serviceName> <indexName> <adminKey> [-f <facetList>] [-g <histogramPath>] [-h <histogramPath>] [-o <outputPath>]");
             Console.WriteLine("Generate <indexName>.json schema file.");
             Console.WriteLine("-f <facetList>: Comma seperated list of facet names for histogram.  By default all schema facets.");
-            Console.WriteLine("-g <histogramPath>: Generate an <indexName>-histogram.bin file with histogram information from index.");
-            Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.");
-            Console.WriteLine("-o <outputFile>: Where to put generated schema and histogram files.");
+            Console.WriteLine("-g <histogramPath>: Generate a file with histogram information from index.  This can take a long time.");
+            Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.  This can be the just generated histogram.");
+            Console.WriteLine("-o <schemaPath>: Where to put generated schema.");
             Console.WriteLine("-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
             Console.WriteLine("-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 5000 from LUIS limit.");
             Console.WriteLine("-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.");
@@ -240,11 +251,25 @@
             schema.Save(schemaPath);
         }
 
-        public static string Normalize(string original)
+        public static string Normalize(string input)
         {
-            var result = original.Trim();
-            return result;
+            int start = 0;
+            for(; start < input.Length; ++start)
+            {
+                if (!char.IsPunctuation(input[start]))
+                {
+                    break;
+                }
+            }
+            int end = input.Length;
+            for(; end > 0; --end)
+            {
+                if (!char.IsPunctuation(input[end - 1]))
+                {
+                    break;
+                }
+            }
+            return end > start ? input.Substring(start, end - start) : "";
         }
     }
-
 }

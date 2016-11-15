@@ -76,8 +76,12 @@ namespace Search.Azure
             }
             else if (value is DateTime)
             {
-                var val = ((DateTime)value).ToString("o");
+                var val = ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
                 constant = $"'datetime'{val}";
+            }
+            else if (value is DateTimeOffset)
+            {
+                constant = ((DateTimeOffset)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
             }
             else
             {

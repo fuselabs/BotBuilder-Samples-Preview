@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Microsoft.Azure.Search;
     using Microsoft.Azure.Search.Models;
+    using Search.Azure;
     using Search.Models;
     using Search.Services;
     using System.Text;
@@ -48,20 +49,6 @@
             {
                 schema.AddField(SearchTools.ToSearchField(field));
             }
-        }
-
-        public static string Constant(object value)
-        {
-            string constant = null;
-            if (value is string)
-            {
-                constant = $"'{EscapeFilterString(value as string)}'";
-            }
-            else
-            {
-                constant = value.ToString();
-            }
-            return constant;
         }
 
         // Azure search only supports full text in a seperate tree combined with AND of the filter.
@@ -136,7 +123,7 @@
                 if (op != null)
                 {
                     var field = (SearchField)expression.Values[0];
-                    var value = Constant(expression.Values[1]);
+                    var value = SearchTools.Constant(expression.Values[1]);
                     if (field.Type == typeof(string[]))
                     {
                         if (expression.Operator != Operator.Equal)
@@ -180,10 +167,10 @@
         {
             var builder = new StringBuilder();
             string prefix = "";
-            foreach(var phrase in phrases)
+            foreach (var phrase in phrases)
             {
                 builder.Append(prefix);
-                builder.Append(Constant(phrase));
+                builder.Append(SearchTools.Constant(phrase));
                 prefix = " OR ";
             }
             if (expressions.Any())
@@ -192,18 +179,13 @@
                 foreach (var expression in expressions)
                 {
                     var property = (SearchField)expression.Values[0];
-                    var value = Constant(expression.Values[1]);
+                    var value = SearchTools.Constant(expression.Values[1]);
                     builder.Append($"{prefix}{property.Name}:{value}");
                     prefix = " AND ";
                 }
                 builder.Append(")");
             }
             return builder.ToString();
-        }
-
-        private static string EscapeFilterString(string s)
-        {
-            return s.Replace("'", "''");
         }
 
         public SearchSchema Schema

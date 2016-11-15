@@ -1,0 +1,2 @@
+﻿extract realestate listings 93B04DA93FF693841A35B66AF9D32023 -g RealEstateBot-histogram.bin -v price -h RealEstateBot-histogram.bin -o ..\..\..\RealEstateBot\Dialogs\RealEstateBot.json 
+generate ..\..\..\RealEstateBot\Dialogs\RealEstateBot.json -l <your LUIS Key> -o ..\..\..\RealEstateBot\Dialogs\RealEstateModel.json  -u

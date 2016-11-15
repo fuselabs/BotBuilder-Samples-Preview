@@ -106,17 +106,26 @@
             foreach(var choice in choices)
             {
                 var newUtterance = CreateUtterance(choice, intent, entity);
-                newUtterances.Add(choice, newUtterance);
-                foundUtterance.Add(choice, false);
+                if (!newUtterances.ContainsKey(choice))
+                {
+                    // We can get duplicates because of normalization
+                    newUtterances.Add(choice, newUtterance);
+                    foundUtterance.Add(choice, false);
+                }
             }
+            var replacements = new List<dynamic>();
             foreach (var child in model.utterances)
             {
                 dynamic newUtterance;
                 if (newUtterances.TryGetValue((string) child.text, out newUtterance))
                 {
-                    foundUtterance[newUtterance.text] = true;
-                    child.Replace(newUtterance);
+                    foundUtterance[(string) newUtterance.text] = true;
+                    replacements.Add(child);
                 }
+            }
+            foreach(var replacement in replacements)
+            {
+                replacement.Replace(newUtterances[(string)replacement.text]);
             }
             foreach (var found in foundUtterance)
             {

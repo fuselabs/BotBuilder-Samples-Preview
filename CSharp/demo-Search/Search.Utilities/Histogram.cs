@@ -18,6 +18,7 @@ namespace Search.Utilities
             if (_counts.TryGetValue(value, out count))
             {
                 ++_counts[value];
+                ++count;
             }
             else
             {

@@ -110,6 +110,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Search.Azure\Search.Azure.csproj">
+      <Project>{2734B7AA-2144-41A8-9423-225A544438B8}</Project>
+      <Name>Search.Azure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Search.Contracts\Search.Contracts.csproj">
       <Project>{ff10cd6a-2be1-4520-a01f-769c396906cb}</Project>
       <Name>Search.Contracts</Name>
