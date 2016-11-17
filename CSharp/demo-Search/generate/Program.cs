@@ -169,6 +169,8 @@
 
         static void AddAttribute(dynamic model, SearchField field)
         {
+            var feature = Feature(model, "Properties");
+            feature.words = AddSynonyms((string)feature.words, field.NameSynonyms);
             var rand = new Random(0);
             var attributes = Feature(model, "Attributes");
             var builder = new StringBuilder((string) attributes.words);
@@ -242,6 +244,7 @@
             var rand = new Random(0);
             var propertyNames = ((string)Feature(model, "Properties").words).Split(',');
             var attributes = ((string)Feature(model, "Attributes").words).Split(',');
+            var toRemove = new List<dynamic>();
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
@@ -249,23 +252,44 @@
                 var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" || prop.entity == "Attribute" orderby prop.startPos ascending select prop).ToList();
                 if (properties.Any())
                 {
+                    var failed = false;
                     for (var i = 0; i < tokens.Count();)
                     {
                         var token = tokens[i];
                         string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
                         if (choices != null)
                         {
-                            var word = choices[rand.Next(choices.Length)];
-                            ReplaceToken(utterance, tokens, i, word, properties.First());
-                            properties.RemoveAt(0);
+                            if (properties.Any())
+                            {
+                                var word = choices[rand.Next(choices.Length)];
+                                ReplaceToken(utterance, tokens, i, word, properties.First());
+                                properties.RemoveAt(0);
+                            }
+                            else
+                            {
+                                failed = true;
+                                break;
+                            }
                         }
                         else
                         {
                             ++i;
                         }
                     }
-                    utterance.text = string.Join(" ", tokens);
+                    if (failed)
+                    {
+                        Console.WriteLine($"{text} is tagged improperly in the template.");
+                        toRemove.Add(utterance);
+                    }
+                    else
+                    {
+                        utterance.text = string.Join(" ", tokens);
+                    }
                 }
+            }
+            foreach(var failed in toRemove)
+            {
+                model.utterances.Remove(failed);
             }
         }
 

@@ -40,10 +40,11 @@
         private static string GetTitleForItem(SearchResult result)
         {
             return string.Format(
-                "{0} bedroom, {1} bath in {2}, ${3:#,0}",
+                "{0} bedroom, {1} bath in {2}, {3}, ${4:#,0}",
                 result.Document["beds"],
                 result.Document["baths"],
                 result.Document["city"],
+                ((string) result.Document["region"]).ToUpper(),
                 result.Document["price"]);
         }
     }
