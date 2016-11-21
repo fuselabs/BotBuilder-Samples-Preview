@@ -34,9 +34,11 @@
                 // For local debugging of the sample without checking in your key
                 key = System.Environment.GetEnvironmentVariable(LUISKey);
             }
+            context.PostAsync("Welcome to the real estate search bot!");
             var cts = new CancellationTokenSource();
             var id = await LUISTools.GetOrCreateModelAsync(key, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"), cts.Token);
-            context.Call(new SearchDialog(new Prompts(), this.SearchClient, key, id, multipleSelection: true,
+            context.Call(new SearchDialog(new Prompts(),
+                this.SearchClient, key, id, multipleSelection: true,
                 refiners: new string[] {"type", "beds", "baths", "sqft", "price",
                                         "city", "district", "region",
                                         "daysOnMarket", "status" }), Done);

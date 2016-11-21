@@ -98,7 +98,7 @@
     public class Prompts
     {
         // Prompts
-        public string InitialPrompt = "What would you like to find?";
+        public string InitialPrompt = "Please describe in your own words what you would like to find?";
         public string RefinePrompt = "Refine your search";
         public string FacetPrompt = "What facet would you like to refine by?";
         public string FacetValuePrompt = "What value for {0} would you like to filter by?";
@@ -141,6 +141,9 @@
     [Serializable]
     public class SearchDialog : LuisDialog<IList<SearchHit>>
     {
+        // Expose this publically so that other dialogs could interact with partial results
+        public readonly IList<SearchHit> Selected = new List<SearchHit>();
+
         protected class CanonicalValue
         {
             public SearchField Field;
@@ -160,7 +163,6 @@
         protected string Refiner = null;
         protected string DefaultProperty = null;
 
-        private readonly IList<SearchHit> Selected = new List<SearchHit>();
         private IList<SearchHit> Found;
 
         [NonSerialized]
@@ -299,10 +301,11 @@
                 var desc = field.Description();
                 var anyButton = new Button(
                    string.Format(field.Type.IsNumeric() ? this.Prompts.AnyNumberLabel : this.Prompts.AnyLabel, desc),
-                   string.Format(this.Prompts.AnyMessage, desc));
-                if (field.FilterPreference == PreferredFilter.Facet
-                    || field.FilterPreference == PreferredFilter.MinValue
-                    || field.FilterPreference == PreferredFilter.MaxValue)
+                                 string.Format(this.Prompts.AnyMessage, desc));
+                var preference = field.FilterPreference;
+                if (preference == PreferredFilter.Facet
+                    || preference == PreferredFilter.MinValue
+                    || preference == PreferredFilter.MaxValue)
                 {
                     var search = await this.ExecuteSearchAsync(this.Refiner);
                     var choices = (from facet in search.Facets[this.Refiner]
@@ -310,14 +313,14 @@
                                    orderby facetDesc ascending
                                    select new GenericFacet() { Value = facetDesc, Count = facet.Count });
                     var buttons = new List<Button>();
-                    if (field.FilterPreference == PreferredFilter.Facet)
+                    if (preference == PreferredFilter.Facet)
                     {
                         foreach (var choice in choices)
                         {
                             buttons.Add(new Button(field.ValueSynonyms.Any() ? $"{choice.Value}" : $"{choice.Value} {desc}", $"{choice.Value} ({choice.Count})"));
                         }
                     }
-                    else if (field.FilterPreference == PreferredFilter.MinValue)
+                    else if (preference == PreferredFilter.MinValue)
                     {
                         var total = choices.Sum((choice) => choice.Count);
                         foreach (var choice in choices)
@@ -326,7 +329,7 @@
                             total -= choice.Count;
                         }
                     }
-                    else if (field.FilterPreference == PreferredFilter.MaxValue)
+                    else if (preference == PreferredFilter.MaxValue)
                     {
                         long total = 0;
                         foreach (var choice in choices)
@@ -367,7 +370,7 @@
                     FieldCanonicalizer.Add(field.NameSynonyms);
                     foreach (var synonym in field.ValueSynonyms)
                     {
-                        foreach(var alt in synonym.Alternatives)
+                        foreach (var alt in synonym.Alternatives)
                         {
                             ValueCanonicalizers.Add(Normalize(alt), new CanonicalValue { Field = field, Value = synonym.Canonical, Description = synonym.Description });
                         }

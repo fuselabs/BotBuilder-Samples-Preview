@@ -152,7 +152,7 @@
 
             if (facet != null)
             {
-                parameters.Facets = new List<string> { $"{facet},count:100" };
+                parameters.Facets = new List<string> { $"{facet},count:{queryBuilder.MaxFacets}" };
             }
 
             var searchExpressions = new List<FilterExpression>();

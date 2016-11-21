@@ -7,6 +7,7 @@
     public class SearchQueryBuilder
     {
         private const int DefaultHitPerPage = 5;
+        private const int DefaultMaxFacets = 100;
 
         public SearchQueryBuilder()
         {
@@ -18,12 +19,15 @@
 
         public int HitsPerPage { get; set; } = DefaultHitPerPage;
 
+        public int MaxFacets { get; set; } = DefaultMaxFacets;
+
         public SearchQueryBuilder DeepCopy()
         {
             var query = new SearchQueryBuilder();
-            query.Spec = Spec?.DeepCopy();
+            query.Spec = this.Spec?.DeepCopy();
             query.HitsPerPage = this.HitsPerPage;
             query.PageNumber = this.PageNumber;
+            query.MaxFacets = this.MaxFacets;
             return query;
         }
 
