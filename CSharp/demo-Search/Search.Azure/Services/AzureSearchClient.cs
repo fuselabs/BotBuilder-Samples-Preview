@@ -175,7 +175,8 @@
             }
             if (expressions.Any())
             {
-                builder.Append("(");
+                builder.Append($"{prefix}(");
+                prefix = "";
                 foreach (var expression in expressions)
                 {
                     var property = (SearchField)expression.Values[0];
