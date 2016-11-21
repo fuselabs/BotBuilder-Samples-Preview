@@ -238,11 +238,11 @@
             }
         }
 
-        static void ReplaceGenericNames(dynamic model)
+        static void ReplaceGenericNames(dynamic model, IEnumerable<SearchField> fields)
         {
             // Use a fixed random sequence to minimize random churn
             var rand = new Random(0);
-            var propertyNames = ((string)Feature(model, "Properties").words).Split(',');
+            var propertyNames = fields.SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
             var attributes = ((string)Feature(model, "Attributes").words).Split(',');
             var toRemove = new List<dynamic>();
             foreach (var utterance in model.utterances)
@@ -361,7 +361,7 @@
                     AddComparison(template, field);
                 }
             }
-            ReplaceGenericNames(template);
+            ReplaceGenericNames(template, from field in schema.Fields.Values where field.Type.IsNumeric() select field);
             ExpandFacetExamples(template);
 
             if (p.OutputPath != null)
