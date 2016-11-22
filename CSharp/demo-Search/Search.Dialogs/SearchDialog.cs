@@ -28,11 +28,12 @@
 
     public class Range
     {
-        public SearchField Property;
-        public object Lower;
-        public object Upper;
-        public bool IncludeLower;
-        public bool IncludeUpper;
+        public SearchField Property { get; set; }
+        public object Lower { get; set; }
+        public object Upper { get; set; }
+        public bool IncludeLower { get; set; }
+        public bool IncludeUpper { get; set; }
+        public string Description { get; set; }
     }
 
     class ComparisonEntity
@@ -405,7 +406,7 @@
             var attributes = (from entity in entities
                               let canonical = CanonicalAttribute(entity)
                               where canonical != null
-                              select new FilterExpression(Operator.Equal, canonical.Field, canonical.Value));
+                              select new FilterExpression(entity.Entity, Operator.Equal, canonical.Field, canonical.Value));
             var removals = (from entity in entities where entity.Type == "Removal" select entity);
             var substrings = entities.UncoveredSubstrings(result.Query);
             foreach (var removal in removals)
@@ -635,6 +636,7 @@
                 }
                 range.Lower = lower;
                 range.Upper = upper;
+                range.Description = c.Entity?.Entity;
             }
             return range;
         }
@@ -652,7 +654,7 @@
             }
             if (filter != null)
             {
-                builder.AppendLine(string.Format(this.Prompts.Filter, filter.ToString()));
+                builder.AppendLine(string.Format(this.Prompts.Filter, filter.ToUserFriendlyString()));
                 builder.AppendLine();
             }
             if (phrases.Any())
@@ -667,7 +669,7 @@
                 builder.AppendLine(string.Format(this.Prompts.Keywords, phraseBuilder.ToString()));
                 builder.AppendLine();
             }
-            if (sorts.Count() > 0)
+            if (sorts.Any())
             {
                 var sortBuilder = new StringBuilder();
                 var prefix = "";
@@ -721,21 +723,22 @@
                 {
                     if (!double.IsPositiveInfinity((double)range.Upper))
                     {
-                        filter = FilterExpression.Combine(filter, new FilterExpression(uppercmp, range.Property, range.Upper), connector);
+                        filter = FilterExpression.Combine(filter, new FilterExpression(range.Description, uppercmp, range.Property, range.Upper), connector);
                     }
                 }
                 else if (range.Upper is double && double.IsPositiveInfinity((double)range.Upper))
                 {
-                    filter = FilterExpression.Combine(filter, new FilterExpression(lowercmp, range.Property, range.Lower), connector);
+                    filter = FilterExpression.Combine(filter, new FilterExpression(range.Description, lowercmp, range.Property, range.Lower), connector);
                 }
                 else if (range.Lower == range.Upper)
                 {
-                    filter = FilterExpression.Combine(filter, new FilterExpression(range.Lower is string && range.Property.IsSearchable ? Operator.FullText : Operator.Equal, range.Property, range.Lower), connector);
+                    filter = FilterExpression.Combine(filter, new FilterExpression(range.Description, range.Lower is string && range.Property.IsSearchable ? Operator.FullText : Operator.Equal, range.Property, range.Lower), connector);
                 }
                 else
                 {
+                    //Only add the description to the combination to avoid description duplication and limit the tree traversal
                     var child = FilterExpression.Combine(new FilterExpression(lowercmp, range.Property, range.Lower),
-                                        new FilterExpression(uppercmp, range.Property, range.Upper), Operator.And);
+                                        new FilterExpression(uppercmp, range.Property, range.Upper), Operator.And, range.Description);
                     filter = FilterExpression.Combine(filter, child, connector);
                 }
             }
