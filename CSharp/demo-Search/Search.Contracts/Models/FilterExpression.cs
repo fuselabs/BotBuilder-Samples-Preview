@@ -67,29 +67,6 @@
             return builder.ToString();
         }
 
-        /// <summary>
-        /// Visits the nodes of the expression tree, and stops recursing a given branch when the visitor returns false.
-        /// </summary>
-        private static void VisitExpressionTree(FilterExpression node, Func<FilterExpression, bool> expressionVisitor)
-        {
-            if (node == null) return;
-
-            //We execute the visitor function and keep recursing this branch or not depending on the visitor's result
-            bool shouldKeepVisiting = expressionVisitor(node);
-
-            if (shouldKeepVisiting)
-            {
-                foreach (var value in node.Values)
-                {
-                    var filter = value as FilterExpression;
-                    if (filter != null)
-                    {
-                        VisitExpressionTree(filter, expressionVisitor);
-                    }
-                }
-            }
-        }
-
         public FilterExpression DeepCopy()
         {
             var values = (from value in Values select value is FilterExpression ? (object)(value as FilterExpression).DeepCopy() : value).ToArray();
@@ -188,6 +165,29 @@
                 filter = child2;
             }
             return filter;
+        }
+
+        /// <summary>
+        /// Visits the nodes of the expression tree, and stops recursing a given branch when the visitor returns false.
+        /// </summary>
+        private static void VisitExpressionTree(FilterExpression node, Func<FilterExpression, bool> expressionVisitor)
+        {
+            if (node == null) return;
+
+            //We execute the visitor function and keep recursing this branch or not depending on the visitor's result
+            bool shouldKeepVisiting = expressionVisitor(node);
+
+            if (shouldKeepVisiting)
+            {
+                foreach (var value in node.Values)
+                {
+                    var filter = value as FilterExpression;
+                    if (filter != null)
+                    {
+                        VisitExpressionTree(filter, expressionVisitor);
+                    }
+                }
+            }
         }
     }
 }
