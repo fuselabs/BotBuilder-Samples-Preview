@@ -1,0 +1,25 @@
+{
+  "name": "searchpoweredbots",
+  "version": "0.0.1",
+  "description": "Example for the Bot Builder framework using Azure Search and natural language.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "main": "./lib/botsearch.js",
+  "typings": "./lib/botsearch.d.ts",
+  "dependencies": {
+    "botbuilder": "^3.4.4",
+    "request": "^2.79.0",
+    "restify": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.46",
+    "@types/request": "0.0.33",
+    "mocha": "^2.5.3"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./node_modules/mocha/lib/mocha"
+  }
+}
