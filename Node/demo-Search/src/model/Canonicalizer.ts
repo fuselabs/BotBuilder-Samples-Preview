@@ -11,6 +11,7 @@ export interface ICanonicalValue {
 
 export class Canonicalizer {
     
+    //Simple map of strings to synonyms
     private map: { [s: string]: ISynonyms; } = {}; 
 
     public constructor(synonymsCollection?: ISynonyms[]) {    

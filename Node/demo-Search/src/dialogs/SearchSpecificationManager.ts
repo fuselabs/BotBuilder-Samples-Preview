@@ -27,8 +27,10 @@ export class SearchSpecificationManager {
 
     public filter(entities: IEntity[], originalText: string, defaultProperty?: string): void {
        
+        // Compute new filter
         let newFilter: FilterExpression = this.filterExpressionBuilder.build(entities, originalText, defaultProperty);
         
+        // Combine filters
         if(this.searchSpec.filter) {
             this.searchSpec.filter = FilterExpression.combine(
                 this.searchSpec.filter.remove(newFilter),

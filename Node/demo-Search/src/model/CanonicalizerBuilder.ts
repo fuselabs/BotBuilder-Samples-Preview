@@ -16,6 +16,7 @@ export class CanonicalizerBuilder {
             valueCanonicalizers: {}
         }
 
+        // Load name synonyms and value synonyms from the search schema in the canonicalizers.
         if(searchSchema) {
             for(let fieldKey in searchSchema.Fields) {
                 let field = searchSchema.Fields[fieldKey];

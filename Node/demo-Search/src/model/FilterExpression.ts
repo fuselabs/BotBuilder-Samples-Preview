@@ -44,6 +44,7 @@ export class FilterExpression {
         
         let fields = new Array<ISearchField>(); 
 
+        // Recursively retrieve all distinct search fields from the tree.
         FilterExpression.traversePreOrder(this, (node: FilterExpression): boolean => {
 
             if(node.operator == Operator.And || node.operator == Operator.Or || node.operator == Operator.Not) {
@@ -69,6 +70,7 @@ export class FilterExpression {
         
         let resultExpression: FilterExpression = null; 
 
+        // Recursively remove all occurrences of the specified search field from the expression tree.
         FilterExpression.traversePostOrder<FilterExpression>(this, (node: FilterExpression, childrenResults: FilterExpression[]): FilterExpression => {
 
             if(node.operator == Operator.And || node.operator == Operator.Or) {
