@@ -112,8 +112,8 @@
           "endPos": 0
         },
         {
-          "entity": "Property",
-          "startPos": 2,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 2
         },
         {
@@ -122,8 +122,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 2,
           "endPos": 2
         }
       ]
@@ -138,8 +138,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -148,8 +148,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -164,13 +164,13 @@
           "endPos": 0
         },
         {
-          "entity": "Property",
-          "startPos": 1,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 1,
           "endPos": 1
         }
       ]
@@ -190,8 +190,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -200,8 +200,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -216,8 +216,8 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
@@ -226,8 +226,8 @@
           "endPos": 2
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         }
       ]
@@ -247,8 +247,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -257,8 +257,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -273,8 +273,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -283,8 +283,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -299,8 +299,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -309,8 +309,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -330,8 +330,8 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
@@ -340,8 +340,8 @@
           "endPos": 0
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         }
       ]
@@ -356,8 +356,8 @@
           "endPos": 0
         },
         {
-          "entity": "Property",
-          "startPos": 2,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 2
         },
         {
@@ -366,8 +366,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 2,
           "endPos": 2
         }
       ]
@@ -382,8 +382,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -392,8 +392,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -413,14 +413,14 @@
           "endPos": 5
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     },
@@ -444,13 +444,13 @@
           "endPos": 9
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
-          "entity": "Property",
-          "startPos": 10,
+          "entity": "Comparison",
+          "startPos": 7,
           "endPos": 10
         },
         {
@@ -464,13 +464,13 @@
           "endPos": 8
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         },
         {
-          "entity": "Comparison",
-          "startPos": 7,
+          "entity": "Property",
+          "startPos": 10,
           "endPos": 10
         }
       ]
@@ -490,13 +490,13 @@
           "endPos": 8
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 3,
           "endPos": 4
         },
         {
-          "entity": "Property",
-          "startPos": 9,
+          "entity": "Comparison",
+          "startPos": 6,
           "endPos": 9
         },
         {
@@ -505,13 +505,13 @@
           "endPos": 7
         },
         {
-          "entity": "Comparison",
-          "startPos": 3,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         },
         {
-          "entity": "Comparison",
-          "startPos": 6,
+          "entity": "Property",
+          "startPos": 9,
           "endPos": 9
         }
       ]
@@ -526,14 +526,14 @@
           "endPos": 4
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
         }
       ]
     },
@@ -552,14 +552,14 @@
           "endPos": 7
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     },
@@ -583,13 +583,13 @@
           "endPos": 8
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
-          "entity": "Property",
-          "startPos": 9,
+          "entity": "Comparison",
+          "startPos": 6,
           "endPos": 9
         },
         {
@@ -608,13 +608,13 @@
           "endPos": 7
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         },
         {
-          "entity": "Comparison",
-          "startPos": 6,
+          "entity": "Property",
+          "startPos": 9,
           "endPos": 9
         }
       ]
@@ -629,14 +629,14 @@
           "endPos": 3
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
         }
       ]
     },
@@ -655,13 +655,13 @@
           "endPos": 5
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 6,
+          "entity": "Comparison",
+          "startPos": 5,
           "endPos": 6
         },
         {
@@ -670,13 +670,13 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Comparison",
-          "startPos": 5,
+          "entity": "Property",
+          "startPos": 6,
           "endPos": 6
         }
       ]
@@ -716,11 +716,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
           "entity": "Removal",
           "startPos": 0,
           "endPos": 1
@@ -729,6 +724,11 @@
           "entity": "RemovalOperator",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
         }
       ]
     },
@@ -742,14 +742,14 @@
           "endPos": 5
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
         }
       ]
     },
@@ -768,11 +768,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
           "entity": "Removal",
           "startPos": 0,
           "endPos": 3
@@ -781,6 +776,11 @@
           "entity": "RemovalOperator",
           "startPos": 0,
           "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
@@ -794,14 +794,14 @@
           "endPos": 2
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
         }
       ]
     },
@@ -809,11 +809,6 @@
       "text": "any propertyname",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
         {
           "entity": "Removal",
           "startPos": 0,
@@ -823,6 +818,11 @@
           "entity": "RemovalOperator",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
         }
       ]
     },
@@ -846,14 +846,14 @@
           "endPos": 3
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
         }
       ]
     },
@@ -887,9 +887,9 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
+          "entity": "Comparison",
           "startPos": 0,
-          "endPos": 0
+          "endPos": 3
         },
         {
           "entity": "Operator",
@@ -897,9 +897,9 @@
           "endPos": 2
         },
         {
-          "entity": "Comparison",
+          "entity": "Property",
           "startPos": 0,
-          "endPos": 3
+          "endPos": 0
         }
       ]
     },
@@ -913,9 +913,9 @@
           "endPos": 4
         },
         {
-          "entity": "Property",
+          "entity": "Comparison",
           "startPos": 0,
-          "endPos": 0
+          "endPos": 4
         },
         {
           "entity": "Operator",
@@ -923,9 +923,9 @@
           "endPos": 3
         },
         {
-          "entity": "Comparison",
+          "entity": "Property",
           "startPos": 0,
-          "endPos": 4
+          "endPos": 0
         }
       ]
     },
@@ -954,9 +954,9 @@
           "endPos": 4
         },
         {
-          "entity": "Property",
+          "entity": "Comparison",
           "startPos": 0,
-          "endPos": 0
+          "endPos": 4
         },
         {
           "entity": "Operator",
@@ -964,9 +964,9 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
+          "entity": "Property",
           "startPos": 0,
-          "endPos": 4
+          "endPos": 0
         }
       ]
     },
@@ -985,9 +985,9 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
+          "entity": "Comparison",
           "startPos": 0,
-          "endPos": 0
+          "endPos": 3
         },
         {
           "entity": "Operator",
@@ -995,9 +995,9 @@
           "endPos": 2
         },
         {
-          "entity": "Comparison",
+          "entity": "Property",
           "startPos": 0,
-          "endPos": 3
+          "endPos": 0
         }
       ]
     },
@@ -1016,8 +1016,8 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 4
         },
         {
@@ -1026,8 +1026,8 @@
           "endPos": 0
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         }
       ]
@@ -1047,16 +1047,6 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 1
@@ -1064,6 +1054,16 @@
         {
           "entity": "Comparison",
           "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -1083,16 +1083,6 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 1
@@ -1100,6 +1090,16 @@
         {
           "entity": "Comparison",
           "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -1119,16 +1119,6 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 1
@@ -1136,6 +1126,16 @@
         {
           "entity": "Comparison",
           "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -1160,13 +1160,13 @@
           "endPos": 4
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 5,
+          "entity": "Comparison",
+          "startPos": 4,
           "endPos": 5
         },
         {
@@ -1175,13 +1175,13 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Comparison",
-          "startPos": 4,
+          "entity": "Property",
+          "startPos": 5,
           "endPos": 5
         }
       ]
@@ -1201,13 +1201,13 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 1,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 1
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 2,
           "endPos": 4
         },
         {
@@ -1216,13 +1216,13 @@
           "endPos": 3
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 1,
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 2,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         }
       ]
@@ -1248,16 +1248,6 @@
           "endPos": 0
         },
         {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 2
@@ -1266,6 +1256,16 @@
           "entity": "Attribute",
           "startPos": 4,
           "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
@@ -1284,13 +1284,13 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 2,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 4,
+          "entity": "Comparison",
+          "startPos": 3,
           "endPos": 4
         },
         {
@@ -1299,13 +1299,13 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 2,
           "endPos": 2
         },
         {
-          "entity": "Comparison",
-          "startPos": 3,
+          "entity": "Property",
+          "startPos": 4,
           "endPos": 4
         }
       ]
@@ -1335,13 +1335,13 @@
           "endPos": 6
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 7,
+          "entity": "Comparison",
+          "startPos": 4,
           "endPos": 7
         },
         {
@@ -1355,13 +1355,13 @@
           "endPos": 5
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Comparison",
-          "startPos": 4,
+          "entity": "Property",
+          "startPos": 7,
           "endPos": 7
         }
       ]
@@ -1381,14 +1381,14 @@
           "endPos": 5
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     },
@@ -1407,14 +1407,14 @@
           "endPos": 4
         },
         {
-          "entity": "Operator",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
@@ -1428,14 +1428,14 @@
           "endPos": 6
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 2
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
         }
       ]
     },
@@ -1460,16 +1460,6 @@
           "endPos": 0
         },
         {
-          "entity": "Property",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 2
@@ -1478,6 +1468,16 @@
           "entity": "Attribute",
           "startPos": 3,
           "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     },
@@ -1496,16 +1496,6 @@
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
@@ -1514,6 +1504,16 @@
           "entity": "Attribute",
           "startPos": 7,
           "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
         }
       ]
     },
@@ -1532,13 +1532,13 @@
           "endPos": 5
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Property",
-          "startPos": 7,
+          "entity": "Comparison",
+          "startPos": 5,
           "endPos": 7
         },
         {
@@ -1552,13 +1552,13 @@
           "endPos": 6
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         },
         {
-          "entity": "Comparison",
-          "startPos": 5,
+          "entity": "Property",
+          "startPos": 7,
           "endPos": 7
         }
       ]
@@ -1583,21 +1583,6 @@
           "endPos": 10
         },
         {
-          "entity": "Property",
-          "startPos": 11,
-          "endPos": 11
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Operator",
-          "startPos": 8,
-          "endPos": 9
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 5
@@ -1611,6 +1596,21 @@
           "entity": "Attribute",
           "startPos": 6,
           "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 8,
+          "endPos": 9
+        },
+        {
+          "entity": "Property",
+          "startPos": 11,
+          "endPos": 11
         }
       ]
     },
@@ -1634,21 +1634,6 @@
           "endPos": 11
         },
         {
-          "entity": "Property",
-          "startPos": 4,
-          "endPos": 4
-        },
-        {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Operator",
-          "startPos": 7,
-          "endPos": 9
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
@@ -1662,6 +1647,21 @@
           "entity": "Attribute",
           "startPos": 5,
           "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 9
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 4
         }
       ]
     },
@@ -1680,16 +1680,6 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
-          "endPos": 3
-        },
-        {
-          "entity": "Operator",
-          "startPos": 1,
-          "endPos": 1
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
@@ -1698,6 +1688,16 @@
           "entity": "Attribute",
           "startPos": 4,
           "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
@@ -1722,13 +1722,13 @@
           "endPos": 0
         },
         {
-          "entity": "Property",
-          "startPos": 1,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 1,
           "endPos": 1
         }
       ]
@@ -1748,8 +1748,8 @@
           "endPos": 2
         },
         {
-          "entity": "Property",
-          "startPos": 3,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 3
         },
         {
@@ -1758,8 +1758,8 @@
           "endPos": 1
         },
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Property",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -1827,14 +1827,14 @@
           "endPos": 7
         },
         {
-          "entity": "Operator",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     },
@@ -1869,14 +1869,111 @@
           "endPos": 5
         },
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
           "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "3+ propertyname attributename in xword with a attributename for less than $800k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
           "startPos": 0,
           "endPos": 0
         },
         {
+          "entity": "Value",
+          "startPos": 12,
+          "endPos": 13
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 5
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 10,
+          "endPos": 13
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 10,
+          "endPos": 11
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "3+ propertyname attributename in yword with a zword for less than $600k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 12,
+          "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 10,
+          "endPos": 13
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 10,
+          "endPos": 11
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 2
         }
       ]
     }
