@@ -66,9 +66,4 @@ export class StringBuilder {
     public empty(): boolean {
         return this.soFar.length == 0;
     }
-
-    // public appendAll(entries: string[], quoteEntries: boolean, separatorAtFirstAndLast: boolean, separator: string = ' ') {
-
-    // }
-
 }

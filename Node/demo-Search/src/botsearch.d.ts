@@ -189,7 +189,7 @@ export interface IRetryStrategy {
     execute<TResult>(predicate: () => TResult): TResult;
 }
 
-/** Definition of a canonical value. */
+/** Definition of a canonical value, which in this context is a unique representation of a set of semantically equivalent expressions. */
 export interface ICanonicalValue {
     /** Search field. */
     field: ISearchField;
