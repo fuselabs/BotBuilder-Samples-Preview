@@ -1,5 +1,5 @@
 
-import {IntentDialog, IIntentDialogOptions, IEntity} from 'botbuilder';
+import { IntentDialog, IIntentDialogOptions, IEntity, IRecognizeDialogContext, Session, IIsCardAction, IIntentRecognizerResult } from 'botbuilder';
 
 //=============================================================================
 //
@@ -8,13 +8,7 @@ import {IntentDialog, IIntentDialogOptions, IEntity} from 'botbuilder';
 //=============================================================================
 
 /** Options used to configure a SearchDialog. */
-export interface ISearchDialogOptions extends IIntentDialogOptions {
-
-    /** Azure Search schema json. */
-    searchSchema: ISearchSchema;
-    
-    /** Callback that converts a search result object to an ISearchHit for display in the search dialog. */
-    resultMapperCallback:  (searchResult: any) => ISearchHit;
+export interface ISearchDialogOptions {
     
     /** Url for the Azure Search service. */
     searchServiceUrl: string;
@@ -24,9 +18,6 @@ export interface ISearchDialogOptions extends IIntentDialogOptions {
     
     /** Name of the Azure Search index. */
     searchIndexName: string;
-    
-    /** Optional ISearchClient implementation. If specified, the ISearchClient specified will be used for searching instead of Azure Search. */
-    searchClientToInject?: ISearchClient;
 }
 
 /** Search Client definition*/
@@ -293,13 +284,50 @@ export interface IExpressionAndFullTextFilter {
 //
 //=============================================================================
 
-/** Identifies a user's intents and uses Azure Search to retrieve results. */
+/** Dialog that identifies a user's intents and uses Azure Search to find relevant results. */
 export class SearchDialog extends IntentDialog {
+
     /** 
      * Constructs a new instance of a SearchDialog.
      * @param options Options used to initialize the dialog.
     */
     constructor(options: ISearchDialogOptions);
+
+    /**
+     * Specifies the search schema to be used by the Search Dialog. This property must be set for the dialog to work.
+     * @param schema The search schema json, which indicates about the entities, synonyms and options from search fields. 
+     */
+    schema(schema: ISearchSchema): this;
+
+    /**
+     * Specifies the handler function that receives the json result from the search client and transforms it into a search hit. 
+     * @param handler The handler function that receives the json result from the search client and transforms it into a search hit.
+     */
+    onResultMapping(handler: (searchResult: any) => ISearchHit): this;
+
+    /**
+     * (Optional) Specifies an optional ISearchClient instance, which the dialog will use as search client. 
+     * @param client The search client to inject into the dialog. 
+     */
+    searchClient(client: ISearchClient): this;
+
+    /**
+     * (Optional) Specifies an optional set of refiners from the search schema that will be presented to the user.
+     * If ot specified, the dialog presents the refiners found in the search schema.
+     * @param client The set of refiners from the search schema that will be presented to the user
+     */
+    refiners(refiners: string[]): this;
+
+    /** 
+     * Attempts to match a users text utterance to an intent using the libraries recognizers. See 
+     * [IIntentRecognizer.recognize()](/en-us/node/builder/chat-reference/interfaces/_botbuilder_d_.iintentrecognizer#recognize) 
+     * for details.
+     * @param context Read-only recognizer context for the current conversation.
+     * @param callback Function that should be invoked upon completion of the recognition.
+     * @param callback.err Any error that occured during the operation.
+     * @param callback.result The result of the recognition operation. 
+     */
+    recognize(context: IRecognizeDialogContext, cb: (err: Error, result: IIntentRecognizerResult) => void): void;
 }
 
 /** Abstraction responsible for managing the search specification to be used to query the search service, based on the user's intents. */
@@ -578,3 +606,133 @@ export class SearchQueryBuilder {
     build(searchSpec: ISearchSpecification): ISearchQuery;
 }
 
+/** Utility to create controls for interacting with the user. */
+export class Controls {
+
+    /** 
+     * Creates the set of buttons used for the SearchDialog introduction.
+     * @param session Session object for the current conversation. 
+     * @returns The set of buttons for the SearchDialog introduction.
+     */
+    public static introButtons(session: Session): IIsCardAction[];
+
+    /** 
+     * Creates the set of buttons used for the SearchDialog refine menu.
+     * @param session Session object for the current conversation. 
+     * @returns The set of buttons for the SearchDialog refine menu.
+     */
+    public static refineButtons(session: Session): IIsCardAction[];
+
+    /** 
+     * Creates a button for the browse action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the browse action
+     */
+    public static browse(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the nextPage action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the nextPage action
+     */
+    public static nextPage(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the list action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the list action
+     */
+    public static list(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the add action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the add action
+     */
+    public static add(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the remove action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the remove action
+     */
+    public static remove(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the quit action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the quit action
+     */
+    public static quit(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the finished action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the finished action
+     */
+    public static finished(session: Session): IIsCardAction;
+
+    /** 
+     * Creates a button for the startOver action
+     * @param session Session object for the current conversation. 
+     * @returns The button for the startOver action
+     */
+    public static startOver(session: Session): IIsCardAction;
+}
+
+/** Dialog actions that encapsulate logic for sending of messages, results and keyboards to the user. */
+export class DialogAction {
+    
+    /** 
+     * Sends a message to the user. Looks up the localized text for the provided textKey, and applies params to the textKey format. 
+     * @param session Session object for the current conversation.
+     * @param textKey The key for the text to send in the message. The key should exist in the locale file. 
+     * @param params Optional parameters for string formatting.
+     */
+    public static sendMessage(session: Session, textKey: string, ...params:any[]);
+
+    /** 
+     * Displays a result set to the user. 
+     * @param session Session object for the current conversation.
+     * @param hits The collection of search hits to be displayed to the user. 
+     * @param searchSpec The search specification that resulted in the search hits being displayed.
+     * @param showRemove Whether to show a 'remove from list' button in the results. If false, an 'add to list' button will be displayed. 
+     */
+    public static showResults(session: Session, hits: ISearchHit[], searchSpec: ISearchSpecification, showRemove: boolean);
+
+    /** 
+     * Sends a keyboard to the user.
+     * @param session Session object for the current conversation.
+     * @param buttons The buttons to be displayed in the keyboard.
+     * @param titleKey The key for the title to send in the message. The key should exist in the locale file. 
+     * @param params Optional parameters for string formatting of the title.
+     */
+    public static sendKeyboard(session: Session, buttons: IIsCardAction[], titleKey: string, ...params: any[]);
+}
+
+/** Utility to read results from facet search */
+export class FacetResultReader {
+
+    /**
+     * Constructs an isntance of FacetResultReader.
+     * @param canonicalizers Grouping of field and value canonicalizers used to find unique representations of different words.
+     */
+    public constructor(canonicalizers: IDialogCanonicalizers);
+
+    /**
+     * Transforms a facet search result to a set of buttons representing the search result.
+     * @param session Session object for the current conversation.
+     * @param facets The list of facets obtained from the search client.
+     * @param field The search field being faceted.
+     * @param fieldDescription Description of the field to be displayed in the buttons.
+     * @returns An array of buttons ready to add to a keyboard.
+     */
+    public toButtons(session: Session, facets: IFacet[], field: ISearchField, fieldDescription: string): IIsCardAction[];
+
+    /**
+     * Computes the description of a facet given the current canonicalizers.
+     * @param facet The facet from which to obtain the description.
+     * @returns The description of the specified facet.
+     */
+    public description(facet: IFacet): string;
+}

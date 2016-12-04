@@ -1,6 +1,39 @@
+// 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+// 
+// Microsoft Bot Framework: http://botframework.com
+// 
+// Bot Builder SDK Github:
+// https://github.com/Microsoft/BotBuilder
+// 
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+// 
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 import { ISearchField } from '../search/ISearchSchema';
-import * as util from 'util';
+import { StringBuilder } from '../tools/StringBuilder';
+import { sprintf } from 'sprintf-js';
 
 export enum Operator {
     None, LessThan, LessThanOrEqual, Equal, GreaterThanOrEqual, GreaterThan, And, Or, Not, FullText
@@ -33,7 +66,9 @@ export class FilterExpression {
 
         if(expression) {
             for(let field of expression.retrieveSearchFields()) {
-                filter = filter.removeSearchField(field);
+                if(filter) {
+                    filter = filter.removeSearchField(field);
+                }
             }
         }
 
@@ -104,14 +139,14 @@ export class FilterExpression {
         const emptyPrefix = '';
         const expressionFormat = '%s\"%s\"';
         let prefix = emptyPrefix;
-        let stringBuilder: string[] = [];
+        let stringBuilder = new StringBuilder();
         
         FilterExpression.traversePreOrder(this, (node: FilterExpression): boolean => {
             if(!node.description) {
                 return true;
             } 
 
-            stringBuilder.push(util.format(expressionFormat, prefix, node.description));
+            stringBuilder.append(sprintf(expressionFormat, prefix, node.description));
 
             if(prefix == emptyPrefix) {
                 prefix = spacePrefix;
@@ -120,11 +155,10 @@ export class FilterExpression {
             return false;
         });
 
-        return stringBuilder.join('');
+        return stringBuilder.toString();
     }
 
     private isSearchField(value: any): boolean {
-        //TODO: Improve this
         return value.Name && value.Type;
     }
 
@@ -158,8 +192,7 @@ export class FilterExpression {
 
     public getOperator(): Operator {
         return this.operator;
-    }
-
+    } 
     public getValues(): any[] {
         return this.values;
     }

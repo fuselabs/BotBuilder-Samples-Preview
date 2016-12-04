@@ -31,26 +31,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ISynonyms } from './ISearchClient';
+export class StringBuilder {
 
-export interface ISearchSchema {
-    Fields?: {[key: string]: ISearchField};
-    DefaultCurrencyProperty?: string;
-    DefaultNumericProperty?: string;
-    DefaultGeoProperty?: string;
-    Fragments?: any;
-}
+    private soFar: string = '';
+    private readonly newLineString: string = '<br>';
 
-export interface ISearchField {
-    Name: string;
-    Type: string;
-    IsFacetable: boolean;
-    IsFilterable: boolean;
-    IsKey: boolean;
-    IsRetrievable: boolean;
-    IsSearchable: boolean;
-    IsSortable: boolean;
-    FilterPreference: number;
-    NameSynonyms?: ISynonyms;
-    ValueSynonyms?: ISynonyms[];
+    public constructor(newLineString?: string) {
+        if(newLineString) {
+            this.newLineString = newLineString;
+        }
+    }
+
+    public toString() {
+        return this.soFar;
+    }
+
+    public append(text: string) {
+        this.soFar += text;
+    }
+
+    public appendDoubleQuoted(text: string, ) {
+        this.append('\"' + text + '\"');
+    }
+
+    public appendLine(text: string) {
+        this.append(text);
+        this.newLine();
+    }
+
+    public newLine() {
+        this.append(this.newLineString);
+    }
+
+    public empty(): boolean {
+        return this.soFar.length == 0;
+    }
+
+    // public appendAll(entries: string[], quoteEntries: boolean, separatorAtFirstAndLast: boolean, separator: string = ' ') {
+
+    // }
+
 }

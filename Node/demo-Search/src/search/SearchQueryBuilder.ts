@@ -1,11 +1,43 @@
+// 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
+// 
+// Microsoft Bot Framework: http://botframework.com
+// 
+// Bot Builder SDK Github:
+// https://github.com/Microsoft/BotBuilder
+// 
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
+// 
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 import { FilterExpression, Operator } from '../model/FilterExpression';
 import { ISearchQuery } from './ISearchQuery';
 import { ISearchField } from './ISearchSchema';
-import { QueryTypes, SearchModes } from './SearchConstants';
+import { QueryTypes, SearchModes, SearchDefaults } from './SearchConstants';
 import { ISearchSpecification } from '../dialogs/SearchSpecificationManager';
-
-import * as util from 'util';
+import { StringBuilder } from '../tools/StringBuilder';
+import { sprintf } from 'sprintf-js';
 
 export interface IExpressionAndFullTextFilter {
     expressionFilter: FilterExpression;
@@ -21,7 +53,7 @@ export class SearchQueryBuilder {
         const facetFormat = '%s,count:%d';
 
         let query: ISearchQuery = {
-            top: searchSpec.top || 5,
+            top: searchSpec.top || SearchDefaults.pageSize,
             count: true,
             facets: [],
             filter: '',
@@ -29,24 +61,30 @@ export class SearchQueryBuilder {
             search: '',
             searchFields: '',
             searchMode: SearchModes.any,
-            skip: searchSpec.skip
+            skip: (searchSpec.pageNumber || 0) * (searchSpec.top || SearchDefaults.pageSize)
         };
 
         if(searchSpec.facet) {
-            query.facets.push(util.format(facetFormat, searchSpec.facet, 100));//TODO: max facets constant
+            query.facets.push(sprintf(facetFormat, searchSpec.facet, SearchDefaults.maxFacets));
         }
 
+        // Build separate filters for expressions (e.g. # beds > 2) and full text (e.g. 'fireplace')
         let segregatedFilters: IExpressionAndFullTextFilter = this.segregateFullTextFilters(searchSpec);
-        let expressionQuery: string = this.computeExpressionQuery(segregatedFilters.expressionFilter);
-        let fullTextQuery: string = this.computeFullTextQuery(searchSpec.phrases, segregatedFilters.fullTextFilter);
 
-        query.filter = expressionQuery;
-        query.search = fullTextQuery;
+        if(segregatedFilters) {
+            // Compute the query string for the expression part of the filter
+            query.filter = this.computeExpressionQuery(segregatedFilters.expressionFilter);
+
+            // Compute the query string for the full text part of the filter
+            query.search = this.computeFullTextQuery(searchSpec.phrases, segregatedFilters.fullTextFilter);
+        }
 
         return query;
     }
 
     private segregateFullTextFilters(searchSpec: ISearchSpecification): IExpressionAndFullTextFilter {
+
+        if(!searchSpec.filter) return null;
 
         let fullTextFilter = new Array<FilterExpression>(); 
         let expressionFilter = FilterExpression.traversePostOrder<FilterExpression>(searchSpec.filter, (node: FilterExpression, childrenResults: FilterExpression[]): FilterExpression => {
@@ -70,16 +108,18 @@ export class SearchQueryBuilder {
 
     private computeExpressionQuery(filter: FilterExpression): string {
 
+        if(!filter) return '';
+
         return FilterExpression.traversePostOrder<string>(filter, (node: FilterExpression, childrenResults: string[]): string => {
             let op: string = null;
 
             switch(node.getOperator()) {
                 case Operator.And:
-                    return util.format('(%s) and (%s)', childrenResults[0], childrenResults[1]);
+                    return sprintf('(%s) and (%s)', childrenResults[0], childrenResults[1]);
                 case Operator.Or:
-                    return util.format('(%s) or (%s)', childrenResults[0], childrenResults[1]);
+                    return sprintf('(%s) or (%s)', childrenResults[0], childrenResults[1]);
                 case Operator.Not:
-                    return util.format('not (%s)', childrenResults[0]);
+                    return sprintf('not (%s)', childrenResults[0]);
                 
                 case Operator.FullText:
                     throw new Error('Full text expressions are not supported');
@@ -102,7 +142,7 @@ export class SearchQueryBuilder {
                 //    return util.format('%s/any(z: z eq %s)', searchField.Name, value);
                 //}
 
-                return util.format('%s %s %s', searchField.Name, op, value);
+                return sprintf('%s %s %s', searchField.Name, op, value);
             }
 
             return null;
@@ -118,40 +158,40 @@ export class SearchQueryBuilder {
         const expressionEnd = ')';
 
         let prefix = emptyPrefix;
-        let stringBuilder: string[] = [];
+        let stringBuilder = new StringBuilder()
 
         //Query for phrases
         for(let phrase of phrases) {
-            stringBuilder.push(prefix);
-            stringBuilder.push(this.textConstantFrom(phrase));
+            stringBuilder.append(prefix);
+            stringBuilder.append(this.textConstantFrom(phrase));
             if(prefix == emptyPrefix) {
                 prefix = orPrefix;
             }
         }
 
         if(expressions && expressions.length > 0) {
-            stringBuilder.push(util.format(expressionStartFormat, prefix));
+            stringBuilder.append(sprintf(expressionStartFormat, prefix));
             prefix = emptyPrefix;
 
             for(let expression of expressions) {
                 let property: ISearchField = <ISearchField>expression.getValues()[0];
                 let value = this.textConstantFrom(expression.getValues()[1]);
 
-                stringBuilder.push(expressionFormat, prefix, property.Name, value);
+                stringBuilder.append(sprintf(expressionFormat, prefix, property.Name, value));
                 if(prefix == emptyPrefix) {
                     prefix = andPrefix;
                 }
             }
-            stringBuilder.push(expressionEnd);
+            stringBuilder.append(expressionEnd);
         }
 
-        return stringBuilder.join(emptyPrefix);
+        return stringBuilder.toString();
     }
 
     private textConstantFrom(value: any): string {
         if(typeof value == 'string') {
             let escapedValue = <string>value.replace('\'','\'\'');
-            return util.format('\'%s\'', escapedValue);
+            return sprintf('\'%s\'', escapedValue);
         }
         //TODO Datetime / Offset support
         return value;

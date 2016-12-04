@@ -31,26 +31,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ISynonyms } from './ISearchClient';
+import { IRecognizeContext } from 'botbuilder';
 
-export interface ISearchSchema {
-    Fields?: {[key: string]: ISearchField};
-    DefaultCurrencyProperty?: string;
-    DefaultNumericProperty?: string;
-    DefaultGeoProperty?: string;
-    Fragments?: any;
+export interface IWordAnalyzer {
+    isNoiseWord(word: string): boolean;
+    isPunctuation(word: string): boolean;
 }
 
-export interface ISearchField {
-    Name: string;
-    Type: string;
-    IsFacetable: boolean;
-    IsFilterable: boolean;
-    IsKey: boolean;
-    IsRetrievable: boolean;
-    IsSearchable: boolean;
-    IsSortable: boolean;
-    FilterPreference: number;
-    NameSynonyms?: ISynonyms;
-    ValueSynonyms?: ISynonyms[];
+export class LocalizedWordAnalyzer {
+
+    private readonly stopWords: string[];
+    private readonly punctuationChars: string[];
+
+    public constructor(context: IRecognizeContext){
+         this.stopWords = context.localizer.gettext(context.preferredLocale(), 'wordAnalyzerStopWords').split('|');
+         this.punctuationChars = context.localizer.gettext(context.preferredLocale(), 'wordAnalyzerPunctuation').split('|');
+
+         if(!this.stopWords || !this.punctuationChars) {
+             throw new Error("Word analyzer could not load language information. Verify that the index.json for the preferred locale includes wordAnalyzerStopWords and wordAnalyzerPunctuation");
+         }
+    }
+
+    public isNoiseWord(word: string): boolean {
+        return this.stopWords.indexOf(word) != -1;
+    }
+
+    public isPunctuation(word: string): boolean {
+        return this.punctuationChars.indexOf(word) != -1;
+    }
 }
