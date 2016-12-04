@@ -47,7 +47,7 @@ describe('AzureSearchClient', function() {
 
         let searchClient = new botsearch.AzureSearchClient(serviceUrl, serviceKey, indexName, searchSchema, hitMapper);        
 
-        let searchResult = searchClient.search(searchQuery, function(result, error){
+        let searchResult = searchClient.search(searchQuery, function(error, result){
             if(error) {
                 done(error);
             } else {

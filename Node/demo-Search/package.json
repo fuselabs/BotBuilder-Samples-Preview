@@ -7,19 +7,22 @@
   "main": "./lib/botsearch.js",
   "typings": "./lib/botsearch.d.ts",
   "dependencies": {
-    "botbuilder": "^3.4.4",
+    "botbuilder": "^3.5.0-rc8",
     "request": "^2.79.0",
-    "restify": "^4.3.0"
+    "restify": "^4.3.0",
+    "sprintf-js": "^1.0.3",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "@types/node": "^6.0.46",
     "@types/request": "0.0.33",
+    "@types/sprintf-js": "0.0.27",
     "mocha": "^2.5.3"
   },
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "node ./node_modules/mocha/lib/mocha"
+    "test": "mocha ./test/*.js"
   }
 }

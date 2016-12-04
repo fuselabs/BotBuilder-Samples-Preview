@@ -11,7 +11,7 @@ describe('CanonicalizerBuilder', function() {
         assert.equal('listingId', listingCanonical);
 
         let virginiaCanonical = canonicalizers.valueCanonicalizers['virginia'];
-        assert.equal('va', virginiaCanonical.description);
+        assert.equal('Virginia', virginiaCanonical.description);
 
         done();
     });

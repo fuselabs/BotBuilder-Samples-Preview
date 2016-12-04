@@ -6,7 +6,7 @@ var searchSchema = require("./RealEstate");
 describe('FilterExpressionBuilder', function() {
     it('keywords are extracted successfuly given a set of entities from a luis result', function(done) {
         
-        //Code the response from LUIS from the query 2+ bed house with a fireplace and stainless steel
+        //Code the response from LUIS from the query '2+ bed house with a fireplace and stainless steel'
 
         let originalText = '2+ bed house with a fireplace and stainless steel';
         let entities = getEntities();

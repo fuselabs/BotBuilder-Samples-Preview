@@ -232,7 +232,6 @@ describe('FilterExpression', function() {
         //   |         |
         //  field2    field3
 
-
         //Remove field 1
         let resultingExpression = rootExpression.removeSearchField(searchField1);
 
