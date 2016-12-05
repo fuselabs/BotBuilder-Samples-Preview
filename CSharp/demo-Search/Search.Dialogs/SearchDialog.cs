@@ -721,7 +721,7 @@
                 var uppercmp = (range.IncludeUpper ? Operator.LessThanOrEqual : Operator.LessThan);
                 if (range.Lower is double && double.IsNegativeInfinity((double)range.Lower))
                 {
-                    if (!double.IsPositiveInfinity((double)range.Upper))
+                    if (range.Upper is double && !double.IsPositiveInfinity((double)range.Upper))
                     {
                         filter = FilterExpression.Combine(filter, new FilterExpression(range.Description, uppercmp, range.Property, range.Upper), connector);
                     }
