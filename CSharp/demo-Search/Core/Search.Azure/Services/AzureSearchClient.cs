@@ -66,14 +66,6 @@ namespace Search.Azure.Services
             return this.mapper.Map(documentSearchResult);
         }
 
-        //public void AddFields(IEnumerable<Field> fields)
-        //{
-        //    foreach (var field in fields)
-        //    {
-        //        schema.AddField(SearchTools.ToSearchField(field));
-        //    }
-        //}
-
         // Azure search only supports full text in a seperate tree combined with AND of the filter.
         // We extract all of the FullText operators found in the tree along AND paths only.
         private FilterExpression ExtractFullText(FilterExpression expression, List<FilterExpression> searchExpression)

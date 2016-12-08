@@ -53,11 +53,6 @@ namespace Search.Models
             return Fields[name];
         }
 
-        //public IReadOnlyDictionary<string, SearchField> Fields
-        //{
-        //    get { return fields; }
-        //}
-
         public void Save(string path)
         {
             using (var output = new StreamWriter(new FileStream(path, FileMode.OpenOrCreate)))
