@@ -137,16 +137,16 @@
       },
       "ValueSynonyms": [
         {
-          "canonical": "active",
-          "alternatives": [ "active", "unsold" ]
+          "Canonical": "active",
+          "Alternatives": [ "active", "unsold" ]
         },
         {
-          "canonical": "pending",
-          "alternatives": [ "pending", "selling" ]
+          "Canonical": "pending",
+          "Alternatives": [ "pending", "selling" ]
         },
         {
-          "canonical": "sold",
-          "alternatives":  ["sold"]
+          "Canonical": "sold",
+          "Alternatives":  ["sold"]
         }
       ]
     },
@@ -239,12 +239,12 @@
       },
       "ValueSynonyms": [
         {
-          "canonical": "House",
-          "alternatives": [ "Home", "homes", "house", "houses" ]
+          "Canonical": "House",
+          "Alternatives": [ "Home", "homes", "house", "houses" ]
         },
         {
-          "canonical": "Apartment",
-          "alternatives": [ "Apartment", "apartments", "condo", "condos" ]
+          "Canonical": "Apartment",
+          "Alternatives": [ "Apartment", "apartments", "condo", "condos" ]
         }
       ]
     },

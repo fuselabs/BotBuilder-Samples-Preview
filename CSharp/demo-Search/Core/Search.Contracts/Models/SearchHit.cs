@@ -1,9 +1,15 @@
-﻿namespace Search.Models
+﻿using System.Runtime.Serialization;
+
+namespace Search.Models
 {
     using System;
     using System.Collections.Generic;
 
+#if !NETSTANDARD1_6
     [Serializable]
+#else
+    [DataContract]
+#endif
     public class SearchHit
     {
         public SearchHit()

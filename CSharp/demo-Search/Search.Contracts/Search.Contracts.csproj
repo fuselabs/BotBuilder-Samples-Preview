@@ -31,7 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,20 +45,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Canonicalizer.cs" />
-    <Compile Include="Models\FilterExpression.cs" />
-    <Compile Include="Models\GenericFacet.cs" />
-    <Compile Include="Models\GenericSearchResult.cs" />
-    <Compile Include="Models\SearchField.cs" />
-    <Compile Include="Models\SearchHit.cs" />
-    <Compile Include="Models\SearchQueryBuilder.cs" />
-    <Compile Include="Models\SearchSchema.cs" />
-    <Compile Include="Models\SearchSpec.cs" />
-    <Compile Include="Models\SortKey.cs" />
-    <Compile Include="Models\Synonyms.cs" />
+    <Compile Include="..\Core\Search.Contracts\Models\Canonicalizer.cs">
+      <Link>Models\Canonicalizer.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\FilterExpression.cs">
+      <Link>Models\FilterExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\GenericFacet.cs">
+      <Link>Models\GenericFacet.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\GenericSearchResult.cs">
+      <Link>Models\GenericSearchResult.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SearchField.cs">
+      <Link>Models\SearchField.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SearchFragment.cs">
+      <Link>Models\SearchFragment.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SearchHit.cs">
+      <Link>Models\SearchHit.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SearchQueryBuilder.cs">
+      <Link>Models\SearchQueryBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SearchSchema.cs">
+      <Link>Models\SearchSchema.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SearchSpec.cs">
+      <Link>Models\SearchSpec.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\SortKey.cs">
+      <Link>Models\SortKey.cs</Link>
+    </Compile>
+    <Compile Include="..\Core\Search.Contracts\Models\Synonyms.cs">
+      <Link>Models\Synonyms.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\SearchFragment.cs" />
-    <Compile Include="Services\ISearchClient.cs" />
+    <Compile Include="..\Core\Search.Contracts\Services\ISearchClient.cs">
+      <Link>Services\ISearchClient.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

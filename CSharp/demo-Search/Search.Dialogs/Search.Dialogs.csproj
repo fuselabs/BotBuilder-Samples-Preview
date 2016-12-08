@@ -67,8 +67,8 @@
       <HintPath>..\packages\Microsoft.Spatial.6.15.0\lib\portable-net45+win+wpa81\Microsoft.Spatial.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -108,7 +108,7 @@
       <Name>Search.Azure</Name>
     </ProjectReference>
     <ProjectReference Include="..\Search.Contracts\Search.Contracts.csproj">
-      <Project>{FF10CD6A-2BE1-4520-A01F-769C396906CB}</Project>
+      <Project>{ff10cd6a-2be1-4520-a01f-769c396906cb}</Project>
       <Name>Search.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\Search.Utilities\Search.Utilities.csproj">
