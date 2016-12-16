@@ -11,7 +11,7 @@ namespace Search.Dialogs.UserInteraction
             Message = message ?? label;
         }
 
-        public string Label;
-        public string Message;
+        public string Label { get; }
+        public string Message { get; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Search.Azure.Services
 {
-    public interface IMapper<T, TResult>
+    public interface IMapper<TArg, TResult>
     {
-        TResult Map(T item);
+        TResult Map(TArg item);
     }
 }

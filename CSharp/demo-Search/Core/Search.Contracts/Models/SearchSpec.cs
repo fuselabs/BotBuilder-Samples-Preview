@@ -14,12 +14,12 @@ namespace Search.Models
 #endif
     public class SearchSpec
     {
-        public List<string> Phrases = new List<string>();
-        public FilterExpression Filter = null;
-        public List<SortKey> Sort = new List<SortKey>();
-        public List<string> Selection = new List<string>();
-        public int? Skip;
-        public int? Top;
+        public List<string> Phrases { get; set; } = new List<string>();
+        public FilterExpression Filter { get; set; }
+        public List<SortKey> Sort { get; set; } = new List<SortKey>();
+        public List<string> Selection { get; set; } = new List<string>();
+        public int? Skip { get; set; }
+        public int? Top { get; set; }
 
         public void Remove(SearchField field)
         {

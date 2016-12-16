@@ -30,26 +30,36 @@ namespace Search.Dialogs
     [Serializable]
     public class SearchDialog : LuisDialog<IList<SearchHit>>
     {
-        protected readonly ISearchHitStyler HitStyler;
-        protected readonly bool MultipleSelection;
-
-        protected readonly Prompts Prompts;
-        protected readonly PromptStyler PromptStyler;
-        protected readonly Button[] Refiners;
-        protected readonly ISearchClient SearchClient;
-        // Expose this publically so that other dialogs could interact with partial results
-        public readonly IList<SearchHit> Selected = new List<SearchHit>();
-        protected string DefaultProperty = null;
-
-        [NonSerialized] protected Canonicalizer FieldCanonicalizer;
+        #region Members
 
         private IList<SearchHit> Found;
+
+        protected readonly ISearchHitStyler HitStyler;
+        protected readonly bool MultipleSelection;
+        protected readonly Prompts Prompts;
+        protected readonly PromptStyler PromptStyler;
+        protected Button[] Refiners;
+        protected readonly ISearchClient SearchClient;
+
+        protected string DefaultProperty = null;
         protected Button[] LastButtons = null;
         protected SearchQueryBuilder LastQueryBuilder;
         protected SearchQueryBuilder QueryBuilder;
         protected string Refiner = null;
 
+        [NonSerialized] protected Canonicalizer FieldCanonicalizer;
         [NonSerialized] protected Dictionary<string, CanonicalValue> ValueCanonicalizers;
+
+        #endregion Members
+
+        #region Properties
+
+        // Expose this publically so that other dialogs could interact with partial results
+        public IList<SearchHit> Selected { get; } = new List<SearchHit>();
+
+        #endregion Properties
+
+        #region Constructor
 
         public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model,
             SearchQueryBuilder queryBuilder = null,
@@ -66,26 +76,13 @@ namespace Search.Dialogs
             HitStyler = searchHitStyler ?? new SearchHitStyler();
             PromptStyler = promptStyler ?? new PromptStyler();
             MultipleSelection = multipleSelection;
-            if (refiners == null)
-            {
-                var defaultRefiners = new List<string>();
-                foreach (var field in SearchClient.Schema.Fields.Values)
-                {
-                    if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
-                    {
-                        defaultRefiners.Add(field.Name);
-                    }
-                }
-                refiners = defaultRefiners;
-            }
-            var buttons = new List<Button>();
-            foreach (var refiner in refiners)
-            {
-                var field = SearchClient.Schema.Field(refiner);
-                buttons.Add(new Button(field.Description()));
-            }
-            Refiners = buttons.ToArray();
+
+            InitializeRefiners(refiners);
         }
+
+        #endregion Constructor
+
+        #region Bot Flow
 
         protected async Task PromptAsync(IDialogContext context, string prompt, params Button[] buttons)
         {
@@ -141,6 +138,10 @@ namespace Search.Dialogs
                 await base.MessageReceived(context, item);
             }
         }
+
+        #endregion Bot Flow
+
+        #region Luis Intents
 
         [LuisIntent("")]
         public async Task None(IDialogContext context, LuisResult result)
@@ -199,46 +200,7 @@ namespace Search.Dialogs
             }
         }
 
-        private void Canonicalizers()
-        {
-            if (FieldCanonicalizer == null)
-            {
-                FieldCanonicalizer = new Canonicalizer();
-                ValueCanonicalizers = new Dictionary<string, CanonicalValue>();
-                foreach (var field in SearchClient.Schema.Fields.Values)
-                {
-                    FieldCanonicalizer.Add(field.NameSynonyms);
-                    foreach (var synonym in field.ValueSynonyms)
-                    {
-                        foreach (var alt in synonym.Alternatives)
-                        {
-                            ValueCanonicalizers.Add(Normalize(alt),
-                                new CanonicalValue
-                                {
-                                    Field = field,
-                                    Value = synonym.Canonical,
-                                    Description = synonym.Description
-                                });
-                        }
-                    }
-                }
-            }
-        }
 
-        private string Normalize(string source)
-        {
-            return source.Trim().ToLower();
-        }
-
-        private CanonicalValue CanonicalAttribute(dynamic entity)
-        {
-            CanonicalValue canonical = null;
-            if (entity.Type != "Attribute" || !ValueCanonicalizers.TryGetValue(Normalize(entity.Entity), out canonical))
-            {
-                canonical = null;
-            }
-            return canonical;
-        }
 
         [LuisIntent("Filter")]
         public async Task Filter(IDialogContext context, LuisResult result)
@@ -330,24 +292,6 @@ namespace Search.Dialogs
             await ShowList(context);
         }
 
-        private async Task ShowList(IDialogContext context)
-        {
-            if (Selected.Count == 0)
-            {
-                await PromptAsync(context, Prompts.NotAddedPrompt, LastButtons);
-            }
-            else
-            {
-                var message = context.MakeMessage();
-                HitStyler.Show(ref message, (IReadOnlyList<SearchHit>) Selected, Prompts.ListPrompt, Prompts.Remove);
-                await context.PostAsync(message);
-                await
-                    PromptAsync(context, Prompts.RefinePrompt, Prompts.Finished, Prompts.Quit, Prompts.StartOver,
-                        Prompts.Browse);
-            }
-            context.Wait(MessageReceived);
-        }
-
         [LuisIntent("StartOver")]
         public async Task StartOver(IDialogContext context, LuisResult result)
         {
@@ -368,6 +312,10 @@ namespace Search.Dialogs
             context.Done(Selected);
             return Task.CompletedTask;
         }
+
+        #endregion Luis Intents
+
+        #region Search
 
         private string SearchDescription()
         {
@@ -447,6 +395,10 @@ namespace Search.Dialogs
             return await SearchClient.SearchAsync(QueryBuilder, facet);
         }
 
+        #endregion Search
+
+        #region User List
+
         protected virtual async Task AddSelectedItem(IDialogContext context, string selection)
         {
             var hit = Found.SingleOrDefault(h => h.Key == selection);
@@ -489,6 +441,94 @@ namespace Search.Dialogs
                 await ShowList(context);
             }
         }
+        
+        private async Task ShowList(IDialogContext context)
+        {
+            if (Selected.Count == 0)
+            {
+                await PromptAsync(context, Prompts.NotAddedPrompt, LastButtons);
+            }
+            else
+            {
+                var message = context.MakeMessage();
+                HitStyler.Show(ref message, (IReadOnlyList<SearchHit>)Selected, Prompts.ListPrompt, Prompts.Remove);
+                await context.PostAsync(message);
+                await
+                    PromptAsync(context, Prompts.RefinePrompt, Prompts.Finished, Prompts.Quit, Prompts.StartOver,
+                        Prompts.Browse);
+            }
+            context.Wait(MessageReceived);
+        }
+
+        #endregion User List
+
+        #region Helpers 
+
+        private void InitializeRefiners(IEnumerable<string> refiners)
+        {
+            if (refiners == null)
+            {
+                var defaultRefiners = new List<string>();
+                foreach (var field in SearchClient.Schema.Fields.Values)
+                {
+                    if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
+                    {
+                        defaultRefiners.Add(field.Name);
+                    }
+                }
+                refiners = defaultRefiners;
+            }
+            var buttons = new List<Button>();
+            foreach (var refiner in refiners)
+            {
+                var field = SearchClient.Schema.Field(refiner);
+                buttons.Add(new Button(field.Description()));
+            }
+            Refiners = buttons.ToArray();
+        }
+
+        private void Canonicalizers()
+        {
+            if (FieldCanonicalizer == null)
+            {
+                FieldCanonicalizer = new Canonicalizer();
+                ValueCanonicalizers = new Dictionary<string, CanonicalValue>();
+                foreach (var field in SearchClient.Schema.Fields.Values)
+                {
+                    FieldCanonicalizer.Add(field.NameSynonyms);
+                    foreach (var synonym in field.ValueSynonyms)
+                    {
+                        foreach (var alt in synonym.Alternatives)
+                        {
+                            ValueCanonicalizers.Add(Normalize(alt),
+                                new CanonicalValue
+                                {
+                                    Field = field,
+                                    Value = synonym.Canonical,
+                                    Description = synonym.Description
+                                });
+                        }
+                    }
+                }
+            }
+        }
+
+        private string Normalize(string source)
+        {
+            return source.Trim().ToLower();
+        }
+
+        private CanonicalValue CanonicalAttribute(dynamic entity)
+        {
+            CanonicalValue canonical = null;
+            if (entity.Type != "Attribute" || !ValueCanonicalizers.TryGetValue(Normalize(entity.Entity), out canonical))
+            {
+                canonical = null;
+            }
+            return canonical;
+        }
+
+        #endregion Initialization 
     }
 
     public class CanonicalValue

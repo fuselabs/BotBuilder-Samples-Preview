@@ -16,7 +16,7 @@ namespace Search.Models
 #endif
     public class SortKey
     {
-        public SortDirection Direction;
-        public string Field;
+        public SortDirection Direction { get; set; }
+        public string Field { get; set; }
     }
 }

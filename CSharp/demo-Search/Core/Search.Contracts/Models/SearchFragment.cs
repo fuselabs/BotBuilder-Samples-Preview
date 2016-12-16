@@ -15,7 +15,7 @@ namespace Search.Models
 #endif
     public class SearchFragment
     {
-        public Synonyms Phrases;
-        public SearchSpec Fragment;
+        public Synonyms Phrases { get; set; }
+        public SearchSpec Fragment { get; set; }
     }
 }

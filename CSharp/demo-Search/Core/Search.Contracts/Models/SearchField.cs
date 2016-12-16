@@ -33,18 +33,18 @@ namespace Search.Models
             return NameSynonyms.Alternatives.First();
         }
 
-        public string Name;
-        public Type Type = typeof(string);
-        public bool IsFacetable;
-        public bool IsFilterable;
-        public bool IsKey;
-        public bool IsRetrievable;
-        public bool IsSearchable;
-        public bool IsSortable;
+        public string Name { get; set; }
+        public Type Type { get; set; } = typeof(string);
+        public bool IsFacetable { get; set; }
+        public bool IsFilterable { get; set; }
+        public bool IsKey { get; set; }
+        public bool IsRetrievable { get; set; }
+        public bool IsSearchable { get; set; }
+        public bool IsSortable { get; set; }
 
         // Fields to control experience
-        public PreferredFilter FilterPreference;
-        public Synonyms NameSynonyms;
-        public Synonyms[] ValueSynonyms = new Synonyms[0];
+        public PreferredFilter FilterPreference { get; set; }
+        public Synonyms NameSynonyms { get; set; }
+        public Synonyms[] ValueSynonyms { get; set; } = new Synonyms[0];
     }
 }
