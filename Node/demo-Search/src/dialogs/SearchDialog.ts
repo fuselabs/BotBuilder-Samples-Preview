@@ -331,8 +331,8 @@ export class SearchDialog extends IntentDialog {
 
         // If the caller specified their own refiners
         if(this.refinersOverride) {
-            for(let fieldKey in this.refinersOverride) {
-                let field = this.searchSchema.Fields[fieldKey];
+            for(let fieldName of this.refinersOverride) {
+                let field = this.searchSchema.Fields[fieldName];
 
                 if(field && field.IsFacetable && field.NameSynonyms && field.NameSynonyms.Alternatives.length > 0) {
                     let description = field.NameSynonyms.Alternatives[0];
