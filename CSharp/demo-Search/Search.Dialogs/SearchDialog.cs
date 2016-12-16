@@ -1,4 +1,8 @@
-﻿namespace Search.Dialogs
+﻿using Search.Dialogs.Luis;
+using Search.Dialogs.Tools;
+using Search.Dialogs.UserInteraction;
+
+namespace Search.Dialogs
 {
     // TODO: List of things still to do
     // Switch to built-in currency and numbers 
@@ -14,7 +18,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Builder.Internals.Fibers;
+    using Fibers = Microsoft.Bot.Builder.Internals.Fibers;
     using Microsoft.Bot.Connector;
     using Search.Models;
     using Search.Services;
@@ -22,122 +26,8 @@
     using Microsoft.Bot.Builder.Luis;
     using System.Text;
     using Azure;
-    using Microsoft.Bot.Builder.FormFlow.Advanced;
 
     public delegate SearchField CanonicalizerDelegate(string propertyName);
-
-    public class Range
-    {
-        public SearchField Property { get; set; }
-        public object Lower { get; set; }
-        public object Upper { get; set; }
-        public bool IncludeLower { get; set; }
-        public bool IncludeUpper { get; set; }
-        public string Description { get; set; }
-    }
-
-    class ComparisonEntity
-    {
-        public EntityRecommendation Entity;
-        public EntityRecommendation Operator;
-        public EntityRecommendation Lower;
-        public EntityRecommendation Upper;
-        public EntityRecommendation Property;
-
-        public ComparisonEntity(EntityRecommendation comparison)
-        {
-            Entity = comparison;
-        }
-
-        public void AddEntity(EntityRecommendation entity)
-        {
-            if (entity.Type != "Comparison" && entity.StartIndex >= Entity.StartIndex && entity.EndIndex <= Entity.EndIndex)
-            {
-                switch (entity.Type)
-                {
-                    case "Currency": AddNumber(entity); break;
-                    case "Value": AddNumber(entity); break;
-                    case "Dimension": AddNumber(entity); break;
-                    case "Operator": Operator = entity; break;
-                    case "Property": Property = entity; break;
-                }
-            }
-        }
-
-        private void AddNumber(EntityRecommendation entity)
-        {
-            if (Lower == null)
-            {
-                Lower = entity;
-            }
-            else if (entity.StartIndex < Lower.StartIndex)
-            {
-                Upper = Lower;
-                Lower = entity;
-            }
-            else
-            {
-                Upper = entity;
-            }
-        }
-    }
-
-    [Serializable]
-    public class Button
-    {
-        public Button(string label, string message = null)
-        {
-            Label = label;
-            Message = message ?? label;
-        }
-
-        public string Label;
-        public string Message;
-    }
-
-    [Serializable]
-    public class Prompts
-    {
-        // Prompts
-        public string InitialPrompt = "Please describe in your own words what you would like to find?";
-        public string RefinePrompt = "Refine your search";
-        public string FacetPrompt = "What facet would you like to refine by?";
-        public string FacetValuePrompt = "What value for {0} would you like to filter by?";
-        public string NotUnderstoodPrompt = "I did not understand what you said";
-        public string UnknownItemPrompt = "That is not an item in the current results.";
-        public string AddedToListPrompt = "{0} was added to your list.";
-        public string RemovedFromListPrompt = "{0} was removed from your list.";
-        public string ListPrompt = "Here is what you have selected so far.";
-        public string NotAddedPrompt = "You have not added anything yet.";
-        public string NoValuesPrompt = "There are no values to filter by for {0}.";
-        public string FilterPrompt = "Enter a filter for {0} like \"no more than 4\".";
-        public string NoResultsPrompt = "Your search found no results so I undid your last constraint.  You can refine again.";
-
-        // Buttons
-        public Button Browse = new Button("Browse");
-        public Button NextPage = new Button("Next Page");
-        public Button List = new Button("List");
-        public Button Add = new Button("Add to List", "ADD:{0}");
-        public Button Remove = new Button("Remove from List", "REMOVE:{0}");
-        public Button Quit = new Button("Quit");
-        public Button Finished = new Button("Finished");
-        public Button StartOver = new Button("Start Over");
-
-        // Status
-        public string Filter = "Filter: {0}";
-        public string Keywords = "Keywords: {0}";
-        public string Sort = "Sort: {0}";
-        public string Page = "Page: {0}";
-        public string Count = "Total results: {0}";
-        public string Selected = "Kept {0} results so far.";
-        public string Ascending = "Ascending";
-        public string Descending = "Descending";
-
-        // Facet messages
-        public string AnyNumberLabel = "Any number of {0}";
-        public string AnyLabel = "Any {0}";
-        public string AnyMessage = "Any";
-    }
 
     [Serializable]
     public class SearchDialog : LuisDialog<IList<SearchHit>>
@@ -179,8 +69,8 @@
             IEnumerable<string> refiners = null)
             : base(new LuisService(new LuisModelAttribute(model, key)))
         {
-            SetField.NotNull(out this.Prompts, nameof(Prompts), prompts);
-            SetField.NotNull(out this.SearchClient, nameof(searchClient), searchClient);
+            Fibers.SetField.NotNull(out this.Prompts, nameof(Prompts), prompts);
+            Fibers.SetField.NotNull(out this.SearchClient, nameof(searchClient), searchClient);
             this.QueryBuilder = queryBuilder ?? new SearchQueryBuilder();
             this.LastQueryBuilder = new SearchQueryBuilder();
             this.HitStyler = searchHitStyler ?? new SearchHitStyler();
@@ -399,6 +289,8 @@
         public async Task Filter(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
+            var rangeResolver = new RangeResolver(this.SearchClient.Schema, FieldCanonicalizer);
+
             var entities = result.Entities ?? new List<EntityRecommendation>();
             var comparisons = (from entity in entities
                                where entity.Type == "Comparison"
@@ -436,11 +328,12 @@
                 }
             }
             var ranges = from comparison in comparisons
-                         let range = Resolve(comparison, result.Query)
+                         let range = rangeResolver.Resolve(comparison, result.Query, this.DefaultProperty)
                          where range != null
                          select range;
             var filter = GenerateFilterExpression(ranges, Operator.And);
             filter = attributes.GenerateFilterExpression(Operator.And, filter);
+
             if (this.QueryBuilder.Spec.Filter != null)
             {
                 this.QueryBuilder.Spec.Filter = FilterExpression.Combine(this.QueryBuilder.Spec.Filter.Remove(filter), filter, Operator.And);
@@ -509,136 +402,6 @@
         {
             context.Done(Selected);
             return Task.CompletedTask;
-        }
-
-        private double ParseNumber(string entity, out bool isCurrency)
-        {
-            isCurrency = false;
-            double multiply = 1.0;
-            if (entity.StartsWith("$"))
-            {
-                isCurrency = true;
-                entity = entity.Substring(1);
-            }
-            if (entity.EndsWith("k"))
-            {
-                multiply = 1000.0;
-                entity = entity.Substring(0, entity.Length - 1);
-            }
-            double result;
-            var str = entity.Replace(",", "").Replace(" ", "");
-            if (double.TryParse(str, out result))
-            {
-                result *= multiply;
-            }
-            else
-            {
-                result = double.NaN;
-            }
-            return result;
-        }
-
-        private Range Resolve(ComparisonEntity c, string originalText)
-        {
-            Range range = null;
-            bool isCurrency = false;
-            object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
-            object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
-            string propertyName = c.Property?.Entity;
-            if (propertyName == null)
-            {
-                if (isCurrency)
-                {
-                    propertyName = this.SearchClient.Schema.DefaultCurrencyProperty ?? this.DefaultProperty;
-                }
-                else
-                {
-                    propertyName = this.DefaultProperty;
-                }
-            }
-            else
-            {
-                propertyName = this.FieldCanonicalizer.Canonicalize(c.Property.Entity);
-            }
-            if (propertyName != null)
-            {
-                range = new Range { Property = this.SearchClient.Schema.Field(propertyName) };
-                if (lower is double && double.IsNaN((double)lower))
-                {
-                    lower = originalText.Substring(c.Lower.StartIndex.Value, c.Lower.EndIndex.Value - c.Lower.StartIndex.Value + 1);
-                }
-                if (upper is double && double.IsNaN((double)upper))
-                {
-                    upper = originalText.Substring(c.Upper.StartIndex.Value, c.Upper.EndIndex.Value - c.Upper.StartIndex.Value + 1);
-                }
-                if (c.Operator == null)
-                {
-                    // This is the case where we just have naked values
-                    range.IncludeLower = true;
-                    range.IncludeUpper = true;
-                    upper = lower;
-                }
-                else
-                {
-                    switch (c.Operator.Entity)
-                    {
-                        case ">=":
-                        case "+":
-                        case "greater than or equal":
-                        case "at least":
-                        case "no less than":
-                            range.IncludeLower = true;
-                            range.IncludeUpper = true;
-                            upper = double.PositiveInfinity;
-                            break;
-
-                        case ">":
-                        case "greater than":
-                        case "more than":
-                            range.IncludeLower = false;
-                            range.IncludeUpper = true;
-                            upper = double.PositiveInfinity;
-                            break;
-
-                        case "-":
-                        case "between":
-                        case "and":
-                        case "or":
-                            range.IncludeLower = true;
-                            range.IncludeUpper = true;
-                            break;
-
-                        case "<=":
-                        case "no more than":
-                        case "less than or equal":
-                            range.IncludeLower = true;
-                            range.IncludeUpper = true;
-                            upper = lower;
-                            lower = double.NegativeInfinity;
-                            break;
-
-                        case "<":
-                        case "less than":
-                            range.IncludeLower = true;
-                            range.IncludeUpper = false;
-                            upper = lower;
-                            lower = double.NegativeInfinity;
-                            break;
-
-                        case "any":
-                        case "any number of":
-                            upper = double.PositiveInfinity;
-                            lower = double.NegativeInfinity;
-                            break;
-
-                        default: throw new ArgumentException($"Unknown operator {c.Operator.Entity}");
-                    }
-                }
-                range.Lower = lower;
-                range.Upper = upper;
-                range.Description = c.Entity?.Entity;
-            }
-            return range;
         }
 
         private string SearchDescription()
@@ -791,131 +554,6 @@
                 this.Selected.Remove(hit);
                 await ShowList(context);
             }
-        }
-    }
-    public static partial class Extensions
-    {
-        public static IEnumerable<string> UncoveredSubstrings(this IEnumerable<EntityRecommendation> entities, string originalText)
-        {
-            var ranges = new[] { new { start = 0, end = originalText.Length } }.ToList();
-            foreach (var entity in entities)
-            {
-                if (entity.StartIndex.HasValue)
-                {
-                    int i = 0;
-                    while (i < ranges.Count)
-                    {
-                        var range = ranges[i];
-                        if (range.start > entity.EndIndex)
-                        {
-                            break;
-                        }
-                        if (range.start == entity.StartIndex)
-                        {
-                            if (range.end <= entity.EndIndex)
-                            {
-                                // Completely contained 
-                                ranges.RemoveAt(i);
-                            }
-                            else
-                            {
-                                // Remove from start
-                                ranges.RemoveAt(i);
-                                ranges.Insert(i, new { start = entity.EndIndex.Value + 1, end = range.end });
-                                ++i;
-                            }
-                        }
-                        else if (range.end == entity.EndIndex)
-                        {
-                            // Remove from end
-                            ranges.RemoveAt(i);
-                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value });
-                            ++i;
-                        }
-                        else if (range.start < entity.StartIndex && range.end > entity.EndIndex)
-                        {
-                            // Split
-                            ranges.RemoveAt(i);
-                            ranges.Insert(i, new { start = range.start, end = entity.StartIndex.Value });
-                            ranges.Insert(++i, new { start = entity.EndIndex.Value + 1, end = range.end });
-                            ++i;
-                        }
-                        else if (range.start > entity.StartIndex && range.end < entity.EndIndex)
-                        {
-                            // Completely contained
-                            ranges.RemoveAt(i);
-                        }
-                        else
-                        {
-                            ++i;
-                        }
-                    }
-                }
-            }
-            IEnumerable<string> substrings = new List<string>();
-            foreach (var range in ranges)
-            {
-                var str = originalText.Substring(range.start, range.end - range.start);
-                substrings = substrings.Union(str.Phrases());
-            }
-            return substrings;
-        }
-
-        // Break string into phrases where noise words or punctuation are breaks
-        private static IEnumerable<string> Phrases(this string str)
-        {
-            var phrase = new StringBuilder();
-            var words = str.Split(' ');
-            foreach (var word in words)
-            {
-                if (!string.IsNullOrEmpty(word))
-                {
-                    if (Language.NoiseResponse(word))
-                    {
-                        if (phrase.Length > 0)
-                        {
-                            yield return phrase.ToString();
-                            phrase = new StringBuilder();
-                        }
-                    }
-                    else if (char.IsPunctuation(word.Last()))
-                    {
-                        int lastPunc = 0;
-                        for (int i = 0; i < word.Length; ++i)
-                        {
-                            if (char.IsPunctuation(word[i]))
-                            {
-                                lastPunc = i;
-                            }
-                        }
-                        phrase.Append(word.Substring(0, lastPunc));
-                        yield return phrase.ToString();
-                        phrase = new StringBuilder();
-                    }
-                    else
-                    {
-                        if (phrase.Length > 0)
-                        {
-                            phrase.Append(' ');
-                        }
-                        phrase.Append(word);
-                    }
-                }
-            }
-            if (phrase.Length > 0)
-            {
-                yield return phrase.ToString();
-            }
-        }
-
-        public static FilterExpression GenerateFilterExpression(this IEnumerable<FilterExpression> filters, Operator connector = Operator.And, FilterExpression soFar = null)
-        {
-            FilterExpression result = soFar;
-            foreach (var filter in filters)
-            {
-                result = FilterExpression.Combine(result, filter, connector);
-            }
-            return result;
         }
     }
 }

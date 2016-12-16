@@ -1,4 +1,6 @@
-﻿namespace RealEstateBot.Dialogs
+﻿using Search.Dialogs.UserInteraction;
+
+namespace RealEstateBot.Dialogs
 {
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Internals.Fibers;

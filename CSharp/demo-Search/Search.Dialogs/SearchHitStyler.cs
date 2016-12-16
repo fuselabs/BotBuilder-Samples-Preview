@@ -1,4 +1,6 @@
-﻿namespace Search.Dialogs
+﻿using Search.Dialogs.UserInteraction;
+
+namespace Search.Dialogs
 {
     using System;
     using System.Collections.Generic;

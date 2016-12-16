@@ -1,4 +1,6 @@
-﻿namespace JobListingBot.Dialogs
+﻿using Search.Dialogs.UserInteraction;
+
+namespace JobListingBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
