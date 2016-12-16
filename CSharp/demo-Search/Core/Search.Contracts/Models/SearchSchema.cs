@@ -1,15 +1,11 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization.Formatters;
+using Newtonsoft.Json;
 
 namespace Search.Models
 {
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-
-
 #if !NETSTANDARD1_6
     [Serializable]
 #else

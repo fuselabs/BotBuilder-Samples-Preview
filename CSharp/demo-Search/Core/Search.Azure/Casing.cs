@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace Search.Utilities
 {
@@ -17,10 +13,10 @@ namespace Search.Utilities
         {
             var builder = new StringBuilder();
             var name = original.Trim();
-            var previousUpper = Char.IsUpper(name[0]);
-            var previousLetter = Char.IsLetter(name[0]);
-            bool first = true;
-            for (int i = 0; i < name.Length; ++i)
+            var previousUpper = char.IsUpper(name[0]);
+            var previousLetter = char.IsLetter(name[0]);
+            var first = true;
+            for (var i = 0; i < name.Length; ++i)
             {
                 var ch = name[i];
                 if (!first && (ch == '_' || ch == ' '))
@@ -30,11 +26,11 @@ namespace Search.Utilities
                 }
                 else
                 {
-                    var isUpper = Char.IsUpper(ch);
-                    var isLetter = Char.IsLetter(ch);
+                    var isUpper = char.IsUpper(ch);
+                    var isLetter = char.IsLetter(ch);
                     if ((!previousUpper && isUpper)
                         || (isLetter != previousLetter)
-                        || (!first && isUpper && (i + 1) < name.Length && Char.IsLower(name[i + 1])))
+                        || (!first && isUpper && i + 1 < name.Length && char.IsLower(name[i + 1])))
                     {
                         // Break on lower to upper, number boundaries and Upper to lower
                         builder.Append(' ');

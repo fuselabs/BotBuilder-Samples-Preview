@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Search.Models
 {
@@ -14,7 +12,7 @@ namespace Search.Models
 #endif
     public class Canonicalizer
     {
-        private Dictionary<string, Synonyms> map = new Dictionary<string, Synonyms>();
+        private readonly Dictionary<string, Synonyms> map = new Dictionary<string, Synonyms>();
 
         private string Normalize(string source)
         {

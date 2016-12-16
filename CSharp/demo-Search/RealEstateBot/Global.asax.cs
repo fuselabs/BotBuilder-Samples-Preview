@@ -1,34 +1,38 @@
-﻿namespace RealEstateBot
-{
-    using System.Web;
-    using System.Web.Http;
-    using Autofac;
-    using Microsoft.Azure.Search.Models;
-    using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Builder.Internals.Fibers;
-    using RealEstateBot.Dialogs;
-    using Search.Azure.Services;
-    using Search.Models;
-    using Search.Services;
-    using System.IO;
-    using Newtonsoft.Json;
+﻿using System.IO;
+using System.Web;
+using System.Web.Http;
+using Autofac;
+using Microsoft.Azure.Search.Models;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Internals.Fibers;
+using Newtonsoft.Json;
+using RealEstateBot.Dialogs;
+using Search.Azure.Services;
+using Search.Models;
+using Search.Services;
 
+namespace RealEstateBot
+{
     public class WebApiApplication : HttpApplication
     {
         protected void Application_Start()
         {
-            ContainerBuilder builder = new ContainerBuilder();
+            var builder = new ContainerBuilder();
 
             builder.RegisterType<RealEstateSearchDialog>()
-              .As<IDialog<object>>()
-              .InstancePerDependency();
+                .As<IDialog<object>>()
+                .InstancePerDependency();
 
             builder.RegisterType<RealEstateMapper>()
-               .Keyed<IMapper<DocumentSearchResult, GenericSearchResult>>(FiberModule.Key_DoNotSerialize)
-               .AsImplementedInterfaces()
-               .SingleInstance();
+                .Keyed<IMapper<DocumentSearchResult, GenericSearchResult>>(FiberModule.Key_DoNotSerialize)
+                .AsImplementedInterfaces()
+                .SingleInstance();
 
-            builder.Register((c) => JsonConvert.DeserializeObject<SearchSchema>(File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstate.json"))))
+            builder.Register(
+                    (c) =>
+                        JsonConvert.DeserializeObject<SearchSchema>(
+                            File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"),
+                                @"dialogs\RealEstate.json"))))
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<AzureSearchClient>()

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Bot.Builder.Luis.Models;
 
-namespace Search.Dialogs.Luis
+namespace Search.Dialogs.Filter
 {
     class ComparisonEntity
     {

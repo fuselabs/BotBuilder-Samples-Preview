@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Search.Models;
 
-namespace Search.Dialogs.Luis
+namespace Search.Dialogs.Filter
 {
-    class RangeResolver
+    internal class RangeResolver
     {
-        private readonly SearchSchema schema;
         private readonly Canonicalizer fieldCanonicalizer;
+        private readonly SearchSchema schema;
 
         public RangeResolver(SearchSchema schema, Canonicalizer fieldCanonicalizer)
         {
@@ -21,12 +17,12 @@ namespace Search.Dialogs.Luis
         public Range Resolve(ComparisonEntity c, string originalText, string defaultProperty)
         {
             Range range = null;
-            bool isCurrency = false;
+            var isCurrency = false;
 
             object lower = c.Lower == null ? double.NegativeInfinity : ParseNumber(c.Lower.Entity, out isCurrency);
             object upper = c.Upper == null ? double.PositiveInfinity : ParseNumber(c.Upper.Entity, out isCurrency);
 
-            string propertyName = c.Property?.Entity;
+            var propertyName = c.Property?.Entity;
 
             if (propertyName == null)
             {
@@ -41,19 +37,21 @@ namespace Search.Dialogs.Luis
             }
             else
             {
-                propertyName = this.fieldCanonicalizer.Canonicalize(c.Property.Entity);
+                propertyName = fieldCanonicalizer.Canonicalize(c.Property.Entity);
             }
 
             if (propertyName != null)
             {
-                range = new Range { Property = schema.Field(propertyName) };
-                if (lower is double && double.IsNaN((double)lower))
+                range = new Range {Property = schema.Field(propertyName)};
+                if (lower is double && double.IsNaN((double) lower))
                 {
-                    lower = originalText.Substring(c.Lower.StartIndex.Value, c.Lower.EndIndex.Value - c.Lower.StartIndex.Value + 1);
+                    lower = originalText.Substring(c.Lower.StartIndex.Value,
+                        c.Lower.EndIndex.Value - c.Lower.StartIndex.Value + 1);
                 }
-                if (upper is double && double.IsNaN((double)upper))
+                if (upper is double && double.IsNaN((double) upper))
                 {
-                    upper = originalText.Substring(c.Upper.StartIndex.Value, c.Upper.EndIndex.Value - c.Upper.StartIndex.Value + 1);
+                    upper = originalText.Substring(c.Upper.StartIndex.Value,
+                        c.Upper.EndIndex.Value - c.Upper.StartIndex.Value + 1);
                 }
                 if (c.Operator == null)
                 {
@@ -115,7 +113,8 @@ namespace Search.Dialogs.Luis
                             lower = double.NegativeInfinity;
                             break;
 
-                        default: throw new ArgumentException($"Unknown operator {c.Operator.Entity}");
+                        default:
+                            throw new ArgumentException($"Unknown operator {c.Operator.Entity}");
                     }
                 }
                 range.Lower = lower;
@@ -128,7 +127,7 @@ namespace Search.Dialogs.Luis
         private double ParseNumber(string entity, out bool isCurrency)
         {
             isCurrency = false;
-            double multiply = 1.0;
+            var multiply = 1.0;
             if (entity.StartsWith("$"))
             {
                 isCurrency = true;

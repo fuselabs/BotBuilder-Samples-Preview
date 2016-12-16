@@ -98,14 +98,16 @@
   <ItemGroup>
     <Compile Include="CancelablePromptChoice.cs" />
     <Compile Include="CancelablePromptOptions.cs" />
-    <Compile Include="Luis\ComparisonEntity.cs" />
-    <Compile Include="Luis\Range.cs" />
-    <Compile Include="Luis\RangeResolver.cs" />
+    <Compile Include="Filter\ComparisonEntity.cs" />
+    <Compile Include="Filter\FilterExpressionBuilder.cs" />
+    <Compile Include="Filter\Range.cs" />
+    <Compile Include="Filter\RangeResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchDialog.cs" />
     <Compile Include="SearchHitStyler.cs" />
     <Compile Include="Tools\Extensions.cs" />
     <Compile Include="UserInteraction\Button.cs" />
+    <Compile Include="UserInteraction\FacetDisplay.cs" />
     <Compile Include="UserInteraction\Prompts.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Search.Models;
+﻿using Search.Models;
 
-namespace Search.Dialogs.Luis
+namespace Search.Dialogs.Filter
 {
     public class Range
     {

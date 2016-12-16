@@ -1,10 +1,10 @@
-﻿namespace RealEstateBot
-{
-    using System.Linq;
-    using Microsoft.Azure.Search.Models;
-    using Search.Azure.Services;
-    using Search.Models;
+﻿using System.Linq;
+using Microsoft.Azure.Search.Models;
+using Search.Azure.Services;
+using Search.Models;
 
+namespace RealEstateBot
+{
     public class RealEstateMapper : IMapper<DocumentSearchResult, GenericSearchResult>
     {
         public GenericSearchResult Map(DocumentSearchResult documentSearchResult)
@@ -12,7 +12,8 @@
             var searchResult = new GenericSearchResult();
 
             searchResult.Results = documentSearchResult.Results.Select(r => ToSearchHit(r)).ToList();
-            searchResult.Facets = documentSearchResult.Facets?.ToDictionary(kv => kv.Key, kv => kv.Value.Select(f => ToFacet(f)));
+            searchResult.Facets = documentSearchResult.Facets?.ToDictionary(kv => kv.Key,
+                kv => kv.Value.Select(f => ToFacet(f)));
 
             return searchResult;
         }
@@ -30,10 +31,10 @@
         {
             return new SearchHit
             {
-                Key = (string)hit.Document["listingId"],
+                Key = (string) hit.Document["listingId"],
                 Title = GetTitleForItem(hit),
-                PictureUrl = (string)hit.Document["thumbnail"],
-                Description = (string)hit.Document["description"]
+                PictureUrl = (string) hit.Document["thumbnail"],
+                Description = (string) hit.Document["description"]
             };
         }
 

@@ -7,9 +7,9 @@ using Search.Models;
 
 namespace Search.Dialogs.Tools
 {
-    public static partial class Extensions
+    public static class Keywords
     {
-        public static IEnumerable<string> UncoveredSubstrings(this IEnumerable<EntityRecommendation> entities, string originalText)
+        public static IEnumerable<string> ExtractPhrases(IEnumerable<EntityRecommendation> entities, string originalText)
         {
             var ranges = new[] { new { start = 0, end = originalText.Length } }.ToList();
             foreach (var entity in entities)

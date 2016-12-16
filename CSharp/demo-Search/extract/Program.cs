@@ -1,22 +1,21 @@
-﻿namespace Search.Extract
-{
-    using Microsoft.Azure.Search;
-    using Microsoft.Azure.Search.Models;
-    using Search.Utilities;
-    using System;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Search.Models;
-    using Azure;
-    using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.Azure.Search;
+using Microsoft.Azure.Search.Models;
+using Search.Azure;
+using Search.Models;
+using Search.Utilities;
 
-    class Program
+namespace Search.Extract
+{
+    internal class Program
     {
-        static int Apply(SearchIndexClient client, string valueField, string idField, string text, SearchParameters sp, Action<int, SearchResult> function,
+        private static int Apply(SearchIndexClient client, string valueField, string idField, string text,
+            SearchParameters sp, Action<int, SearchResult> function,
             int max = int.MaxValue,
             int page = 1000)
         {
@@ -27,15 +26,15 @@
             var total = 0;
             object lastValue = null;
             object lastID = null;
-            sp.OrderBy = new string[] { valueField };
+            sp.OrderBy = new string[] {valueField};
             sp.Top = page;
             var results = client.Documents.Search(text, sp).Results;
             while (total < max && results.Any())
             {
-                bool skipping = lastValue != null;
-                bool newValue = false;
-                int row = 0;
-                int firstRowWithValue = 0;
+                var skipping = lastValue != null;
+                var newValue = false;
+                var row = 0;
+                var firstRowWithValue = 0;
                 foreach (var result in results)
                 {
                     var id = result.Document[idField];
@@ -80,7 +79,8 @@
                 {
                     sp.Skip += toSkip;
                 }
-                sp.Filter = (originalFilter == null ? "" : $"({originalFilter}) and ") + $"{valueField} ge {SearchTools.Constant(lastValue)}";
+                sp.Filter = (originalFilter == null ? "" : $"({originalFilter}) and ") +
+                            $"{valueField} ge {SearchTools.Constant(lastValue)}";
                 results = client.Documents.Search(text, sp).Results;
             }
             sp.Filter = originalFilter;
@@ -90,7 +90,7 @@
             return total;
         }
 
-        static void Process(int count,
+        private static void Process(int count,
             SearchResult result,
             IEnumerable<string> fields, Dictionary<string, Histogram<object>> histograms)
         {
@@ -107,7 +107,7 @@
                     }
                     if (value is string[])
                     {
-                        foreach(var val in value as string[])
+                        foreach (var val in value as string[])
                         {
                             histogram.Add(val);
                         }
@@ -118,7 +118,7 @@
                     }
                 }
             }
-            if ((count % 100) == 0)
+            if (count%100 == 0)
             {
                 Console.Write($"\n{count}: ");
             }
@@ -128,21 +128,28 @@
             }
         }
 
-        static void Usage(string msg = null)
+        private static void Usage(string msg = null)
         {
-            Console.WriteLine("extract <serviceName> <indexName> <adminKey> [-f <facetList>] [-g <histogramPath>] [-h <histogramPath>] [-o <outputPath>]");
+            Console.WriteLine(
+                "extract <serviceName> <indexName> <adminKey> [-f <facetList>] [-g <histogramPath>] [-h <histogramPath>] [-o <outputPath>]");
             Console.WriteLine("Generate <indexName>.json schema file.");
-            Console.WriteLine("-f <facetList>: Comma seperated list of facet names for histogram.  By default all schema facets.");
-            Console.WriteLine("-g <histogramPath>: Generate a file with histogram information from index.  This can take a long time.");
-            Console.WriteLine("-h <histogramPath>: Use histogram to help generate schema.  This can be the just generated histogram.");
+            Console.WriteLine(
+                "-f <facetList>: Comma seperated list of facet names for histogram.  By default all schema facets.");
+            Console.WriteLine(
+                "-g <histogramPath>: Generate a file with histogram information from index.  This can take a long time.");
+            Console.WriteLine(
+                "-h <histogramPath>: Use histogram to help generate schema.  This can be the just generated histogram.");
             Console.WriteLine("-o <schemaPath>: Where to put generated schema.");
-            Console.WriteLine("-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
-            Console.WriteLine("-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 100.  LUIS allows a total of 5000.");
-            Console.WriteLine("-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.");
+            Console.WriteLine(
+                "-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
+            Console.WriteLine(
+                "-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 100.  LUIS allows a total of 5000.");
+            Console.WriteLine(
+                "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.");
             Environment.Exit(-1);
         }
 
-        static string NextArg(int i, string[] args)
+        private static string NextArg(int i, string[] args)
         {
             string arg = null;
             if (i < args.Length)
@@ -156,7 +163,7 @@
             return arg;
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length < 3)
             {
@@ -168,26 +175,42 @@
             string[] facets = null;
             string generatePath = null;
             string histogramPath = null;
-            string schemaPath = indexName + ".json";
-            int samples = int.MaxValue;
-            int uniqueValueThreshold = 100;
+            var schemaPath = indexName + ".json";
+            var samples = int.MaxValue;
+            var uniqueValueThreshold = 100;
             string sortable = null;
             for (var i = 3; i < args.Length; ++i)
             {
                 var arg = args[i];
                 switch (arg)
                 {
-                    case "-f": facets = NextArg(++i, args).Split(',').ToArray<string>(); break;
-                    case "-g": generatePath = NextArg(++i, args); break;
-                    case "-h": histogramPath = NextArg(++i, args); break;
-                    case "-o": schemaPath = NextArg(++i, args); break;
-                    case "-s": samples = int.Parse(NextArg(++i, args)); break;
-                    case "-u": uniqueValueThreshold = int.Parse(NextArg(++i, args)); break;
-                    case "-v": sortable = NextArg(++i, args); break;
-                    default: Usage($"{arg} is not understood."); break;
+                    case "-f":
+                        facets = NextArg(++i, args).Split(',').ToArray<string>();
+                        break;
+                    case "-g":
+                        generatePath = NextArg(++i, args);
+                        break;
+                    case "-h":
+                        histogramPath = NextArg(++i, args);
+                        break;
+                    case "-o":
+                        schemaPath = NextArg(++i, args);
+                        break;
+                    case "-s":
+                        samples = int.Parse(NextArg(++i, args));
+                        break;
+                    case "-u":
+                        uniqueValueThreshold = int.Parse(NextArg(++i, args));
+                        break;
+                    case "-v":
+                        sortable = NextArg(++i, args);
+                        break;
+                    default:
+                        Usage($"{arg} is not understood.");
+                        break;
                 }
             }
-            var schema = Search.Azure.SearchTools.GetIndexSchema(serviceName, adminKey, indexName);
+            var schema = SearchTools.GetIndexSchema(serviceName, adminKey, indexName);
             if (generatePath != null)
             {
                 if (sortable == null)
@@ -197,19 +220,18 @@
                 var indexClient = new SearchIndexClient(serviceName, indexName, new SearchCredentials(adminKey));
                 if (facets == null)
                 {
-                    facets = (from field in schema.Fields.Values where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable select field.Name).ToArray();
+                    facets = (from field in schema.Fields.Values
+                        where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable
+                        select field.Name).ToArray();
                 }
                 var id = schema.Fields.Values.First((f) => f.IsKey);
                 var histograms = new Dictionary<string, Histogram<object>>();
                 var sp = new SearchParameters();
                 var timer = Stopwatch.StartNew();
                 var results = Apply(indexClient, sortable, id.Name, null, sp,
-                    (count, result) =>
-                    {
-                        Process(count, result, facets, histograms);
-                    },
+                    (count, result) => { Process(count, result, facets, histograms); },
                     samples
-                    );
+                );
                 Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
                 using (var stream = new FileStream(generatePath, FileMode.Create))
                 {
@@ -223,7 +245,7 @@
                 using (var stream = new FileStream(histogramPath, FileMode.Open))
                 {
                     var deserializer = new BinaryFormatter();
-                    histograms = (Dictionary<string, Histogram<object>>)deserializer.Deserialize(stream);
+                    histograms = (Dictionary<string, Histogram<object>>) deserializer.Deserialize(stream);
                     foreach (var histogram in histograms)
                     {
                         var field = schema.Field(histogram.Key);
@@ -253,16 +275,16 @@
 
         public static string Normalize(string input)
         {
-            int start = 0;
-            for(; start < input.Length; ++start)
+            var start = 0;
+            for (; start < input.Length; ++start)
             {
                 if (!char.IsPunctuation(input[start]))
                 {
                     break;
                 }
             }
-            int end = input.Length;
-            for(; end > 0; --end)
+            var end = input.Length;
+            for (; end > 0; --end)
             {
                 if (!char.IsPunctuation(input[end - 1]))
                 {

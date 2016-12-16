@@ -1,24 +1,22 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Azure.Search;
+using Microsoft.Azure.Search.Models;
+using Search.Models;
+using Search.Services;
+
 namespace Search.Azure.Services
 {
-
 #if !NETSTANDARD1_6
     using System.Configuration;
 #else
     using Microsoft.Extensions.Configuration;
 #endif
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.Azure.Search;
-    using Microsoft.Azure.Search.Models;
-    using Search.Azure;
-    using Search.Models;
-    using Search.Services;
-    using System.Text;
-    using System.Linq;
 
-    class AzureSearchConfiguration
+    internal class AzureSearchConfiguration
     {
         public string ServiceName { get; set; }
         public string IndexName { get; set; }
@@ -27,13 +25,12 @@ namespace Search.Azure.Services
 
     public class AzureSearchClient : ISearchClient
     {
-        private readonly ISearchIndexClient searchClient;
         private readonly IMapper<DocumentSearchResult, GenericSearchResult> mapper;
-        private SearchSchema schema = new SearchSchema();
+        private readonly ISearchIndexClient searchClient;
 
         public AzureSearchClient(SearchSchema schema, IMapper<DocumentSearchResult, GenericSearchResult> mapper)
         {
-            this.schema = schema;
+            Schema = schema;
             this.mapper = mapper;
 #if !NETSTANDARD1_6
             var serviceName = ConfigurationManager.AppSettings["SearchDialogsServiceName"];
@@ -57,14 +54,16 @@ namespace Search.Azure.Services
             var oldFilter = queryBuilder.Spec.Filter;
             if (refiner != null && oldFilter != null)
             {
-                queryBuilder.Spec.Filter = queryBuilder.Spec.Filter.Remove(this.Schema.Field(refiner));
+                queryBuilder.Spec.Filter = queryBuilder.Spec.Filter.Remove(Schema.Field(refiner));
             }
             string search;
             var parameters = BuildSearch(queryBuilder, refiner, out search);
-            var documentSearchResult = await this.searchClient.Documents.SearchAsync(search, parameters);
+            var documentSearchResult = await searchClient.Documents.SearchAsync(search, parameters);
             queryBuilder.Spec.Filter = oldFilter;
-            return this.mapper.Map(documentSearchResult);
+            return mapper.Map(documentSearchResult);
         }
+
+        public SearchSchema Schema { get; } = new SearchSchema();
 
         // Azure search only supports full text in a seperate tree combined with AND of the filter.
         // We extract all of the FullText operators found in the tree along AND paths only.
@@ -76,17 +75,17 @@ namespace Search.Azure.Services
                 switch (expression.Operator)
                 {
                     case Operator.And:
-                        {
-                            var left = ExtractFullText((FilterExpression)expression.Values[0], searchExpression);
-                            var right = ExtractFullText((FilterExpression)expression.Values[1], searchExpression);
-                            filter = FilterExpression.Combine(left, right);
-                        }
+                    {
+                        var left = ExtractFullText((FilterExpression) expression.Values[0], searchExpression);
+                        var right = ExtractFullText((FilterExpression) expression.Values[1], searchExpression);
+                        filter = FilterExpression.Combine(left, right);
+                    }
                         break;
                     case Operator.FullText:
-                        {
-                            searchExpression.Add(expression);
-                            filter = null;
-                        }
+                    {
+                        searchExpression.Add(expression);
+                        filter = null;
+                    }
                         break;
                     default:
                         filter = expression;
@@ -105,39 +104,49 @@ namespace Search.Azure.Services
                 switch (expression.Operator)
                 {
                     case Operator.And:
-                        {
-                            var left = BuildFilter((FilterExpression)expression.Values[0]);
-                            var right = BuildFilter((FilterExpression)expression.Values[1]);
-                            filter = $"({left}) and ({right})";
-                            break;
-                        }
+                    {
+                        var left = BuildFilter((FilterExpression) expression.Values[0]);
+                        var right = BuildFilter((FilterExpression) expression.Values[1]);
+                        filter = $"({left}) and ({right})";
+                        break;
+                    }
                     case Operator.Or:
-                        {
-                            var left = BuildFilter((FilterExpression)expression.Values[0]);
-                            var right = BuildFilter((FilterExpression)expression.Values[1]);
-                            filter = $"({left}) or ({right})";
-                            break;
-                        }
+                    {
+                        var left = BuildFilter((FilterExpression) expression.Values[0]);
+                        var right = BuildFilter((FilterExpression) expression.Values[1]);
+                        filter = $"({left}) or ({right})";
+                        break;
+                    }
                     case Operator.Not:
-                        {
-                            var child = BuildFilter((FilterExpression)expression.Values[0]);
-                            filter = $"not ({child})";
-                            break;
-                        }
+                    {
+                        var child = BuildFilter((FilterExpression) expression.Values[0]);
+                        filter = $"not ({child})";
+                        break;
+                    }
                     case Operator.FullText:
                         throw new ArgumentException("Cannot handle complex full text expressions.");
 
-                    case Operator.LessThan: op = "lt"; break;
-                    case Operator.LessThanOrEqual: op = "le"; break;
-                    case Operator.Equal: op = "eq"; break;
-                    case Operator.GreaterThanOrEqual: op = "ge"; break;
-                    case Operator.GreaterThan: op = "gt"; break;
+                    case Operator.LessThan:
+                        op = "lt";
+                        break;
+                    case Operator.LessThanOrEqual:
+                        op = "le";
+                        break;
+                    case Operator.Equal:
+                        op = "eq";
+                        break;
+                    case Operator.GreaterThanOrEqual:
+                        op = "ge";
+                        break;
+                    case Operator.GreaterThan:
+                        op = "gt";
+                        break;
                     default:
                         break;
                 }
                 if (op != null)
                 {
-                    var field = (SearchField)expression.Values[0];
+                    var field = (SearchField) expression.Values[0];
                     var value = SearchTools.Constant(expression.Values[1]);
                     if (field.Type == typeof(string[]))
                     {
@@ -158,16 +167,16 @@ namespace Search.Azure.Services
 
         private SearchParameters BuildSearch(SearchQueryBuilder queryBuilder, string facet, out string search)
         {
-            SearchParameters parameters = new SearchParameters
+            var parameters = new SearchParameters
             {
                 Top = queryBuilder.HitsPerPage,
-                Skip = queryBuilder.PageNumber * queryBuilder.HitsPerPage,
+                Skip = queryBuilder.PageNumber*queryBuilder.HitsPerPage,
                 SearchMode = SearchMode.Any
             };
 
             if (facet != null)
             {
-                parameters.Facets = new List<string> { $"{facet},count:{queryBuilder.MaxFacets}" };
+                parameters.Facets = new List<string> {$"{facet},count:{queryBuilder.MaxFacets}"};
             }
 
             var searchExpressions = new List<FilterExpression>();
@@ -181,7 +190,7 @@ namespace Search.Azure.Services
         private string BuildSearchFilter(IEnumerable<string> phrases, IList<FilterExpression> expressions)
         {
             var builder = new StringBuilder();
-            string prefix = "";
+            var prefix = "";
             foreach (var phrase in phrases)
             {
                 builder.Append(prefix);
@@ -194,7 +203,7 @@ namespace Search.Azure.Services
                 prefix = "";
                 foreach (var expression in expressions)
                 {
-                    var property = (SearchField)expression.Values[0];
+                    var property = (SearchField) expression.Values[0];
                     var value = SearchTools.Constant(expression.Values[1]);
                     builder.Append($"{prefix}{property.Name}:{value}");
                     prefix = " AND ";
@@ -202,14 +211,6 @@ namespace Search.Azure.Services
                 builder.Append(")");
             }
             return builder.ToString();
-        }
-
-        public SearchSchema Schema
-        {
-            get
-            {
-                return schema;
-            }
         }
     }
 }
