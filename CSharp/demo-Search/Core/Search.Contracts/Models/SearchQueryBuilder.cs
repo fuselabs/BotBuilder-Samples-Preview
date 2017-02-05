@@ -42,5 +42,10 @@ namespace Search.Models
             Spec = new SearchSpec();
             this.PageNumber = 0;
         }
+
+        public virtual bool HasNoConstraints()
+        {
+            return this.Spec?.Filter == null;
+        }
     }
 }

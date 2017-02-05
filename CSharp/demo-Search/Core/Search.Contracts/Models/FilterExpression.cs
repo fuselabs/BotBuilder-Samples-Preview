@@ -43,6 +43,10 @@ namespace Search.Models
                 foreach (var field in expression.Fields())
                 {
                     filter = filter.Remove(field);
+                    if (filter == null)
+                    {
+                        break;
+                    }
                 }
             }
             return filter;

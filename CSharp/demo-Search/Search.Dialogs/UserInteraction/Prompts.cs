@@ -31,12 +31,12 @@ namespace Search.Dialogs.UserInteraction
         public readonly Button StartOver = new Button("Start Over");
 
         // Status
-        public const string Filter = "Filter: {0}";
-        public const string Keywords = "Keywords: {0}";
-        public const string Sort = "Sort: {0}";
-        public const string Page = "Page: {0}";
-        public const string Count = "Total results: {0}";
-        public const string Selected = "Kept {0} results so far.";
+        public const string Filter = "**Filter**: {0}";
+        public const string Keywords = "**Keywords**: {0}";
+        public const string Sort = "**Sort**: {0}";
+        public const string Page = "**Page**: {0}";
+        public const string Count = "**Total results**: {0}";
+        public const string Selected = "**Kept**: {0} results";
         public const string Ascending = "Ascending";
         public const string Descending = "Descending";
 

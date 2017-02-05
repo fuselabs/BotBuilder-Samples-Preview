@@ -24,7 +24,7 @@ namespace Search.Dialogs
     // Add support around locations
     // Cannot handle street in RealEstate because of the way facet values are handled.
     // Allow multiple synonyms in canonicalizer and generate a disjunction for query
-    
+
     public delegate SearchField CanonicalizerDelegate(string propertyName);
 
     [Serializable]
@@ -46,9 +46,12 @@ namespace Search.Dialogs
         protected SearchQueryBuilder LastQueryBuilder;
         protected SearchQueryBuilder QueryBuilder;
         protected string Refiner = null;
+        protected bool SkipIntro = false;
 
-        [NonSerialized] protected Canonicalizer FieldCanonicalizer;
-        [NonSerialized] protected Dictionary<string, CanonicalValue> ValueCanonicalizers;
+        [NonSerialized]
+        protected Canonicalizer FieldCanonicalizer;
+        [NonSerialized]
+        protected Dictionary<string, CanonicalValue> ValueCanonicalizers;
 
         #endregion Members
 
@@ -71,12 +74,12 @@ namespace Search.Dialogs
         {
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out Prompts, nameof(Prompts), prompts);
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out SearchClient, nameof(searchClient), searchClient);
+            SkipIntro = queryBuilder != null && !queryBuilder.HasNoConstraints();
             QueryBuilder = queryBuilder ?? new SearchQueryBuilder();
             LastQueryBuilder = new SearchQueryBuilder();
             HitStyler = searchHitStyler ?? new SearchHitStyler();
             PromptStyler = promptStyler ?? new PromptStyler();
             MultipleSelection = multipleSelection;
-
             InitializeRefiners(refiners);
         }
 
@@ -93,25 +96,26 @@ namespace Search.Dialogs
             await context.PostAsync(msg);
         }
 
-        public override Task StartAsync(IDialogContext context)
+        public override async Task StartAsync(IDialogContext context)
         {
-            context.Wait(Intro);
-            return Task.CompletedTask;
-        }
-
-        public async Task Intro(IDialogContext context, IAwaitable<IMessageActivity> message)
-        {
-            await PromptAsync(context, Prompts.InitialPrompt, Prompts.Browse, Prompts.Quit);
-            context.Wait(MessageReceived);
+            if (SkipIntro)
+            {
+                await Search(context);
+            }
+            else
+            {
+                await PromptAsync(context, Prompts.InitialPrompt, Prompts.Browse, Prompts.Quit);
+                context.Wait(MessageReceived);
+            }
         }
 
         protected override IntentRecommendation BestIntentFrom(LuisResult result)
         {
             var best = (from intent in result.Intents
-                let score = intent.Score ?? 0.0
-                where score > 0.3
-                orderby score descending
-                select intent).FirstOrDefault();
+                        let score = intent.Score ?? 0.0
+                        where score > 0.3
+                        orderby score descending
+                        select intent).FirstOrDefault();
             if (best == null)
             {
                 best = new IntentRecommendation("Filter", 0.0);
@@ -173,9 +177,9 @@ namespace Search.Dialogs
                 {
                     var search = await ExecuteSearchAsync(Refiner);
                     var choices = from facet in search.Facets[Refiner]
-                        let facetDesc = FacetDisplay.Describe(facet, ValueCanonicalizers)
-                        orderby facetDesc ascending
-                        select new GenericFacet() {Value = facetDesc, Count = facet.Count};
+                                  let facetDesc = FacetDisplay.Describe(facet, ValueCanonicalizers)
+                                  orderby facetDesc ascending
+                                  select new GenericFacet() { Value = facetDesc, Count = facet.Count };
 
                     var buttons = FacetDisplay.Buttons(preference, choices, field, desc);
 
@@ -210,15 +214,16 @@ namespace Search.Dialogs
 
             var entities = result.Entities ?? new List<EntityRecommendation>();
             var comparisons = (from entity in entities
-                where entity.Type == "Comparison"
-                select new ComparisonEntity(entity)).ToList();
+                               where entity.Type == "Comparison"
+                               select new ComparisonEntity(entity)).ToList();
 
             var attributes = from entity in entities
-                let canonical = CanonicalAttribute(entity)
-                where canonical != null
-                select new FilterExpression(entity.Entity, Operator.Equal, canonical.Field, canonical.Value);
+                             let canonical = CanonicalAttribute(entity)
+                             where canonical != null
+                             select new FilterExpression(entity.Entity, Operator.Equal, canonical.Field, canonical.Value);
 
             var removals = from entity in entities where entity.Type == "Removal" select entity;
+            // TODO: This really should be using the AlteredQuery if spelling is involved
             var substrings = Keywords.ExtractPhrases(entities, result.Query);
 
             foreach (var removal in removals)
@@ -252,9 +257,9 @@ namespace Search.Dialogs
             }
 
             var ranges = from comparison in comparisons
-                let range = rangeResolver.Resolve(comparison, result.Query, DefaultProperty)
-                where range != null
-                select range;
+                         let range = rangeResolver.Resolve(comparison, result.Query, DefaultProperty)
+                         where range != null
+                         select range;
             var filter = FilterExpressionBuilder.Build(ranges, Operator.And);
             filter = attributes.GenerateFilterExpression(Operator.And, filter);
 
@@ -319,48 +324,16 @@ namespace Search.Dialogs
 
         private string SearchDescription()
         {
-            var builder = new StringBuilder();
-            var filter = QueryBuilder.Spec.Filter;
-            var phrases = QueryBuilder.Spec.Phrases;
-            var sorts = QueryBuilder.Spec.Sort;
+            var description = QueryBuilder.Description();
             if (Selected.Any())
             {
+                var builder = new StringBuilder();
                 builder.AppendLine(string.Format(Prompts.Selected, Selected.Count()));
                 builder.AppendLine();
+                builder.Append(description);
+                description = builder.ToString();
             }
-            if (filter != null)
-            {
-                builder.AppendLine(string.Format(Prompts.Filter, filter.ToUserFriendlyString()));
-                builder.AppendLine();
-            }
-            if (phrases.Any())
-            {
-                var phraseBuilder = new StringBuilder();
-                var prefix = "";
-                foreach (var phrase in phrases)
-                {
-                    phraseBuilder.Append($"{prefix}\"{phrase}\"");
-                    prefix = " ";
-                }
-                builder.AppendLine(string.Format(Prompts.Keywords, phraseBuilder.ToString()));
-                builder.AppendLine();
-            }
-            if (sorts.Any())
-            {
-                var sortBuilder = new StringBuilder();
-                var prefix = "";
-                foreach (var sort in sorts)
-                {
-                    var dir = sort.Direction == SortDirection.Ascending ? Prompts.Ascending : Prompts.Descending;
-                    sortBuilder.Append($"{prefix}{sort.Field} {dir}");
-                    prefix = ", ";
-                }
-                builder.AppendLine(string.Format(Prompts.Sort, sortBuilder.ToString()));
-                builder.AppendLine();
-            }
-            builder.AppendLine(string.Format(Prompts.Page, QueryBuilder.PageNumber));
-            builder.AppendLine();
-            return builder.ToString();
+            return description;
         }
 
         public async Task Search(IDialogContext context)
@@ -377,7 +350,7 @@ namespace Search.Dialogs
             Found = response.Results.ToList();
             HitStyler.Show(
                 ref message,
-                (IReadOnlyList<SearchHit>) Found,
+                (IReadOnlyList<SearchHit>)Found,
                 SearchDescription(),
                 Prompts.Add
             );
@@ -441,7 +414,7 @@ namespace Search.Dialogs
                 await ShowList(context);
             }
         }
-        
+
         private async Task ShowList(IDialogContext context)
         {
             if (Selected.Count == 0)

@@ -13,14 +13,22 @@ using Search.Dialogs.UserInteraction;
 using Search.Models;
 using Search.Services;
 using Search.Utilities;
+using Microsoft.Bot.Connector;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RealEstateBot.Dialogs
 {
     [Serializable]
     public class RealEstateSearchDialog : IDialog
     {
-        private const string LUISKey = "LUISSubscriptionKey";
+        private const string NameKey = "Name";
+        private const string QueryKey = "LastQuery";
+        private const string LUISKeyKey = "LUISSubscriptionKey";
         private readonly ISearchClient SearchClient;
+        private SearchQueryBuilder Query = new SearchQueryBuilder();
+        private SearchQueryBuilder LastQuery = null;
+        private string LUISKey;
+        private string ModelId;
 
         public RealEstateSearchDialog(ISearchClient searchClient)
         {
@@ -29,21 +37,89 @@ namespace RealEstateBot.Dialogs
 
         public async Task StartAsync(IDialogContext context)
         {
-            var key = ConfigurationManager.AppSettings[LUISKey];
-            if (string.IsNullOrWhiteSpace(key))
+            this.LUISKey = ConfigurationManager.AppSettings[LUISKeyKey];
+            if (string.IsNullOrWhiteSpace(this.LUISKey))
             {
                 // For local debugging of the sample without checking in your key
-                key = Environment.GetEnvironmentVariable(LUISKey);
+                this.LUISKey = Environment.GetEnvironmentVariable(LUISKeyKey);
             }
-            context.PostAsync("Welcome to the real estate search bot!");
-            var cts = new CancellationTokenSource();
-            var id =
+            this.ModelId =
                 await
-                    LUISTools.GetOrCreateModelAsync(key,
+                    LUISTools.GetOrCreateModelAsync(this.LUISKey,
                         Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
-                        cts.Token);
+                        context.CancellationToken);
+            context.Wait(IgnoreFirstMessage);
+        }
+
+        private async Task IgnoreFirstMessage(IDialogContext context, IAwaitable<IMessageActivity> msg)
+        {
+            string name;
+            if (context.UserData.TryGetValue(NameKey, out name))
+            {
+                await context.PostAsync($"Welcome back to the real estate bot {name}!");
+                try
+                {
+                    byte[] lastQuery;
+                    if (context.UserData.TryGetValue(QueryKey, out lastQuery))
+                    {
+                        using (var stream = new MemoryStream(lastQuery))
+                        {
+                            var formatter = new BinaryFormatter();
+                            this.LastQuery = (SearchQueryBuilder) formatter.Deserialize(stream);
+                        }
+                        await context.PostAsync($@"**Last Search**
+
+{this.LastQuery.Description()}");
+                        context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1), UseLastSearch);
+                    }
+                    else
+                    {
+                        Search(context);
+                    }
+                }
+                catch (Exception)
+                {
+                    context.UserData.RemoveValue(QueryKey);
+                    Search(context);
+                }
+            }
+            else
+            {
+                await context.PostAsync("Welcome to the real estate search bot!");
+                context.Call(
+                    new PromptDialog.PromptString("What is your name?", "What is your name?", 2),
+                    GotName);
+            }
+        }
+
+        public async Task GotName(IDialogContext context, IAwaitable<string> name)
+        {
+            var newName = await name;
+            await context.PostAsync($"Good to meet you {newName}!");
+            context.UserData.SetValue(NameKey, newName);
+            Search(context);
+        }
+
+        private async Task UseLastSearch(IDialogContext context, IAwaitable<bool> answer)
+        {
+            if (await answer)
+            {
+                this.Query = this.LastQuery;
+            }
+            else
+            {
+                this.Query = new SearchQueryBuilder();
+            }
+            this.LastQuery = null;
+            Search(context);
+        }
+
+        private void Search(IDialogContext context)
+        {
             context.Call(new SearchDialog(new Prompts(),
-                SearchClient, key, id, multipleSelection: true,
+                this.SearchClient, this.LUISKey, this.ModelId,
+                multipleSelection: true,
+                queryBuilder: this.Query,
                 refiners: new string[]
                 {
                     "type", "beds", "baths", "sqft", "price",
@@ -52,7 +128,7 @@ namespace RealEstateBot.Dialogs
                 }), Done);
         }
 
-        public async Task Done(IDialogContext context, IAwaitable<IList<SearchHit>> input)
+        private async Task Done(IDialogContext context, IAwaitable<IList<SearchHit>> input)
         {
             var selection = await input;
 
@@ -61,7 +137,26 @@ namespace RealEstateBot.Dialogs
                 var list = string.Join("\n\n", selection.Select(s => $"* {s.Title} ({s.Key})"));
                 await context.PostAsync($"Done! For future reference, you selected these properties:\n\n{list}");
             }
-
+            else
+            {
+                await context.PostAsync($"Sorry you could not find anything you liked--maybe next time!");
+            }
+            if (this.Query.HasNoConstraints())
+            {
+                // Reset name and query if no query
+                context.UserData.RemoveValue(NameKey);
+                context.UserData.RemoveValue(QueryKey);
+            }
+            else
+            {
+                this.Query.PageNumber = 0;
+                using (var stream = new MemoryStream())
+                {
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, this.Query);
+                    context.UserData.SetValue(QueryKey, stream.ToArray());
+                }
+            }
             context.Done<object>(null);
         }
     }
