@@ -8,9 +8,7 @@
   },
 
   "dependencies": {
-    "Microsoft.NETCore.App": {
-      "version": "1.0.1"
-    },
+    "Microsoft.NETCore.App": "1.1.0",
     "Search.Azure": "1.0.0-*",
     "Search.Contracts": "1.0.0-*",
     "Search.Utilities": "1.0.0-*"

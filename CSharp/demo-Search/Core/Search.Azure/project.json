@@ -2,10 +2,10 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "Microsoft.Azure.Search": "2.0.2-preview",
+    "Microsoft.Azure.Search": "3.0.2",
     "Microsoft.Extensions.Configuration": "1.1.0",
     "Microsoft.Extensions.Configuration.Json": "1.1.0",
-    "NETStandard.Library": "1.6.0",
+    "NETStandard.Library": "1.6.1",
     "Search.Contracts": "1.0.0-*"
   },
 

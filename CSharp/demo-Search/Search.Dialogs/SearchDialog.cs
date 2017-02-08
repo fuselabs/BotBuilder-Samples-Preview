@@ -158,7 +158,7 @@ namespace Search.Dialogs
         public async Task Facet(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
-            Refiner = FieldCanonicalizer.Canonicalize(result.Query);
+            Refiner = FieldCanonicalizer.Canonicalize(result.AlteredQuery ?? result.Query);
             if (Refiner == null)
             {
                 await Filter(context, result);
@@ -224,7 +224,7 @@ namespace Search.Dialogs
 
             var removals = from entity in entities where entity.Type == "Removal" select entity;
             // TODO: This really should be using the AlteredQuery if spelling is involved
-            var substrings = Keywords.ExtractPhrases(entities, result.Query);
+            var substrings = Keywords.ExtractPhrases(entities, result.AlteredQuery ?? result.Query);
 
             foreach (var removal in removals)
             {

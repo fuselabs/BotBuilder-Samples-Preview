@@ -36,7 +36,7 @@ namespace Search.Dialogs.UserInteraction
         public const string Sort = "**Sort**: {0}";
         public const string Page = "**Page**: {0}";
         public const string Count = "**Total results**: {0}";
-        public const string Selected = "**Kept**: {0} results";
+        public const string Selected = "**Kept so far**: {0}";
         public const string Ascending = "Ascending";
         public const string Descending = "Descending";
 
