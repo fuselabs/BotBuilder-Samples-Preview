@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Search.Models;
-using Search.Utilities;
-using Search.Azure;
-
-namespace Search.Tools.Generate
+﻿namespace Search.Generate
 {
-    public class Program
+    using Azure;
+    using Microsoft.LUIS.API;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using Search.Models;
+    using Search.Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    class Program
     {
-        const string propertyName = "propertyname";
-        const string attributeName = "attributename";
+        private const string propertyName = "propertyname";
+        private const string attributeName = "attributename";
+        private const string SubscriptionKey = "LUISSubscriptionKey";
 
         static void Clear(dynamic model)
         {
@@ -293,16 +295,6 @@ namespace Search.Tools.Generate
             }
         }
 
-        static async Task<string> ModelID(string subscription, string appName, CancellationToken ct)
-        {
-            dynamic model = await LUISTools.GetModelByNameAsync(subscription, appName, ct);
-            if (model == null)
-            {
-                Usage($"{appName} does not exist in your LUIS subscription.");
-            }
-            return model.ID;
-        }
-
         static async Task MainAsync(string[] args, Parameters p)
         {
             var cts = new CancellationTokenSource();
@@ -312,6 +304,7 @@ namespace Search.Tools.Generate
                 cts.Cancel();
             };
 
+            var subscription = new Subscription(p.Domain, p.SubscriptionKey);
             var schema = SearchSchema.Load(p.SchemaPath);
             dynamic template;
             if (p.TemplatePath != null)
@@ -321,13 +314,14 @@ namespace Search.Tools.Generate
                 if (p.UploadTemplate)
                 {
                     Console.WriteLine($"Uploading template {template.name} to LUIS");
-                    await LUISTools.CreateModelAsync(p.LUISKey, template, cts.Token);
+                    await subscription.ReplaceApplicationAsync(template, cts.Token);
                 }
             }
             else
             {
                 Console.WriteLine($"Downloading {p.TemplateName} template from LUIS");
-                template = await LUISTools.DownloadModelAsync(p.LUISKey, await ModelID(p.LUISKey, p.TemplateName, cts.Token), cts.Token);
+                var app = await subscription.GetApplicationByNameAsync(p.TemplateName, cts.Token);
+                template = app != null ? await app.DownloadAsync(cts.Token) : null;
                 if (template == null)
                 {
                     Usage($"Could not download {p.TemplateName} from LUIS.");
@@ -376,8 +370,15 @@ namespace Search.Tools.Generate
             if (p.Upload)
             {
                 Console.WriteLine($"Uploading {p.OutputName} to LUIS");
-                var id = await LUISTools.CreateModelAsync(p.LUISKey, template, cts.Token);
-                Console.WriteLine($"New LUIS app key is {id}");
+                var app = await subscription.ReplaceApplicationAsync(template, cts.Token);
+                if (app == null)
+                {
+                    Console.WriteLine($"Could not upload, train or publish {p.OutputName} to LUIS.");
+                }
+                else
+                {
+                    Console.WriteLine($"New LUIS app key is {app.ApplicationID}");
+                }
             }
         }
 
@@ -391,6 +392,7 @@ namespace Search.Tools.Generate
             Console.WriteLine("Take a JSON schema file and use it to generate a LUIS model from a template.");
             Console.WriteLine("The template can be the included SearchTemplate.json file or can be downloaded from LUIS.");
             Console.WriteLine("The resulting LUIS model can be saved as a file or automatically uploaded to LUIS.");
+            Console.WriteLine("-d <LUIS Domain> : LUIS domain which defaults to westus.api.cognitive.microsoft.com.");
             Console.WriteLine("-l <LUIS subscription key> : LUIS subscription key.");
             Console.WriteLine("-m <modelName> : Output LUIS model name.  By default will be <schemaFileName>Model.");
             Console.WriteLine("-o <outputFile> : Output LUIS JSON file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
@@ -433,7 +435,8 @@ namespace Search.Tools.Generate
             public string OutputPath;
             public string OutputName;
             public string OutputTemplate;
-            public string LUISKey;
+            public string Domain = "westus.api.cognitive.microsoft.com";
+            public string SubscriptionKey;
             public bool Upload = false;
             public bool UploadTemplate = false;
         }
@@ -445,12 +448,15 @@ namespace Search.Tools.Generate
                 Usage();
             }
             var p = new Parameters(args[0]);
+            // For local debugging of the sample without checking in your key
+            p.SubscriptionKey = Environment.GetEnvironmentVariable(SubscriptionKey);
             for (var i = 1; i < args.Count(); ++i)
             {
                 var arg = args[i];
                 switch (arg.Trim().ToLower())
                 {
-                    case "-l": p.LUISKey = NextArg(++i, args); break;
+                    case "-d": p.Domain = NextArg(++i, args); break;
+                    case "-l": p.SubscriptionKey = NextArg(++i, args); break;
                     case "-m": p.OutputName = NextArg(++i, args); break;
                     case "-o": p.OutputPath = NextArg(++i, args); break;
                     case "-ot": p.OutputTemplate = NextArg(++i, args); break;
@@ -461,9 +467,9 @@ namespace Search.Tools.Generate
                     default: Usage($"Unknown parameter {arg}"); break;
                 }
             }
-            if ((p.Upload || p.TemplateName != null || p.UploadTemplate) && p.LUISKey == null)
+            if ((p.Upload || p.TemplateName != null || p.UploadTemplate) && p.SubscriptionKey == null)
             {
-                Usage("You must supply your LUIS subscription key with -l.");
+                Usage($"You must supply your LUIS subscription key with -l or through the environment variable {SubscriptionKey}.");
             }
 
             if (p.TemplateName == null && p.TemplatePath == null)

@@ -16,6 +16,7 @@ namespace JobListingBot.Dialogs
     using System.IO;
     using Search.Utilities;
     using Microsoft.Bot.Builder.Internals.Fibers;
+    using Microsoft.LUIS.API;
 
     [Serializable]
     public class JobListingSearchDialog : IDialog
@@ -37,7 +38,11 @@ namespace JobListingBot.Dialogs
                 key = System.Environment.GetEnvironmentVariable(LUISKey);
             }
             var cts = new CancellationTokenSource();
-            var id = await LUISTools.GetOrCreateModelAsync(key, Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\JobListingModel.json"), cts.Token);
+            var subscription = new Subscription("westus.api.cognitive.microsoft.com", key);
+            var application = await subscription.GetOrCreateApplicationAsync(
+                        Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
+                        context.CancellationToken);
+            var id = application.ApplicationID;
             context.Call(new SearchDialog(new Prompts(), this.SearchClient, key, id, multipleSelection: true,
                 refiners: new string[] { "business_title", "agency", "work_location", "tags" }), Done);
         }

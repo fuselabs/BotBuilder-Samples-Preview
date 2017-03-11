@@ -223,7 +223,6 @@ namespace Search.Dialogs
                              select new FilterExpression(entity.Entity, Operator.Equal, canonical.Field, canonical.Value);
 
             var removals = from entity in entities where entity.Type == "Removal" select entity;
-            // TODO: This really should be using the AlteredQuery if spelling is involved
             var substrings = Keywords.ExtractPhrases(entities, result.AlteredQuery ?? result.Query);
 
             foreach (var removal in removals)

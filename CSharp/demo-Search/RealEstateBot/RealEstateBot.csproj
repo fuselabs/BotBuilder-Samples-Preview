@@ -159,6 +159,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.LUIS.API\Microsoft.LUIS.API.csproj">
+      <Project>{23DB64B7-E168-4A86-9C1F-EADADB1C6B7E}</Project>
+      <Name>Microsoft.LUIS.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Search.Azure\Search.Azure.csproj">
       <Project>{2734B7AA-2144-41A8-9423-225A544438B8}</Project>
       <Name>Search.Azure</Name>

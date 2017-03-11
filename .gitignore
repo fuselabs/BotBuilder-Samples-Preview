@@ -257,3 +257,13 @@ paket-files/
 # Visual Studio Code
 .vscode/
 /Node/demo-Search/built
+/CSharp/demo-Search/SearchPoweredBots.vtg
+/CSharp/demo-Search/SearchPoweredBots.vpwhist
+/CSharp/demo-Search/SearchPoweredBots.vpw
+/CSharp/demo-Search/Search.Utilities/Search.Utilities.vpj
+/CSharp/demo-Search/Search.Dialogs/Search.Dialogs.vpj
+/CSharp/demo-Search/Search.Contracts/Search.Contracts.vpj
+/CSharp/demo-Search/Search.Azure/Search.Azure.vpj
+/CSharp/demo-Search/RealEstateBot/RealEstateBot.vpj
+/CSharp/demo-Search/Microsoft.LUIS.API/Microsoft.LUIS.API.vpj
+/CSharp/demo-Search/JobListingBot/JobListingBot.vpj

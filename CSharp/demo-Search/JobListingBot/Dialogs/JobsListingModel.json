@@ -1,0 +1,2190 @@
+{
+  "luis_schema_version": "1.3.0",
+  "name": "JobListingModel",
+  "desc": "LUIS model generated via the command generate ..\\..\\JobListingBot\\Dialogs\\JobListing.json -o ..\\..\\JobListingBot\\Dialogs\\JobsListingModel.json -u",
+  "culture": "en-us",
+  "intents": [
+    {
+      "name": "Done"
+    },
+    {
+      "name": "Facet"
+    },
+    {
+      "name": "Filter"
+    },
+    {
+      "name": "List"
+    },
+    {
+      "name": "NextPage"
+    },
+    {
+      "name": "None"
+    },
+    {
+      "name": "Quit"
+    },
+    {
+      "name": "Refine"
+    },
+    {
+      "name": "StartOver"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Attribute"
+    },
+    {
+      "name": "Operator"
+    },
+    {
+      "name": "Property"
+    },
+    {
+      "name": "RemovalOperator"
+    },
+    {
+      "name": "Value"
+    }
+  ],
+  "composites": [
+    {
+      "name": "Comparison",
+      "children": [
+        "Value",
+        "Property",
+        "Operator"
+      ]
+    },
+    {
+      "name": "Removal",
+      "children": [
+        "Property",
+        "RemovalOperator"
+      ]
+    }
+  ],
+  "bing_entities": [],
+  "actions": [],
+  "model_features": [
+    {
+      "name": "Operators",
+      "mode": true,
+      "words": "at least,no more than,between,no less than,-,+,at most,less than,more than",
+      "activated": true
+    },
+    {
+      "name": "Properties",
+      "mode": true,
+      "words": "agency,posting type,num of positions,business title,civil service title,title code no,level,salary range from,salary range to,salary frequency,work location,division work unit,minimum qual requirements,preferred skills,additional information,to apply,hours per shift,recruitment contact,tags",
+      "activated": true
+    },
+    {
+      "name": "Removals",
+      "mode": true,
+      "words": "any,no,any number of,all",
+      "activated": true
+    },
+    {
+      "name": "Attributes",
+      "mode": true,
+      "words": "ADMIN FOR CHILDREN'S SVCS,ADMIN TRIALS AND HEARINGS,BUSINESS INTEGRITY COMMISSION,CIVILIAN COMPLAINT REVIEW BD,CONFLICTS OF INTEREST BOARD,CONSUMER AFFAIRS,CULTURAL AFFAIRS,DEPARTMENT FOR THE AGING,DEPARTMENT OF BUILDINGS,DEPARTMENT OF BUSINESS SERV.,DEPARTMENT OF CITY PLANNING,DEPARTMENT OF CORRECTION,DEPARTMENT OF FINANCE,DEPARTMENT OF INVESTIGATION,DEPARTMENT OF PROBATION,DEPARTMENT OF SANITATION,DEPARTMENT OF TRANSPORTATION,DEPT OF CITYWIDE ADMIN SVCS,DEPT OF DESIGN & CONSTRUCTION,DEPT OF ENVIRONMENT PROTECTION,DEPT OF HEALTH/MENTAL HYGIENE,DEPT OF INFO TECH & TELECOMM,DEPT OF PARKS & RECREATION,DEPT OF RECORDS & INFO SERVICE,DEPT OF YOUTH & COMM DEV SRVS,DEPT. OF HOMELESS SERVICES,DISTRICT ATTORNEY KINGS COUNTY,DISTRICT ATTORNEY RICHMOND COU,EQUAL EMPLOY PRACTICES COMM,FINANCIAL INFO SVCS AGENCY,FIRE DEPARTMENT,HOUSING PRESERVATION & DVLPMNT,HRA/DEPT OF SOCIAL SERVICES,HUMAN RIGHTS COMMISSION,LAW DEPARTMENT,NYC EMPLOYEES RETIREMENT SYS,NYC HOUSING AUTHORITY,OFF OF PAYROLL ADMINISTRATION,OFFICE OF COLLECTIVE BARGAININ,OFFICE OF EMERGENCY MANAGEMENT,OFFICE OF LABOR RELATIONS,PRESIDENT BOROUGH OF MANHATTAN,TAX COMMISSION,TAXI & LIMOUSINE COMMISSION,.NET Programmer / Analyst,.Net Programmer / Analyst Position,311 Call Center Manager,311 Support Coordinator,421 - a Analyst,Accessible Communication Coordinator,Account Manager,Accounts Payable Analyst,ADMINISTRATIVE ACCOUNTANT - LEVEL I,Administrative Assistant,Administrative Assistant for Budget and Revenue,Administrative Assistant, Office of First Deputy Commissioner,Administrative Director, Bureau of School Health,ADMINISTRATIVE LAW JUDGE,Administrative on Duty,Administrative Procurement Analyst,Administrative Public Health Nurse, Bureau of School Health,ADMINISTRATIVE STAFF ANALYST,Administrator on Duty,Adminstrative Staff Analyst NM,Adolescent Health Medical Director, Bureau of School Health,AE / CM Contract Specialist,Agency Attorney,AGENCY ATTORNEY,Agency Attorney (Legal/General Counsel),Agency Attorney (Trials & Litigation),Agency Attorney II - Corporate Affairs,Agency Attorney L2,Agency Attorney L3,Agency Attorney L-3,Agency IT Relations Manager,AGENCY LEGAL INTERNE,Air & Noise Pollution Inspector,Air Permitting Engineer,Analyst,Analytic Portfolio Manager,ANCP Project Manager / Junior Underwriter / Analyst,Application Developer,Application Developer Team Leader, Bureau of Application Development and Database Administration,Application Developer, Bureau of Application Development and Database Administration,Application Examiner, Office of Vital Records (Corrections and Amendments Unit),Application Support Analyst, Bureau of Vital Statistics,Application Support for Microsoft Technology, Bureau of Application Development and Database Administration,Application Support Reporting Specialist,Application Support Specialist,APPLICATIONS DEVELOPER,Apprentice (Construction Laborer),Apprentice Inspector (Highways and Sewer),Apprentice Inspector (Highways and Sewers),APU Prosecutor,Archibus Application Administrator,Architect,Architectural/Engineering Planner,Architecture Compliance Lead, Bureau of IT Solutions and Delivery,Area Engineer,Article XI / 420-c Analyst,ASBESTOS HAZARD INVESTIGATOR,Ashokan Watershed Stream Mgmt Program Project Manager,Asset Management Information Specialist,Asset Manager,Assistant Chief Plan Examiner L-1,Assistant Chief Plan Examiner L-2,Assistant City Assessor,Assistant Civil Engineer,Assistant Commisioner, Bureau of Epidemiology Services,Assistant Commissioner for Human Resources Operations,Assistant Commissioner for IT & Facilities/CTO,Assistant Commissioner for Permanency Planning,Assistant Commissioner for the Office of Program Innovation & Planning,ASSISTANT COMMISSIONER OF EEO,Assistant Commissioner, Bureau of  Application Development and Database Administration,Assistant Commissioner, Bureau of Mental Health,ASSISTANT COMMISSIONER, CAPACITY BUILDING & CORPORATE PARTNERSHIPS,Assistant Commissioner, Communications & Public Affairs,Assistant Commissioner, District Public Health Harlem (Center for Health Equity),Assistant Commissioner, Office of Tax Audit,Assistant Compliance Analyst,Assistant Corporation Counsel,ASSISTANT CORPORATION COUNSEL,Assistant Director,Assistant Director for Social Media, Office of External Affairs,Assistant Director of Budget and Procurement,Assistant Director of Financial Empowerment Centers,Assistant Director of Financial Services and Products,Assistant Director of Forensic Operations,Assistant Director of Preventive Family Team Conferencing,Assistant Director of Programs,Assistant Director of Public Health Housing, Center for Health Equity,Assistant Director, Bureau of Veterinary and Pest Control Services,Assistant Director, Food Safety and Community Sanitation,Assistant Director, Preconstruction & Rehabilitation,Assistant Director, Real Property Transfer Tax (RPTT),Assistant Director/EEO Officer,Assistant Disciplinary Advocate,Assistant Executive Director of Information Systems,Assistant General Counsel,Assistant Inspector General,Assistant Landscape Architect,Assistant Plan Examiner,Assistant Project Manager,Assistant Reporting Manager,Assistant Resident Engineer,Assistant Supervisor,Assistive Technology Specialist, Bureau of Early Intervention,Associate Chemist,Associate Commissioner,Associate Commissioner of Quality Assurance & Integrity,Associate Correctional Counselor,  Bureau of Correctional Health Services,Associate Director for Microbiology, Bureau of Public Health Laboratory,ASSOCIATE DIRECTOR, PRODUCT DEVELOPMENT,Associate Project Manager I,Associate Project Manager II,Associate Project Manager III,Attorney Interne,Attorney Level 4,Auditor,Audits & Accounts Analyst,Auto Mechanic,AUTO MECHANIC (DIESEL),AutoCad Operater,Bank Account Analyst,BHIV Training and Technical Assistance Program Care Training Lead,BHIV Training and Technical Assistance Program Training Specialist,BID PROGRAM SUMMER INTERN,Bilingual, Training, & Technical Assistance Specialist, Bureau of HIV/AIDS Prevention and Control,Bilingual/ Spanish Certified Applications Counselor,  Bureau of Primary Care Access and Planning,BIM Manager,Boiler Inspector,Borough Chief of Operations,Borough Director,Borough Distribution Engineer,Borough Outreach Coordinator,Borough Planner,Borough Safety Specialist,Bricklayer,BROOKLYN BOROUGH COORDINATOR,B-Scan Records Associate,Budget Analyst,BUDGET ANALYST,Budget Analyst Trainee,Budget Analyst,  Bureau of Budget and Revenue,Budget Analyst, Budget Administration,Budget Analyst, Family and Child Health Administration,Budget Coordinator, Bureau of the Public Health Laboratory,Budget Director,Budget/Contract Analyst, Prevention and Primary Care Administration,Build It Back Electrical Inspector,Building Benchmarking Analyst,Building Coordinator,Business Analyst,Business Analyst, Bureau of Budget and Revenue,Business Intelligence Analyst,Call Center Customer Service Unit Supervisor,CAPITAL BUDGET MANANGEMENT OFFICE LIAISON,Capital Payment Analyst,Case Compliance Monitors,CASE MANAGEMENT TEAM LEADER,Case Monitor, Mental Health (Social Worker)/Bureau of Mental Health,Cement Mason,Central Messenger,Central Office Timekeeper,Centralized Data Entry Clerk,CERT IT DEVELOPER,CERTIFICATION INTAKE ANALYST,CERTIFIED IT ADMINISTRATOR (WAN), Level 4,CERTIFIED IT DEVELOPER (APPLICATIONS),CHANGE MANAGER,Change Order Analyst,Chauffeur - Attendant,Chief Clerk,Chief Information Officer,Chief Inspector, BEST,Chief of CMOM Compliance,Chief of Distribution Engineering,Chief of Microbiology Services,Chief of Staff,Chief of Staff to the Deputy Commissioner,Chief Operating Officer,Chief Plan Examiner,Chief Plan Examiner-Elevators,Chief Technology Officer,Chief Wastewater Operations,Chief, Contract Services,Chief, Drainage and Modeling,Chief, JOCs/TOCs,Chief, Non-Linear Capital Program Management,Child Health Survey,  Bureau of Epidemiology Services,CIDI Data Analyst,  Bureau of Epidemiology Services,Citrix Support Engineer,City Agency GI Coordinator,City Clinician, Bureau of Sexually Transmitted Disease Control,City Custodial Assistant, Bureau of Operations-Districts Operations,City Medical Examiner I,City Medical Examiner II,City Medical Specialist, Bureau of School Health,City Park Worker,City Pest Control Aide, Bureau of Veterinary and Pest Control Services,CITY PLANNER,City Planning Technician,City Research Scientist,CITY RESEARCH SCIENTIST,City Research Scientist III, Bureau of STD Prevention and Control,City Research Scientist,  Bureau of Sexually Transmitted Disease,City Research Scientist, Bureau of Environmental Sciences and Engineering,City Research Scientist, Bureau of Immunization,City Seasonal Aide/Security Guard,Civil Engineer,Civil Engineer 1,Civil Engineer 2,Civil Engineer 3,Civil Engineer Intern,Civil Engineer L1,Civil Engineering Intern,CIVIL ENGINEERING INTERN,Claim Specialist - Team Leader,Claiming Analyst, Bureau of Budget and Revenue,Claims Analyst,Clerical Associate,Clerical Associate III,Clerical Associate, Bureau of Communicable Diseases,Clerical Associate, Bureau of Vital Statistics,Clerical Associate, Office of Vital Records (Corrections and Amendments Unit),Clerical Associate, Office of Vital Records (Public Service Operations),Clerical Support/Bureau of ChildCare,Client Resources Analyst,Climber & Pruner,Clinic Biller, Bureau of Budget and Revenue,Clinic Billing Specialist, Bureau of Budget and Revenue,Clinic Manager, Bureau of Sexually Transmitted Disease,Clinical Administrative Nurse, Bureau of School Health,Clinical Advisor,Clinical Advisor (Part-Time),Clinical Coordinator,  Bureau of Communicable Disease,Clinical Program Coordinator, Bureau of Maternal Infant and Reproductive Health,Clinical System Analyst, Bureau of Prevention and Primary Care IT Initiatives,Clinical Systems Integration Coordinator,Closing Coordinator,Code Development Architect,Code Development Engineer,Collections Attorney,College Aide,COLLEGE AIDE,College Aide -  Bureau of Veterinary and Pest Control Services  (Vector Surveillance),COLLEGE AIDE - CLERICAL,College Aide - IT,College Aide (1st year - 2nd Year Graduate Students), Bureau of Communicable Diseases,College Aide (1st year - 2nd Year Graduate), Bureau of Communicable Diseases,College Aide IIA (Information Technology, Undergraduate) , Bureau of Network Technology Services,College Aide II-A (Information Technology, Undergraduate) , Bureau of Network Technology Services,College Aide, Bureau of Vital Statistics,College Aide, II (Information Technology, Undergraduate),Communication and Digital Officer,Communications Specialist,Communications Systems Programmer,COMMUNITY ASSISTANT,Community Associate,COMMUNITY ASSOCIATE,Community Coordinator,Community Liaison,Community Partner,Community Preparedness Program Manager, Bureau of Policy, Community Resilience and Response,Community Research & Evaluation Specialist, District Public Health Harlem (Center For Health Equity),Community Service Aide,Complaint Response Investigator, Bureau of Childcare,Compliance Analyst,COMPLIANCE OFFICER,Compliance Support Associate,Computer Associate,Computer Associate (Software),Computer Associate (SW),Computer Specialist (Operations),COMPUTER SPECIALIST (SOFTWARE),COMPUTER SPECIALIST (SOFTWARE), Level 2,Computer Systems Manager / Noticing,CONFIDENTIAL INVESTIGATOR,Confidential Strategy Planner,Constituent Services Liaison,Construction Deputy Director,Construction Inspector,Construction Inspector/Office Engineer,Construction Inspector-C & D,Construction Project Manager,CONSTRUCTION PROJECT MANAGER,Construction Project Manager Intern,Consultant Project Manager,Consultant Public Health Social Worker, Bureau of Correctional Health Services,Content Producer,Contract Analyst,Contract Analyst, Bureau of Mental Hygiene Administration,Contract and Payment Analyst, Office of Chief Information Officer,Contract Budget Specialist, Bureau of Disease Control Administration,Contract Manager,Contract Manager, BCD Administration,Contract Manager, Bureau of Finance Administrative,Contract Manager, Office of the Agency Chief Contracting Officer,Contract Manager, Office of the Agency Chief Contracting Officer  (ACCO),Contract Manager, Office of the Agency Chief Contracting Officer (ACCO),Contract Specialist, Bureau of Disease Control Administration,Contracts Counsel,Coordinator,COORDINATOR,Coordinator, NHBS, Bureau of HIV/AIDS Prevention and Control,Correction Academy Instructors (Part-Time),Correctional Counselor, Bureau of Correctional Health Services,Cost Estimating Manager,Crane Operator,Criminalist IB,Criminalist IV,CRN Project Engineer,CUSTODIAL ASSISTANT,Customer Service Representative,Dam Safety Engineer,Data Analyst,Data Analyst / Modeler,Data Analyst / NYC Supported Transition and Recovery Team (NYCSTART), Mental Health,Data Analyst,Data Analyst, Bureau of  Epidemiology Services,Data Analyst, HIV Epidemiology and Field Services Program,Data Analyst/Data Unit Lead, Bureau of Epidemiology Services,DATA AND BUSINESS ANALYST,Data Assistant,Data Cleansing Intern,Data Entry Clerk,  Bureau of HIV/AIDS Prevention and Control,Data Integrity Analyst,Data Management & Reporting,Data Management Assistant,Data Manager/Analyst,  Bureau of Environmental Disease and Injury Prevention,Data Manager/Court Advocate, Bureau of Correctional Health Services,Data Research Assistant,Data Scientist,Data Security Manager,Data Support Analyst,Database Administrator,DATABASE ADMINISTRATOR,Database Analyst, Bureau of Vital Statistics,Database Manager & Analyst, District of Public Health Office, Harlem (Center for Health Equity),Daytime Emergency Inspector,Delaware Basin Stream Project Manager,Deputy ACCO,Deputy ACCO For Operations,Deputy Assistant Commissioner, DCAS Logistics/Central Storehouse,Deputy Borough Commissioner,Deputy Budget Director,Deputy Budget Director Child Welfare,Deputy Chief,Deputy Chief City Medical Examiner,Deputy Chief Diversity & Industry Relations Officer,Deputy Chief Information Officer (CIO),Deputy Chief of Operations,Deputy Commissioner for Administration (OCME),Deputy Commissioner of Administration, Operations & Finance,Deputy Commissioner, Engineering Design & Construction,Deputy Director,DEPUTY DIRECTOR,Deputy Director of Contracts, Bureau of Mental Hygiene Administration,Deputy Director of Evaluation,Deputy Director of Forensic Biology,Deputy Director of GIS,Deputy Director of GreenThumb,Deputy Director of Landscape Construction,Deputy Director of Planning Projections and Demand Management,Deputy Director of Re-entry Services,Deputy Director of Special Events,Deputy Director of Vision, Bureau of School Health,Deputy Director, Audits and Accounts,Deputy Director, Customer Service,Deputy Director, Multifamily Build it Back, Multifamily Lending Program,Deputy Director, Multifamily Disposition and Finance Programs (MDFP),Deputy Director, Office of  Rehabilitation,Deputy Director, Office of Care Coordination and Health Homes,Deputy Director, Probation and Program Compliance,Deputy Director, Property Control & Commercial Leasing,Deputy Director, Provider Education Program,Bureau of Public Health Training,Deputy Director, QA & Strategic Statistical Analysis,Deputy Director, Topographic Services,Deputy Director--PH Laboratory-Repair & Maintenance, Bureau of Operations,Deputy Inspector General,Deputy Plant Chief,Deputy Press Secretary, Office of External Affairs,Deputy Program Director,Deputy Program Manager,DEPUTY PROJECT MANAGER,Deputy Regional Manager,DEPUTY REGIONAL MANAGER,Design Engineer,Design Liaison,Design Project Manager,Design Technician,DESIGNER, PRODUCT DEVELOPMENT,Desktop Support Technician,Developer, Bureau of Application Development and Database Administration,Development and Outreach Coordinator,Development Application Associate,Development Associate (Per-Diem),Development Lead,Digital Forensic Investigator,Digital Media Associate,Digital Photography Production Manager,Dir. of Enrollment, Eligibility and Accountability,Director,Director of  NYC Records Management,Director of Analysis and Evaluations,Director of Analystics and Information Design,Director of Analytics and Information Design,Director of Asset Management,Director of Brooklyn Planning,Director of Care Coordination and Health Homes, Bureau of Mental Health,Director of Communication, Center for Health Equity,Director of Correspondence,Director of Cost Management,Director of Education and Disabilities,Director of Energy Regulatory Affairs,Director of Engineering,Director of External Content & Social Media,Director of Forensic Toxicology,Director of Health, Mental Health and Nutrition,Director of Inclusionary Approvals,Director of Intergovernmental Affairs, Office of External Affairs,Director of Investigative Procedure,Director of IT Solutions and Delivery,Director of IT Strategy and Quality Assurance, IT Solutions and Delivery,Director of Legislative Affairs,Director of Manhattan Planning,Director of Medical Informatics, Surveillance and Epidemiology, Bureau of Correctional Health Services,Director of Middle School Programs,Director of Neighborhood Preservation Strategies,Director of Nursing/Nurse Practitioner,Director of Operations,Director of Operations, Bureau of Chronic Disease Prevention and Tobacco,Director of Payroll/Timekeeping,Director of Policy and Family Self Sufficiency Programs,Director of Policy and Health Systems Analysis,Director of Program Evaluation--Adolescent Health Unit, Bureau of School Health,Director of Program Planning,  Bureau of HIV/AIDS Prevention and Control,Director of Research and Analysis, Early Intervention,Director of Research and Evaluation, School Health,Director of Research Initiatives and Public Hearings,Director of Research, Evaluation and Planning (Center for Health Equity),Director of Research, World Trade Center Health Registry,Director of Scheduling,Director of Special Projects,Director of Strategic Financial Analysis, Bureau of Finance Administration,Director of Strategic Partnerships & Community Engagement,Director of Technical Assistance, Bureau of HIV/AIDS Prevention and Control,Director of the Office of Grants Administration and Claiming, Bureau of Budget and Revenue,Director of Training,Director of Treatment Services, Bureau of Mental Health,DIRECTOR,  MANAGEMENT POLICY ,  RESEARCH AND SINGLE ISSUE REVIEW,Director, Clinical and Scientific Affairs -Bureau of Chronic Disease Prevention and Tobacco Control,Director, Data Governance and Informatics, Bureau of Epidemiology Services,DIRECTOR, EVENTS PLANNING,Director, HR Special Projects,Director, Infrastructure Build Coordinator,Director, IT Security Ops and Engineering,Director, Office of Tax Enforcement,Director, Property Modeling Group (PMG),Director, Quality Control,Director, Quality Oversight and Audit,Director, Research and Evaluation,  Chronic Disease Prevention and Tobacco Control,Director, Strategic Sourcing,Director, Vendor Relations,Disability Needs Assessment Coordinator,DISASTER RECOVERY ENGINEER,Discharge Planner, Bureau of Correctional Health Services,Discharge Planner, Correctional Health Services/ Forensic Behavioral Health Services â€“ Discharge Planning Unit,Discharge Planning Supervisor, CHS â€“ Forensic Behavioral Health Services (FBHS),District Supervisor (Water & Sewer Systems),Documentation and Training Manager,DYFJ Quality Improvement Specialist,DYFJ Senior Analyst,DYFJ Special Advisor,Early Childhood Education Consultant, Bureau of Childcare,Early Childhood Educational Consultant, Bureau of Childcare,Early Intervention Data Coordinator, Bureau of Budget and Revenue,Early Intervention Liaison, Bureau of Children, Youth,  and Families,Early Intervention Official Designee, Bureau of Early Intervention,Early Intervention Program, Medical Director,ECTP Assistant Project Manager,ECTP Infrastructure Engineer,ECTP PMO Specialist,ECTP Project Manager,ECTP Risk & Issue Manager,Education and Learning Strategist,Education Specialist,EEO Coordinator,EHS Auditor,EHS Compliance Support Specialist,EHS Regional Manager,EHS Training Coordinator,eLearning Specialist/Citywide Systems Trainer,Electrical Advisory Board Plan Examiner,Electrical Design and Review  Engineer,ELECTRICAL ENGINEER II,Electrical Inspector,Electrician (ONYC),Electrician's Helper,ELEVATOR ADMINISTRATOR,Elevator Inspector,ELEVATOR MECHANIC HELPER,Emergency Field Operations Manager, Bureau of Agency Preparedness and Response,Emergency Response Coordinator, Bureau of Healthcare Systems Readiness,Emergency Shelter Architect,Emergency Support Coordinator,Energy Code Compliance Audit Program Assistant Plan Examiners,Energy Code Compliance Audit Program Plan Examiner,Energy Code Compliance Audit Program Senior Engineer,Energy Code Inspector,Energy Manager,Enforcement Associate,ENGAGEMENT AND COMMUNICATIONS PROJECT SPECIALIST,Engineer Auditor,Engineer-in-Charge,Engineer-In-Charge,Engineer-In-Charge, Non-Linear Capital Program Management,Engineering Audit Officer,Enrollment Specialist,Environmental Assessment Coordinator,Environmental Compliance Specialist,Environmental Control Board Member,Environmental Health & Safety Incident Investigator,Environmental Health Scientist, Bureau of Environmental Disease and Injury Prevention,Environmental Response  Analyst, Bureau of Environmental Surveillance and Policy,Epidemiologic Liaison, Bureau of HIV/AIDS Prevention and Control,eSHARE Technical Assistant, Bureau of HIV/AIDS Prevention and Control,ESTIMATOR (GENERAL CONSTRUCTION),Ethics Training Coordinator,Evaluation Reviewer/Bureau of Early Intervention,Evaluation Specialist,  Bureau of HIV/AIDS Prevention and Control,Evaluators,Event Coordinator,Examining Attorney,Executive Agency Counsel,EXECUTIVE AGENCY COUNSEL,Executive Agency Counsel M1,EXECUTIVE ASSISANT, DEFO,Executive Assistant,Executive Assistant to the Deputy Commissioner,Executive Assistant,  Center for Health Equity/Office of the Associate Commissioner,Executive Director,Executive Director of Psychology,Executive Director, Bureau of Healthcare System Readiness,EXECUTIVE DIRECTOR, BUSINESS DEVELOPMENT,Executive Division Coordinator,Executive Human Resources Director,EXECUTIVE OFFICE SUMMER INTERN,Executive Project Audit Engineer,Executive Vice President for External Affairs,Facilities Central Supervisor,Facility Manager-Bushwick & Chelsea Health Centers, Bureau of Operations: District Operations,Facility Manager--Riverside/Washington Heights/Manhattanville, Bureau of Operations,FDCAD CONFIGURATIONS/INTERFACES SUBJECT MATTER EXPERT,FDCAD INFRASTRUCTURE SUBJECT MATTER EXPERT (SME),FDCAD REQUIREMENTS ANALYST,FIELD AUDITOR,Field Coordinator,FIELD DESKTOP ASSOCIATE,FIELD DESKTOP TECHNICIAN,Field Medical Doctor, Bureau of School Health,Field Operations Coordinator, Bureau of Immunization (Immunization Registry),FIELD SERVICES TECHNICIAN,Finance Project Manager,Financial Analyst, Bureau of Mental Hygiene Administration,Financial and Economic Analyst, Disease Control Administration,Financial Data Analyst,Financial Reporting Analyst, Finance Administration,Financial Reviewer,Fire Alam/Electrical Engineer,First Deputy Press Secretary,Fixed Asset Analyst,Fleet Project Manager,Fleet Services Specialist,FLOOD RESILIENCE ASSISTANT URBAN DESIGNER (ZONING DIVISION),Flood Resilience City Planner I (HEIP),Forensic Operations Specialist,Forester,Foundation & Bulk Seed Program Supervisor,Franchise Administrator,FSS Project Manager,Gardener,Gardener I,General Services Associate,Geotechnical Project Manager,GIS Analyst,GIS Coordinator,GIS desktop support specialist,GIS Geodatabase Manager,GIS Web Developer,GIS/.Net Web Developer,Governance and Data Use Manager, Bureau of Epidemiology Services,Grants Manager, Center for Health Equity,GRAPHIC ARTIST - LEVEL II,Green Infrastructure Analyst,Green Infrastructure Engineer,Green Infrastructure Grant Project Manager,Group Chief/Supervisor, Unincorporated Business Tax (UBT),Hazard Material Project Manager,Hazardous Material Project Manager,Health & Safety Specialist,Health and Safety Specialist,Health Information and Insurance Analyst, Bureau of Correctional Health Services (CHS),Healthcare Manager, Bureau of Correctional Health Services (CHS),Healthy Eating Program Administrator, Chronic Disease & Tobacco Control,Hearing Officer,Helpdesk Agent, Bureau of Operations: Information Support Servicesâ€”Call Center,HIGH PRESSURE PLANT TENDER,HIV Care Policy  Intern, Bureau of HIV/AIDS Prevention and Control,HIV Incidence and Resistance Analyst, Bureau of HIV/AIDS Prevention and Control,Hoists & Rigging Inspector,Homeowner Tax Benefits Intern,Hospital Coordinator, Bureau of Environmental Disease and Injury Prevention,HQ DESKTOP SUPPORT,HRP- IT PROJECT COORDINATOR,Human Capital College Aide,Human Resources Director,Human Resources Generalist,Human Resources Generalist, Bureau of Human Resources and Labor Relations,Human Rights Specialist,HUMAN RIGHTS SPECIALIST,Identification Specialist,Industrial Hygienist 2,INDUSTRIAL HYGIENIST II,Information Modeler,Information Modeler (Data Architect),Information Security Manager,INFORMATION SECURITY SPECIALIST,Infrastructure Capacity Management Engineer,In-House EHSO,Inspector,Inspector General,Inspector,  Bureau of Veterinary and Pest Control Services,Instrumentation Specialist,INSTRUMENTATION SPECIALIST II,Intake Specialist,Integration Developer,Integration Support Engineer,Intelligence Analyst,INTERFACE SECTION MANAGER,Internal Auditor,Internal Monitor,Internetworking Architect Specialist,Internetworking Specialist,Investigative Analyst,Investigative Auditor,Investigative Inspector,Investigator,Investigator - Employee Discipline,Investigator (Discipline/Staff Conduct),Investigator Level 1,Investigator Level 2,IT Asset and Configuration Administrator,IT Asset Management College Aide,IT Asset Warehouse Manager,IT Business Analyst,IT Project Manager, Bureau of IT Solutions and Delivery,IT Security Intern,IT Service Delivery and Problem Manager,IV-E Waiver Senior Coordinator,J2EE DEVELOPER,J-51 Analyst,Java Developer,JOB ADMIN TECHNICIAN/PROD CONTROL,Junior .NET Developer, Bureau of HIV/AIDS Prevention and Control,Junior Claiming Analyst, Bureau of Budget and Revenue,Junior Java Developer,Junior Pubilc Health Nurse, Bureau of School Health,Junior Public Health Nurse,Junior Tax Credit Analyst,Juvenile Justice Initiative Brooklyn Supervisor,Lab Microbiologist,Labor Relations Attorney,Laboratory Administrator, Bureau of Public Health Laboratory,Laboratory Coordinator, Bureau of IT Informatics,Laboratory Helper,Laboratory Microbiologist II,Laboratory Microbiologist, Bureau of Public Health Laboratory,Laboratory Microbiologist, Bureau of Sexually Transmitted Disease Control,Laboratory Preparedness Coordinator,LAN/NETWORK ENGINEER,Land Use and Legislative Analyst,Landlord and Tenant Agency Attorney,Landscape Architect,Landscape Architect II,Lead Business Analyst,  Informatics, IT Solutions and Delivery,LEAD QUALITY ASSURANCE ANALYST,Lead Radio Frequency Engineer,Lead Safety Investigator,Lease Administrator,Lease Coordinator, Bureau of Facilities Planning and Administrative Services (Finance Unit),Legal Director,Legal Intern, Office of General Counsel,Licensing Analyst,Licensing Clerk,Licensing Specialist,Limited Alteration Application (LAA) Inspector,LINUX SYSTEMS ADMINISTRATOR,LITIGATION SUPPORT COUNSEL,Litigation Support Director for Agency-Based Discovery,Low Pressure Boiler Inspector,MACHINE LEADER,Machinist,MAINFRAME DB2 SYSTEM PROGRAMMER,Maintenance Worker - Technical Services-Heating Unit,MANAGED CARE PROJECT ANALYST,MANAGEMENT ADVISOR, LEARNING MANAGEMENT,MANAGEMENT AUDITOR,Management Auditor I,Manager of Mental Health & Strategic Partnerships, Bureau of Maternal Infant and Reproductive Health,Manager, EHS Program Development,Manager, IT Security Engineering,Manager, IT Security Operations and Engineering,Managing Mechanical Engineer,Marine Electronics Technician,Marine Oiler,Marketing Coordinator Intern, Bureau of Primary Care Access and Planning,Matching Analyst and Strategist, Bureau of Vital Statistics,Mate,Mechanical Design & Review Engineer,Mechanical Engineer,MECHANICAL ENGINEER II,Mechanical Engineering Intern,Medicaid Analyst,  Policy, Planning, and Strategic Data Use,Medicaid Project Manager/Analyst, Office of the Executive Deputy Commissioner,Medicaid Project/Analyst, Office of the Executive Deputy Commissioner,Medical Director,Medical Director, Bureau of Sexually Transmitted Disease Control,Medical Director, District Public Health Brooklyn (Center for Health Equity),Medicolegal Investigator / Physician Assistant,Medicolegal Investigator/ Physician Assistant,Medicolegal Investigator/Physician Assistant,Messaging and Collaboration Architect Manager,Miscellaneous Revenue Collections Analyst, Bureau of Budget and Revenue,Mobile Application Developer,MODA Policy Coordinator,Modeler / Policy Analyst,Molecular Genetics Researcher,MOME Associate Commissioner of Marketing and Communications,MOME Broadcast Project Engineer,MOME Field Representive,MOME Marketing/Communications Associate,Monitoring Engineer,MOTI Fellow,MOTI Tech & Innovation Policy Advisor,MOTI Technology Solutions Manager,Network Administrator,Network Design Associate,Network Engineer I LAN/WAN,Network Support, Bureau of Network Technology Services,NFP Nurse Home Visitor, Bureau of Maternal Infant and Reproductive Health,Night Emergency Inspector,Notify NYC/Public Warning Specialist,Nurse Practitioner, Bureau of Sexually Transmitted Disease Control,Nurse Practitioner, Clinical Quality Management & Improvement - Employeesâ€™ Health Program,Nurse, Bureau of School Health,Nutrition Consultant,NYC BUSINESS ACCELERATION INTERN,NYC Regional Planning Consortium Administrative Assistant, Mental Hygiene/Office of Executive Deputy Commissioner,NYC Regional Planning Consortium Coordinator, Office of the Executive Deputy Commissioner,NYC Regional Planning Consortium Director, Office of the Executive Deputy Commissioner,NYC Regional Planning Consortium Manager, Office of the Executive Deputy Commissioner,NYC Tech Talent Pipeline Intern,OCA Contract Manager,Office Administrator (EEO),Office Assistant (College Aide, Freshman- Sophomore), Agency Chief Contracting Officer,Office Assistant, Bureau of Budget and Revenue,Office Assistant, Bureau of Early Intervention,Office Assistant/College Aide (Jr-Sr), Bureau of Budget and Revenue,Office Engineer,Office Machine Aide,Office Machine Aide, Level 1,Office Manager,OIL BURNER SPECIALIST,Oiler,On-Line Medical Control (OLMC) Physician,OPERATIONS ADMINISTRATIVE PROJECT MANAGER,Operations Analyst,Operations Associate,  Bureau of Environmental Disease and Injury Prevention,Operations Associate, Bureau of Child Care,Operations Manager,OPERATIONS SPECIALIST,Oracle Applications Developer,ORACLE APPLICATIONS DEVELOPER,Oracle Applications Developer (DOJ),Oracle SOA Lead Developer,Outreach and Community Education Coordinator, Bureau of Communicable Disease,Outreach Intern,PACE Clinical Manager, Bureau of Correctional Health Services,PACE Discharge Planner, Bureau of Correctional Health Services,PAINTER,Paralegal,Paralegal Aide,Paralegal Aide, Office of General Counsel,PART-TIME OFFICE MACHINE AIDE, LEVEL 1,Patient Services Associate, Bureau of Correctional Health Services,Payment Liaison,Payment Liaison, Finance /Bureau of the Controller,Payroll Coordinator,Payroll Operations Support Manager,PCSI Projects Specialist,  Disease Control Administration,PECO Data Analyst, Bureau of Agency Preparedness and Response,PECO Planner, Bureau of Agency Preparedness and Response,PECO Program Manager,  Bureau of Agency Preparedness & Response,PECO Vulnerability Specialist, Bureau of Policy, Community Resilience and Response,PEP Captain,Per Diem - Remote Learning Team Specialist,Performance Management Specialist,Performance Management Specialist, Bureau of Human Resources and Labor Relations,Personnel Analyst,Personnel Coordinator/Designated Human Resources Liaison, Mental Hygiene Administration/,Personnel Database Administrator,Personnel Liaison, Bureau of Food Safety and Community Sanitation,Pharmacist, Bureau of Correctional Health Services,Pharmacy Assistant, Bureau of Correctional Health Services,Plan Examiner,Plan Examiner- Forensic Engineering,Plan Examiner Trainee,Plan Examiner-Cranes & Derricks,Planner (Bronx Planning Unit),Planner (Brooklyn Planning Unit),Planner (Neighborhood Planning Unit),Planner (Pre-Development Planning Unit),Planning and Program Scheduler,PLASTERER,PLUMBER'S HELPER,Plumbing Inspector,Plumbing/Fire Suppression Engineer,PMO ANALYST,Poison Information Specialist, Bureau of Environemental Health Administration (Poison Control Center),Poison Information Specialist, Bureau of Environmental Health Administration (Poison Control Center),Policy Analyst,Policy Analyst, Bureau of Chronic Disease Prevention & Tobacco Control,Policy Analyst, Bureau of HIV/AIDS Prevention and Control,Policy Analyst, Bureau of Policy, Community Resilience and Response,Policy Analyst/Advisor,Policy and Legal,POLICY AND PROCEDURE ANALYST,Policy and Strategic Intiatives Analyst,Population Biologist, Bureau of Veterinary and Pest Control Services,Port Marine Engineer,Port Marine Engineer (Vessels),Portal Application Engineer,Portal Support Engineer,PowerBuilder.NET Programmer/Analyst,Pre Audit Supervisor,PRESS SECRETARY,Prevention and Treatment Coordinator, Bureau of Communicable Disease,Principal Administrative Associate,Principal Design Engineer,Priority Population Health Survey/Program Evaluation Lead, Bureau of HIV/AIDS Prevention and Control,Procurement Analyst,PROCUREMENT ANALYST,Procurement Analyst (Small Purchase Unit),Procurement Analyst II,Procurement Analyst, Bureau of Facilities Planning and Administrative Services:  Finance Unit,Procurement Coordinator,Procurement Coordinator, Office of the Agency Chief Contracting Officer (ACCO),Procurement Liaison, Bureau of Food Safety and Community Sanitation,PROCUREMENT OFFICER,Producer/Editor, NYC Media,Production Manager,Program Administrator,Program Analyst,Program Analyst, Bureau of Disease Control Administration,Program Analyst, Bureau of HIV/AIDS Prevention and Control,Program and System Assistant, Bureau of Children, Youth, and Families,Program Assistant,Program Assistant, Bureau of Mental Health,Program Associate,Program Consultant, Bureau of Alcohol and Drug Use Prevention, Care,Program Coordinator, Prevention and Primary Care,Program Director,PROGRAM DIRECTOR, WF1 GREEN CONTRUCTION,Program Evaluation Specialist, Bureau of Epidemiology Services,Program Implementation Coordinator, Bureau of Communicable Disease,PROGRAM LIAISON,Program Manager,PROGRAM MANAGER, CAP,PROGRAM MANAGER, CAPACITY BUILDING PROGRAMS,PROGRAM MANAGER, CAPITAL ACCESS,Program Manager, Center for Health Equity,PROGRAM MANAGER, WF1 GREEN CONSTRUCTION,Program Officer,Program Officer - I,Program Planner, Bureau of Communicable Disease,Program Planner, Bureau of HIV/AIDS Prevention and Control,Program Specialist, Office of Housing Services,Program Specialist, Treatment Services , Bureau of Mental Health,Programmer Analyst, Bureau of Mental Hygiene Administration,Programming Manager,Project Controls Intern,Project Controls Specialist,Project Coordinator, District Public Health Brooklyn,Project Coordinator/Bureau of Disease Control Administrative,Project Director,Project Director, Bureau of Correctional Health Services,Project Engineer,Project Engineer  (Structural),Project Engineer (Design),Project Engineer (Geotechnical),PROJECT LEADER,Project Management Analyst,Project Manager,PROJECT MANAGER,Project Manager Intern,Project Manager Interns,Project Manager, HUD Multifamily Program,Project Manager, Marketing,Project Manager, MultiFamily Storm Recovery Program,PROJECT MANAGER, NDD,Project Manager, New Infill Homeownership Opportunities Program (NIHOP),Project Manager/Data Analyst, Bureau of HIV/AIDS Prevention and Control,Project Manager/Sr. Project Manager,Project Officer , Bureau of HIV/AIDS Prevention and Control,Project Officer, Bureau of HIV/AIDS Prevention and Control,Project Officer/Analyst,  Bureau of HIV/AIDS Prevention and Control,Project Specialist,Prosecuting Attorney,PS Coordinator, Environmental Health Administrative,PSAC Service Center Manager,Psychiatrist/Director of Oversight for Psychotropic Medications,Psychologist (Part-Time),Public Education Policy Advisor,Public Health Adviser, Bureau of Immunization,Public Health Advisor, Bureau of Maternal Infant and Reproductive Health,Public Health Advisor, Bureau of Sexually Transmitted Diseases Prevention and Control,Public Health Assistant, Bureau of School Health,Public Health Epidemiologist, Bureau of Communicable Diseases,Public Health Inspector, Bureau of Childcare,Public Health Inspector, Bureau of Food Safety and Community Sanitation,Public Health Nurse (School Health),Public Health Nurse, Bureau of Environmental Disease and Injury Prevention,Public Health Nurse, Bureau of School Health,Public Health Sanitarian, Bureau of Environmental Disease and Injury Prevention,Purchasing Agent,QUALITY ASSURANCE (QA) ANALYST,Quality Assurance Analyst,Quality Assurance Analyst and Trainer, Bureau of Vital Statistics,Quality Assurance Analyst, Bureau of IT Solutions and Delivery,Quality Assurance Compliance Analyst,Quality Assurance Compliance Manager,Quality Assurance Specialist,Quality Oversight and Analyst,Quality Program Manager,Queens Borough Commissioner,Radio Repair Mechanic,RBA Informatics Specialist,  Bureau of Environmental Surveillance and Policy,Real Estate Appraiser,Records Access Attorney,Reentry Coordinator,Reentry Planner/Enroller,Referral Intake Coordinator, Bureau of Early Intervention,Referral/ Transfer Liaison, Bureau of Early Intervention,Regional Manager,REGIONAL OFFICE LIAISON,Regulatory Manager,Release Manager/ Application Support Analyst,RENEWABLE ENERGY POLICY ADVISOR,REPOST - E-Learning Content Developer - (Remote Learning Team Specialist),REPOST - Per Diem - Remote Learning Team Specialist,REPOST - Remote Learning Team Specialist,Research Aide - College Aide,Research Analyst (Part-Time),Research Analyst,  Bureau of Vital Statistics,Research Analyst, Family and Child Health Administration,Research and Evaluation Analyst,  Office of Policy, Planning and Strategic Data Use (PPSDU),Research and Evaluation Analyst, District Public Health Harlem (Center For Health Equity),Research Assistant,Research Scientist, Bureau of Chronic Disease Prevention & Tobacco Control,Researcher, Bureau of Children, Youth, and Families,Researcher/Data Analyst, Bureau of Mental Health,Researcher/Grant Writing Specialist,Resident Engineer,Resident Engineer,Resident Engineer/Accountable Manager,Resiliency Planner,Retrofit Accelerator Policy Advisor,RFID/FGAP IT PROJECT MANAGER,RISK MANAGEMENT PLAN MANAGER,Safety Accident Investigator,Safety Auditor,Safety Education Outreach Coordinator (Elementary),Safety Education Outreach Coordinator (Middle),Safety Investigator,SAS Analyst, Bureau of Vital Statistics,SB1 Data and Program Analyst,SB1, PROGRAM MANAGER,Scaffold Safety Inspector,Scheduler,Scientist (Water Ecology),Scientist, Bureau of Environmental Sciences and Engineering,Seasonal City Park Worker,Secretary,SECRETARY TO THE COMMISSIONER,Section Chief for Environmental Water & Sciences, Bureau of Environmental Sciences and Engineering,Section Chief, Drainage Review,Security Helpdesk Supervisor,Senior Administrative Assistant, Early Intervention Program,Senior Administrative Project Manager,Senior Advisor, Early Childhood Health and Development , Family and Child Health Administration,Senior Analyst,Senior Analyst, Quality and Data Management,Senior Application Developer,Senior Application Developer and Accela Development & Support Team Lead,Senior Application Interface Developer,Senior Architectural Designer,Senior Auditor,Senior Auditor,  Bureau of Audit Services,SENIOR AUTOMOTIVE SPECIALIST,Senior Business Analyst,Senior Cost Estimator (Electrical),Senior Design Engineer,Senior Detective Investigator,Senior Developer,Senior Director of Labor Relations, Bureau of Human Resources and Labor Relations,Senior Electrical/Lighting Design & Review Engineer,Senior Engineer,Senior Epidemiologist, HIV Epidemiology and Field Services Program,Senior Estimator,Senior Estimator (Electrical),Senior Estimator (General Construction),Senior Estimator Mechanical,Senior Graphic Designer/Artist,Senior Health Policy Advisor,Senior Integration Developer,Senior IT Network Engineer,Senior IT Security Network Design Engineer,Senior Java Developer,SENIOR JAVA DEVELOPER,Senior Legal Counsel,Senior Mainframe Developer,Senior Manager, Underwriting,Senior Mechanical Design & Review Engineer,Senior Mobile Application Developer,Senior Mortuary Technician,Senior NetBackup Administrator,Senior Personnel Processor,Senior Planner (Neighborhood Planning Unit),Senior Planning (Queens Planning Unit),Senior Policy Analyst,Senior Policy Manager,Senior Port Engineer,Senior Preparedness Evaluator, Bureau of Agency Preparedness and Response,Senior Procurement Analyst,SENIOR PROCUREMENT COORDINATOR,Senior Producer - Interagency Media,Senior Program Associate,Senior Program Manager â€“ Construction,SENIOR PROGRAM MANAGER, BUSINESS PREPAREDNESS,Senior Program Specialist,Treatment Services, Bureau of Mental Health,Senior Property Valuation Modeler,Senior Public Health Assistant, Bureau of School Health,Senior QA Tester,Senior Radio System Network Engineer,Senior Reentry Coordinator,Senior Reentry Planner,Senior Research Analyst, Bureau of Maternal Infant and Reproductive Health,Senior Research Scientist,Senior Researcher,Senior Scientist,Senior Software Developer,Senior Spatial Data Analyst,Senior Special Investigator,SENIOR SYSTEMS DEVELOPER,Sentinel Laboratory Trainer, Bureau of the Public Health Laboratory,Server Engineer,Sharepoint Intern,SharePoint Solutions Architect,Shelter Director,Site Environmental Health & Safety (EHS) Officer,SLA Manager,SOFTWARE BUSINESS ANALYST,Software Developer,Software Development Manager,SOFTWARE QUALITY ASSURANCE/TESTING,Spatial Data Digitizer,Special Assistant for Head Start,SPECIAL ASSISTANT TO DEPUTY COMMISSIONER OF PROGRAM SUPPORT,Special Assistant to Executive Director, Mental Health (Bureau of Correctional Health Services),Special Assistant to the Commissioner,SPECIAL ASSISTANT TO THE COMMISSIONER,Special Assistant to the Commissioner, Office of the Commissioner,Special Assistant to the Medical Director, Bureau of Correctional Health Services,Special Assistant(Green Infrastructure),Special Assistant, Bureau of Environmental Disease and Injury Prevention,Special Assistant, Center for Health Equity,Special Investigator,Special Projects Assistant to the Director of Vital Records,Special Projects Associate,Special Underwriting Project Manager,Specification Engineer,Specifications Specialist,Sr Advisor to EVP for Comm Pgms & Dev,Sr Advisor to the Deputy Commissioner of Fiscal & Procurement Operations,Sr. Estimator,Staff Assistant,Staff Attorney,Staff Attorney, Parking Law,Staff Physician (Part -Time),Staff Physician (Part-Time),Stationary Engineer,Stationary Engineer (Electric),Stationary Engineer Electric,Stock Worker,Stock Worker, Bureau of STD Prevention and Control,Stock Worker, Bureau of Vital Records,Stormwater Analyst,Stormwater Program Coordinator,Structural Design and Review Engineer,Summer College Intern,SUMMER COLLEGE INTERN,SUMMER COLLEGE INTERNE,Summer Graduate Intern,SUMMER GRADUATE INTERN,Summer Graduate Intern, Modeling GIS,Summer Graduate Intern, Price Indices,Summer Intern,SUMMER INTERN, CAP,Supervising Budget Analyst,Supervising Claims Analyst,Supervising Exterminator, Bureau of Veterinary and Pest Control Services,Supervising Inspector-BEST,Supervising Inspector-BIB,Supervising Inspector-Development Inspections Hub,Supervising MD - CATCH Program, Bureau of School Health,Supervising MD, Bureau of School Health,Supervising Medical Doctor - Vulnerable Population, Bureau of School Health,Supervising Nurse, Bureau of School Health,SUPERVISING OPERATOR,SUPERVISING PROGRAM ANALYST,Supervising Public Health Adviser, Bureau of Sexually Transmitted Disease Control,Supervisor (Water & Sewer Systems),Supervisor (Watershed Maintenance),Supervisor Bridge Painter,Supervisor Electrician,Supervisor GIS Data-Maintenance Unit,Supervisor Mechanics (Mechanical Equipment),SUPERVISOR OF CLOSED FILE WAREHOUSE,SUPERVISOR OF ELEVATOR MECHANICS,SUPERVISOR OF TRAFFIC DEVICE MAINTAINERS,Supervisor Pest Control, Bureau of Veterinary and Pest Control Services,Supervisor Steam Fitter,SUPERVISOR WATERSHED MAINTAINANCE II,Supervisor, Building Coordination,Supervisor, EH&S Training  and Administration,Supervisor, Financial Review,Support Services Coordinator,Surveillance Analyst, Bureau of Environmental Disease and Injury Prevention,Sustainability Enforcement Senior Architect,System Administrator II,SYSTEMS DATABASE ADMINISTRATOR,Systems Engineer,Systems Reporting Data Analyst, Bureau of Budget and Revenue,SYSTEMS SPECIALIST,Tax Credit Analyst Assistant,Taxpayer Advocate,TECHNICAL ADVISOR,Technical Investigator,Technical Leader,TECHNICAL PM/SAN ADMINISTRATOR,Technical Project Manager,Technical Project Manager,  Bureau of Network Technology Services,Technical Project Manager, Bureau of IT Solutions and Delivery,Technical QA Analyst,Technical Researcher,TECHNICAL SPECIFICATION WRITER,Technical Support Associate,Technologist, Bureau of Public Health Laboratory,Technology Analyst Intern,Technology and Analytics Trainer,Temporary Painter,TIL Director,Timekeeping and Clerical Support,Tivoli Workload Scheduler,Training Coordinator,Transportation Analyst,Treatment Initiatives Coordinator, Bureau of Alcohol and Drug Use, Prevention, Care, and Treatment,Trial Preparation Paralegal,UI/UX Designer and Process Analyst,Unit Chief for Surveillance,Unit Chief, Radioactive Materials Licensing, Bureau of Environmental Sciences and Engineering,UNIX SYSTEM ADMINISTRATOR,UNIX SYSTEMS ADMINISTRATOR,Utilization Review Nurse, Bureau of Correctional Health Services,UX Designer Lead,UX/UI Designer,VENDOR SERVICES PROGRAM MANAGER,Vessel Construction Manager,Virtualization Architect,Vital Records Liaison,VMware Support Engineer,Waiver Analyst,Water Resources Analyst,Water Resources Modeler,Watershed Maintainer,Web Developer,Web Manager,Web Master,Webmaster,Website Developer,Wireless Supervisor,Workforce Data Analyst/Statistician,Workforce Development & Non-Profit Coordinator,Yard-Stock Person,ACCOUNTANT,ADM MANAGER-NON-MGRL FRM M1/M2,ADMIN COMMUNITY RELATIONS SPEC,ADMIN CONTRACT SPECIALIST (PYR,ADMINISTRATIVE ACCOUNTANT,ADMINISTRATIVE ARCHITECT,ADMINISTRATIVE BUSINESS PROMOT,ADMINISTRATIVE CITY PLANNER,ADMINISTRATIVE DIRECTOR OF SOC,ADMINISTRATIVE ENGINEER,ADMINISTRATIVE HORTICULTURIST,ADMINISTRATIVE HOUSING DEVELOP,ADMINISTRATIVE INSPECTOR (BUIL,ADMINISTRATIVE INVESTIGATOR,ADMINISTRATIVE LABOR RELATIONS,ADMINISTRATIVE MANAGEMENT AUDI,ADMINISTRATIVE PROCUREMENT ANA,ADMINISTRATIVE PROJECT MANAGER,ADMINISTRATIVE PSYCHOLOGIST,ADMINISTRATIVE PUBLIC HEALTH N,ADMINISTRATIVE PUBLIC HEALTH S,ADMINISTRATIVE PUBLIC INFORMAT,ADMINISTRATIVE REAL PROPERTY M,ADMINISTRATIVE STAFF ANALYST (,ADMINISTRATIVE SUPERVISOR OF B,ADMINISTRATIVE TAX AUDITOR,AGENCY ATTORNEY,AGENCY ATTORNEY INTERNE,AGENCY MEDICAL DIRECTOR,AIR POLLUTION INSPECTOR,APPRAISER (REAL ESTATE),APPRENTICE (CONSTRUCTION LABOR,APPRENTICE INSPECTOR (HIGHWAYS,ARCHITECT,ASBESTOS HAZARD INVESTIGATOR,ASSISTANT CITY ASSESSOR,ASSISTANT CIVIL ENGINEER,ASSISTANT COMMISSIONER (AUDIT),ASSISTANT COMMISSIONER (FD),ASSISTANT CORPORATION COUNSEL,ASSISTANT LANDSCAPE ARCHITECT,ASSISTANT PLAN EXAMINER (BLDGS,ASSISTANT URBAN DESIGNER,ASSOCIATE CHEMIST,ASSOCIATE CORRECTIONAL COUNSEL,ASSOCIATE INSPECTOR (CONSTRUCT,ASSOCIATE INSPECTOR (PLUMBING),ASSOCIATE INVESTIGATOR (NOT PR,ASSOCIATE JOB OPPORTUNITY SPEC,ASSOCIATE PROJECT MANAGER,ASSOCIATE PUBLIC HEALTH SANITA,ASSOCIATE QUALITY ASSURANCE SP,ASSOCIATE REAL PROPERTY MANAGE,ASSOCIATE STAFF ANALYST,ASSOCIATE URBAN DESIGNER,AUTO MECHANIC,AUTO MECHANIC (DIESEL),BOOKKEEPER,BRICKLAYER,BUSINESS PROMOTION COORDINATOR,CEMENT MASON,CERT IT DEVELOPER (APP),CERT. IT ADMINISTRATOR WAN,CERTIFIED IT ADMINISTRATOR LAN,CHAUFFEUR-ATTENDANT,CHILD AND FAMILY SPECIALIST,CITY CLINICIAN,CITY CUSTODIAL ASSISTANT,CITY MEDICAL DIRECTOR,CITY MEDICAL EXAMINER (OCME),CITY MEDICAL SPECIALIST,CITY MEDICAL SPECIALIST (PART-,CITY PARK WORKER,CITY PEST CONTROL AIDE,CITY PLANNER,CITY PLANNING TECHNICIAN,CITY RESEARCH SCIENTIST,CITY SEASONAL AIDE,CITY TAX AUDITOR,CIVIL ENGINEER,CIVIL ENGINEERING INTERN,CLAIM SPECIALIST,CLERICAL ASSOCIATE,CLIMBER & PRUNER,COLLEGE AIDE - ASSIGNMENT LEVE,COLLEGE AIDE (ALL CITY DEPTS),COMMUNITY ASSISTANT,COMMUNITY ASSOCIATE,COMMUNITY COORDINATOR,COMMUNITY PLANNING BOARD COORD,COMMUNITY SERVICE AIDE,COMPUTER AIDE,COMPUTER ASSOC (OPERATIONS),COMPUTER ASSOC (SOFTWARE),COMPUTER ASSOC (TECH SUPP),COMPUTER PROGRAMMER ANALYST,COMPUTER SERVICE TECHNICIAN (C,COMPUTER SPECIALIST (OPERATION,COMPUTER SPECIALIST (SOFTWARE),COMPUTER SYSTEMS MANAGER,CONFIDENTIAL INVESTIGATOR,CONFIDENTIAL STRATEGY PLANNER,CONSTRUCTION PROJECT MANAGER,CONSTRUCTION PROJECT MANAGER I,CONSULTANT (EARLY CHILDHOOD ED,CONSULTANT (PUBLIC HEALTH-SOCI,CONTRACT REVIEWER (OFFICE OF L,CONTRACT SPECIALIST,CORRECTIONAL COUNSELOR,CRANE OPERATOR (ANY MOTIVE POW,CRIMINALIST,CRIMINALIST ASSISTANT DIRECTOR,CRIMINALIST DEPUTY DIRECTOR OF,DEPUTY ASSISTANT DIRECTOR (CIV,DEPUTY BOROUGH COMMISSIONER (P,DEPUTY CHIEF CITY MEDICAL EXAM,DEPUTY CHIEF OF OPERATIONS (PA,DEPUTY COMMISSIONER (DEP),DEPUTY COMMISSIONER FOR ADMINI,DEPUTY INSPECTOR GENERAL,DEPUTY SUPERINTENDENT (JUVENIL,DIRECTOR (OCME TOXICOLOGICAL L,DISTRICT SUPERVISOR (WATER & S,ELECTRICAL ENGINEER,ELECTRICIAN,ELECTRICIANS HELPER,ELEVATOR MECHANIC HELPER,EMERGENCY PREPAREDNESS MANAGER,EMERGENCY PREPAREDNESS SPECIAL,ENGINEERING TECHNICIAN,ENVIRONMENTAL ENGINEER,ENVIRONMENTAL ENGINEERING INTE,ESTIMATOR (GENERAL CONSTRUCTIO,EXAMINER OF ACCOUNTS,EXAMINING ATTORNEY,EXECUTIVE AGENCY COUNSEL,FAMILY PUB HEALTH NURSE (HMH),FORENSIC MORTUARY TECHNICIAN,FORESTER,GARDENER,GEOLOGIST,GRAPHIC ARTIST,HEALTH SERVICES MANAGER,HEARING OFFICER (PER SESSION),HIGH PRESSURE PLANT TENDER,HUMAN RIGHTS SPECIALIST (COMM,INDUSTRIAL HYGIENIST,INSPECTOR (BOILERS),INSPECTOR (CONSTRUCTION),INSPECTOR (ELECTRICAL FOR PAYR,INSPECTOR (ELEVATORS),INSPECTOR (HOISTS AND RIGGING),INSPECTOR (LOW PRESSURE BOILER,INSPECTOR (MULTI-DISCIPLINE),INSPECTOR (PLUMBING),INSPECTOR GENERAL,INSTRUMENTATION SPECIALIST,INVESTIGATOR,INVESTIGATOR (CCRB),INVESTIGATOR (EMPLOYEE DISCIPL,INVESTIGATOR(DISCP)(ONLY FOR P,JR PHNURSE (SCH HLTH)>20 HR PT,LABORATORY HELPER,LABORATORY MICROBIOLOGIST,LANDSCAPE ARCHITECT,LEGAL SECRETATIAL ASSISTANT-AL,MACHINIST,MAINTENANCE WORKER,MANAGEMENT AUDITOR,MARINE ELECTRONICS TECHNICIAN,MARINE OILER(FERRY OPERATIONS),MATE,MECHANICAL ENGINEER,MECHANICAL ENGINEERING INTERN,MEDICAL OFFICER (CORRECTION),MEDICOLEGAL INVESTIGATOR (OCME,MEMBER OF THE ENVIRONMENTAL CO,NURSE PRACTITIONER(DEPT HEALTH,NUTRITION CONSULTANT,OFFICE MACHINE AIDE,OIL BURNER SPECIALIST,OILER,PAINTER,PARALEGAL AIDE,PLAN EXAMINER (BLDGS),PLASTERER,PLUMBER'S HELPER,POISON INFORMATION SPECIALIST(,PORT MARINE ENGINEER,PRINCIPAL ADMINISTRATIVE ASSOC,PRINCIPAL MULTIPLE DWELLING SP,PROBATION OFFICER TRAINEE,PROCUREMENT ANALYST,PROGRAM OFFICER (DEPT FOR THE,PROGRAM PRODUCER,PROJECT MANAGER,PROJECT MANAGER INTERN#,PSYCHOLOGIST,PUBLIC HEALTH ADVISER,PUBLIC HEALTH ASSISTANT,PUBLIC HEALTH ASSISTANT (SCHOO,PUBLIC HEALTH EPIDEMIOLOGIST,PUBLIC HEALTH NURSE,PUBLIC HEALTH NURSE (SCHOOL HE,PUBLIC HEALTH SANITARIAN,QUALITY ASSURANCE SPECIALIST,QUALITY ASSURANCE SPECIALIST (,RADIO REPAIR MECHANIC,RESEARCH ASSISTANT,SCIENTIST (RADIATION CONTROL),SCIENTIST (WATER ECOLOGY),SECRETARY,SECRETARY TO THE COMMISSIONER,SENIOR AUTOMOTIVE SPECIALIST,SENIOR DETECTIVE INVESTIGATOR,SENIOR ESTIMATOR (ELECTRICAL),SENIOR ESTIMATOR (GENERAL CONS,SENIOR ESTIMATOR (MECHANICAL),SENIOR MENTAL HEALTH WORKER,SENIOR STATIONARY ENGINEER (EL,SOCIAL WORKER,SPECIAL CONSULTANT (MENTAL HEA,SPECIAL INVESTIGATOR,SR HEALTHCARE PROG PLAN ANLYST,STAFF ANALYST,STAFF ANALYST TRAINEE,STATIONARY ENGINEER,STATIONARY ENGINEER (ELECTRIC),STOCK WORKER,STRATEGIC INITIATIVE SPECIALIS,SUMMER COLLEGE INTERN,SUMMER GRADUATE INTERN,SUPERVISING PUBLIC HEALTH ADVI,SUPERVISOR (EXTERMINATORS),SUPERVISOR (PEST CONTROL),SUPERVISOR (WATER & SEWER SYST,SUPERVISOR (WATERSHED MAINTENA,SUPERVISOR BRIDGE PAINTER,SUPERVISOR ELECTRICIAN,SUPERVISOR ELEVATOR MECHANIC,SUPERVISOR OF ELEVATOR MAINTEN,SUPERVISOR OF MECHANICS(MECHAN,SUPERVISOR OF OFFICE MACHINE O,SUPERVISOR OF STOCK WORKERS,SUPERVISOR OF TRAFFIC DEVICE M,SUPERVISOR STEAMFITTER,TRANSPORTATION BOROUGH COMMISS,WATERSHED MAINTAINER,WORKER'S COMPENSATION BENEFITS,featured",
+      "activated": true
+    }
+  ],
+  "regex_features": [
+    {
+      "name": "Number",
+      "pattern": "\\$?[0-9\\,\\.]+k?",
+      "activated": true
+    }
+  ],
+  "utterances": [
+    {
+      "text": "3+ salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "at least 3 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "3 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "2-4 salary range from",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "no more than 3 num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "3-4 salary range from",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "at least 43 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "at most 1 salary range from",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "1+ num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "at most 3 num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "between $100k and $250k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "parks nearby",
+      "intent": "Filter",
+      "entities": []
+    },
+    {
+      "text": "no more than 4 salary range from and and at most 2 salary range from",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 11,
+          "endPos": 11
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 9,
+          "endPos": 14
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 9,
+          "endPos": 10
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        },
+        {
+          "entity": "Property",
+          "startPos": 12,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "find me a 2 salary range from with at least 1 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 3,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 8,
+          "endPos": 13
+        },
+        {
+          "entity": "Operator",
+          "startPos": 8,
+          "endPos": 9
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        },
+        {
+          "entity": "Property",
+          "startPos": 11,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "no more than $500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "between 100,000 and 450,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 5,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "between 3-4 num of positions and at least 3 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 8,
+          "endPos": 13
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 8,
+          "endPos": 9
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        },
+        {
+          "entity": "Property",
+          "startPos": 11,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "more than $110k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "at most 3 salary range to and 1 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 7,
+          "endPos": 10
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 8,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "reset",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "start over",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "saved",
+      "intent": "List",
+      "entities": []
+    },
+    {
+      "text": "refine",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "done",
+      "intent": "Done",
+      "entities": []
+    },
+    {
+      "text": "no num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "RemovalOperator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "less than $200,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "search again",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "next page",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "any number of salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "RemovalOperator",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "less than 200k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "any salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "RemovalOperator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "next",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "show",
+      "intent": "List",
+      "entities": []
+    },
+    {
+      "text": "less than $200k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "more",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "stop",
+      "intent": "Quit",
+      "entities": []
+    },
+    {
+      "text": "quit",
+      "intent": "Quit",
+      "entities": []
+    },
+    {
+      "text": "browse",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "salary range to more than 10",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "num of positions is at least 4",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 4,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "so far",
+      "intent": "List",
+      "entities": []
+    },
+    {
+      "text": "finished",
+      "intent": "Done",
+      "entities": []
+    },
+    {
+      "text": "salary range to between 3 and 4",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "list",
+      "intent": "List",
+      "entities": []
+    },
+    {
+      "text": "salary range from less than 500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "between 200 and 400 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "3 salary range to 2 salary range from",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 4,
+          "endPos": 7
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 5,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "5 num of positions 8 num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 4,
+          "endPos": 7
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 5,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "1 salary range from 1 num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 4,
+          "endPos": 7
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 5,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "2-3 salary range to 5 salary range from",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 6,
+          "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 7,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "1 salary range to 2+ num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 4,
+          "endPos": 8
+        },
+        {
+          "entity": "Operator",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 8
+        }
+      ]
+    },
+    {
+      "text": "Bureau of Healthcare Systems Readiness",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Attribute",
+          "startPos": 0,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3+ salary range from in MARINE ELECTRONICS TECHNICIAN",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 6,
+          "endPos": 8
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3+ salary range from 2 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 5,
+          "endPos": 8
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        },
+        {
+          "entity": "Property",
+          "startPos": 6,
+          "endPos": 8
+        }
+      ]
+    },
+    {
+      "text": "4-5 num of positions 3-4 num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 6,
+          "endPos": 6
+        },
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 6,
+          "endPos": 11
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "between $200k and $500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "$100k-$800k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Operator",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "no more than $500,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "a CITY PLANNER",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "3+ salary range to MANAGEMENT POLICY",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 salary range from with a Bureau of Epidemiology Services",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 9,
+          "endPos": 12
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "at least 1 propertyname, 2+ num of positions",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 7,
+          "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        },
+        {
+          "entity": "Property",
+          "startPos": 9,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "between $200k and $500k Executive Project Audit Engineer with at least 3 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 5
+        },
+        {
+          "entity": "Value",
+          "startPos": 13,
+          "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 11,
+          "endPos": 16
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 6,
+          "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 11,
+          "endPos": 12
+        },
+        {
+          "entity": "Property",
+          "startPos": 14,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 salary range from Labor Relations Attorney for no more than $950k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Value",
+          "startPos": 3,
+          "endPos": 3
+        },
+        {
+          "entity": "Value",
+          "startPos": 14,
+          "endPos": 15
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 11,
+          "endPos": 15
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 7,
+          "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Operator",
+          "startPos": 11,
+          "endPos": 13
+        },
+        {
+          "entity": "Property",
+          "startPos": 4,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "3-4 num of positions ADMINISTRATIVE PUBLIC HEALTH S",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 6,
+          "endPos": 9
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "an Supervisor Pest Control",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Attribute",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "9 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Property",
+          "startPos": 1,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "2-5 salary range to",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Property",
+          "startPos": 3,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "$300k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "$120,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "$20k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "between $10k and $20,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "$99k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 1
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "between $80k and $120k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 1,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 4,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Operator",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "3+ salary range to NYC Media in xword with a Contract Analyst for less than $800k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 16,
+          "endPos": 17
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 14,
+          "endPos": 17
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 11,
+          "endPos": 12
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 14,
+          "endPos": 15
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "3+ salary range to ASSOCIATE URBAN DESIGNER in yword with a zword for less than $600k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 16,
+          "endPos": 17
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 14,
+          "endPos": 17
+        },
+        {
+          "entity": "Attribute",
+          "startPos": 5,
+          "endPos": 7
+        },
+        {
+          "entity": "Operator",
+          "startPos": 1,
+          "endPos": 1
+        },
+        {
+          "entity": "Operator",
+          "startPos": 14,
+          "endPos": 15
+        },
+        {
+          "entity": "Property",
+          "startPos": 2,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "agency",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "posting type",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "num of positions",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "business title",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "civil service title",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "title code no",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "level",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "salary range from",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "salary range to",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "salary frequency",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "work location",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "division work unit",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "minimum qual requirements",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "preferred skills",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "additional information",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "to apply",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "hours per shift",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "recruitment contact",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "tags",
+      "intent": "Facet",
+      "entities": [
+        {
+          "entity": "Property",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    }
+  ]
+}ndPos": 0
+        }
+      ]
+    }
+  ]
+}

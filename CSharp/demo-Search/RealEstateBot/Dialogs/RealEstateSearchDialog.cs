@@ -15,6 +15,7 @@ using Search.Services;
 using Search.Utilities;
 using Microsoft.Bot.Connector;
 using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.LUIS.API;
 
 namespace RealEstateBot.Dialogs
 {
@@ -43,11 +44,11 @@ namespace RealEstateBot.Dialogs
                 // For local debugging of the sample without checking in your key
                 this.LUISKey = Environment.GetEnvironmentVariable(LUISKeyKey);
             }
-            this.ModelId =
-                await
-                    LUISTools.GetOrCreateModelAsync(this.LUISKey,
+            var subscription = new Subscription("westus.api.cognitive.microsoft.com", this.LUISKey);
+            var application = await subscription.GetOrCreateApplicationAsync(
                         Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
                         context.CancellationToken);
+            this.ModelId = application.ApplicationID;
             context.Wait(IgnoreFirstMessage);
         }
 
@@ -65,7 +66,7 @@ namespace RealEstateBot.Dialogs
                         using (var stream = new MemoryStream(lastQuery))
                         {
                             var formatter = new BinaryFormatter();
-                            this.LastQuery = (SearchQueryBuilder) formatter.Deserialize(stream);
+                            this.LastQuery = (SearchQueryBuilder)formatter.Deserialize(stream);
                         }
                         await context.PostAsync($@"**Last Search**
 

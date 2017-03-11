@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Search.Tools.Generate": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\JobListingBot\\Dialogs\\JobListing.json -o ..\\..\\JobListingBot\\Dialogs\\JobsListingModel.json  -u"
+    }
+  }
+}
