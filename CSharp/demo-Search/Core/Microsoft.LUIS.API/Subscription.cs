@@ -23,6 +23,7 @@ namespace Microsoft.LUIS.API
             this.Domain = domain;
             Key = subscription;
             Client = new HttpClient();
+            Client.Timeout = new TimeSpan(0, 2, 0);
             Client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Key);
         }
 

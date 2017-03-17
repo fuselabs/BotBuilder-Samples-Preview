@@ -18,7 +18,7 @@ namespace Microsoft.LUIS.API
         private readonly JObject _model;
         private readonly int? _take;
         private const int TooManyRequests = 429;
-        private const int MaxRetry = 100;
+        private const int MaxRetry = 1000;
         private const int MaxPageSize = 500;
 
         internal Application(Subscription subscription, JObject model, int? take = MaxPageSize)
@@ -61,12 +61,31 @@ namespace Microsoft.LUIS.API
 
         private async Task<HttpResponseMessage> Retry(Func<Task<HttpResponseMessage>> func)
         {
-            HttpResponseMessage response;
+            HttpResponseMessage response = null;
             int retries = 0;
+            bool continueTrying = false;
             do
             {
-                response = await func();
-            } while ((int)response.StatusCode == TooManyRequests && ++retries < MaxRetry);
+                try
+                {
+                    do
+                    {
+                        continueTrying = false;
+                        response = await func();
+                    } while ((int)response.StatusCode == TooManyRequests && ++retries < MaxRetry);
+                }
+                catch (TaskCanceledException)
+                {
+                    if (++retries >= MaxRetry)
+                    {
+                        throw;
+                    }
+                    else
+                    {
+                        continueTrying = true;
+                    }
+                }
+            } while (continueTrying);
             return response;
         }
 
