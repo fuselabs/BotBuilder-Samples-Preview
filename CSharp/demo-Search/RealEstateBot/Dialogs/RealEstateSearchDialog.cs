@@ -45,7 +45,7 @@ namespace RealEstateBot.Dialogs
                 this.LUISKey = Environment.GetEnvironmentVariable(LUISKeyKey);
             }
             var subscription = new Subscription("westus.api.cognitive.microsoft.com", this.LUISKey);
-            var application = await subscription.GetOrCreateApplicationAsync(
+            var application = await subscription.GetOrImportApplicationAsync(
                         Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
                         context.CancellationToken);
             this.ModelId = application.ApplicationID;

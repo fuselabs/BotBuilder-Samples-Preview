@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -12,27 +14,27 @@ namespace Microsoft.LUIS.API
 {
     public class Subscription
     {
-        private readonly string _domain;
-        private readonly string _subscription;
-        private HttpClient _client;
+        public readonly string Domain;
+        public readonly string Key;
+        public HttpClient Client;
 
         public Subscription(string domain, string subscription)
         {
-            _domain = domain;
-            _subscription = subscription;
-            _client = new HttpClient();
-            _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _subscription);
+            this.Domain = domain;
+            Key = subscription;
+            Client = new HttpClient();
+            Client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Key);
         }
 
         public Uri BaseUri(string api)
         {
-            return new Uri($"https://{_domain}/luis/api/v2.0/{api}");
+            return new Uri($"https://{Domain}/luis/api/v2.0/{api}");
         }
 
         public async Task<HttpResponseMessage> GetAsync(string api, CancellationToken ct)
         {
             var uri = BaseUri(api);
-            return await _client.GetAsync(uri, ct);
+            return await Client.GetAsync(uri, ct);
         }
 
         public async Task<HttpResponseMessage> PostAsync(string api, JToken json, CancellationToken ct)
@@ -43,7 +45,7 @@ namespace Microsoft.LUIS.API
             using (var content = new ByteArrayContent(byteData))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                response = await _client.PostAsync(uri, content, ct);
+                response = await Client.PostAsync(uri, content, ct);
             }
             return response;
         }
@@ -51,7 +53,30 @@ namespace Microsoft.LUIS.API
         public async Task<HttpResponseMessage> DeleteAsync(string api, CancellationToken ct)
         {
             var uri = BaseUri(api);
-            return await _client.DeleteAsync(uri, ct);
+            return await Client.DeleteAsync(uri, ct);
+        }
+
+        private IEnumerablePage<T> EnumerablePage<T>(string api, CancellationToken ct, int? take = null)
+        {
+            return new EnumerableAsync<T>(async (skip) =>
+            {
+                ICollection<T> result = null;
+                var uri = $"{api}?skip={skip}";
+                if (take.HasValue)
+                {
+                    uri += $"&take={take}";
+                }
+                var response = await GetAsync(uri, ct);
+                if (response.IsSuccessStatusCode)
+                {
+                    var arr = JArray.Parse(await response.Content.ReadAsStringAsync());
+                    if (arr.Count > 0)
+                    {
+                        result = (ICollection<T>)arr.Values<T>().ToList();
+                    }
+                }
+                return result;
+            }, ct);
         }
 
         /// <summary>
@@ -59,16 +84,10 @@ namespace Microsoft.LUIS.API
         /// </summary>
         /// <param name="subscription">LUIS subscription key.</param>
         /// <param name="ct">Cancellation token.</param>
-        /// <returns>JArray of app descriptions.</returns>
-        public async Task<JArray> GetAppsAsync(CancellationToken ct)
+        /// <returns>IEnumerablePage of app descriptions.</returns>
+        public IEnumerablePage<JObject> GetApps(CancellationToken ct, int? take = null)
         {
-            JArray result = null;
-            var response = await GetAsync("apps", ct);
-            if (response.IsSuccessStatusCode)
-            {
-                result = JArray.Parse(await response.Content.ReadAsStringAsync());
-            }
-            return result;
+            return EnumerablePage<JObject>("apps", ct, take);
         }
 
         public async Task<Application> GetApplicationAsync(string appID, CancellationToken ct)
@@ -87,20 +106,19 @@ namespace Microsoft.LUIS.API
         /// <returns>New application or null if not present.</returns>
         public async Task<Application> GetApplicationByNameAsync(string appName, CancellationToken ct)
         {
-            JObject model = null;
-            var apps = await GetAppsAsync(ct);
-            if (apps != null)
-            {
-                foreach (var app in apps)
-                {
-                    if (string.Compare((string)app["name"], appName, true) == 0)
-                    {
-                        model = (JObject)app;
-                        break;
-                    }
-                }
-            }
+            var model = await GetApps(ct).FirstAsync((app) => string.Compare((string)app["name"], appName, true) == 0);
             return model == null ? null : new Application(this, model);
+        }
+
+        public async Task<bool> DeleteApplicationByNameAsync(string appName, CancellationToken ct)
+        {
+            bool deleted = false;
+            var app = await GetApplicationByNameAsync(appName, ct);
+            if (app != null)
+            {
+                deleted = await app.DeleteAsync(ct);
+            }
+            return deleted;
         }
 
         /// <summary>
@@ -154,17 +172,35 @@ namespace Microsoft.LUIS.API
         }
 
         /// <summary>
-        /// Return the LUIS model ID of an existing app or import it from <paramref name="modelPath"/> and return the new ID.
+        /// Return the LUIS application of an existing app or import it from <paramref name="modelPath"/> and return a new application.
         /// </summary>
         /// <param name="modelPath">Path to the exported LUIS model.</param>
         /// <returns>LUIS Model ID.</returns>
-        public async Task<Application> GetOrCreateApplicationAsync(string modelPath, CancellationToken ct)
+        public async Task<Application> GetOrImportApplicationAsync(string modelPath, CancellationToken ct)
         {
             dynamic newModel = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(modelPath));
             var app = await GetApplicationByNameAsync((string)newModel.name, ct);
             if (app == null)
             {
                 app = await ReplaceApplicationAsync(newModel, ct);
+            }
+            return app;
+        }
+
+        public async Task<Application> GetOrCreateApplicationAsync(string name, string culture, CancellationToken ct)
+        {
+            var app = await GetApplicationByNameAsync(name, ct);
+            if (app == null)
+            {
+                var appDesc = new JObject();
+                appDesc["name"] = name;
+                appDesc["culture"] = culture;
+                var response = await PostAsync("apps", appDesc, ct);
+                if (response.IsSuccessStatusCode)
+                {
+                    var id = (await response.Content.ReadAsStringAsync()).Replace("\"", string.Empty);
+                    app = await GetApplicationAsync(id, ct);
+                }
             }
             return app;
         }

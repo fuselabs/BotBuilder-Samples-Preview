@@ -3,6 +3,10 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Net;
 
 namespace Microsoft.LUIS.API
 {
@@ -12,13 +16,42 @@ namespace Microsoft.LUIS.API
         public readonly string ApplicationID;
         private readonly string _version;
         private readonly JObject _model;
+        private readonly int? _take;
+        private const int TooManyRequests = 429;
+        private const int MaxRetry = 100;
+        private const int MaxPageSize = 500;
 
-        internal Application(Subscription subscription, JObject model)
+        internal Application(Subscription subscription, JObject model, int? take = MaxPageSize)
         {
             _subscription = subscription;
             _model = model;
-            ApplicationID = (string) model["id"];
+            ApplicationID = (string)model["id"];
             _version = "0.1";
+            _take = take;
+        }
+
+        private IEnumerablePage<T> EnumerablePage<T>(string api, CancellationToken ct, int? take = null)
+        {
+            return new EnumerableAsync<T>(async (skip) =>
+            {
+                ICollection<T> result = null;
+                var uri = $"{api}?skip={skip}";
+                take = take ?? _take;
+                if (take.HasValue)
+                {
+                    api += $"&take={take}";
+                }
+                var response = await GetAsync(uri, ct);
+                if (response.IsSuccessStatusCode)
+                {
+                    var arr = JArray.Parse(await response.Content.ReadAsStringAsync());
+                    if (arr.Count > 0)
+                    {
+                        result = (ICollection<T>)arr.Values<T>().ToList();
+                    }
+                }
+                return result;
+            }, ct);
         }
 
         public string AppAPI(string api)
@@ -26,19 +59,30 @@ namespace Microsoft.LUIS.API
             return $"apps/{ApplicationID}/versions/{_version}/{api}";
         }
 
+        private async Task<HttpResponseMessage> Retry(Func<Task<HttpResponseMessage>> func)
+        {
+            HttpResponseMessage response;
+            int retries = 0;
+            do
+            {
+                response = await func();
+            } while ((int)response.StatusCode == TooManyRequests && ++retries < MaxRetry);
+            return response;
+        }
+
         public async Task<HttpResponseMessage> GetAsync(string api, CancellationToken ct)
         {
-            return await _subscription.GetAsync(AppAPI(api), ct);
+            return await Retry(async () => await _subscription.GetAsync(AppAPI(api), ct));
         }
 
         public async Task<HttpResponseMessage> PostAsync(string api, JToken json, CancellationToken ct)
         {
-            return await _subscription.PostAsync(AppAPI(api), json, ct);
+            return await Retry(async () => await _subscription.PostAsync(AppAPI(api), json, ct));
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string api, CancellationToken ct)
         {
-            return await _subscription.DeleteAsync(AppAPI(api), ct);
+            return await Retry(async () => await _subscription.DeleteAsync(AppAPI(api), ct));
         }
 
         /// <summary>
@@ -105,6 +149,12 @@ namespace Microsoft.LUIS.API
                 : null;
         }
 
+        public async Task<bool> UploadUtteranceAsync(dynamic utterance, CancellationToken ct)
+        {
+            var response = await PostAsync("example", utterance, ct);
+            return response.IsSuccessStatusCode;
+        }
+
         /// <summary>
         /// Upload a batch of labelled utterances.
         /// </summary>
@@ -118,26 +168,120 @@ namespace Microsoft.LUIS.API
                 : null;
         }
 
-        public async Task<JArray> GetIntentsAsync(CancellationToken ct, int? skip, int? take)
+        public IEnumerablePage<JObject> GetIntents(CancellationToken ct, int? take = null)
         {
-            var uri = "intents";
-            if (skip.HasValue)
-            {
-                uri += $"?{skip.Value}";
-            }
-            if (take.HasValue)
-            {
-                uri += $"&{take.Value}";
-            }
-            var response = await GetAsync(uri, ct);
-            return response.IsSuccessStatusCode
-                ? JArray.Parse(await response.Content.ReadAsStringAsync())
-                : null;
+            return EnumerablePage<JObject>("intents", ct, take);
         }
 
-        /* public async Task<bool> CreateIntentAsync(string intent, CancellationToken ct)
+        public async Task<string> GetIntentIDAsync(string name, CancellationToken ct)
         {
+            var intent = await GetIntents(ct).FirstAsync((i) => (string)i["name"] == name);
+            return intent == null ? null : (string)intent["id"];
         }
-        */
+
+        public async Task<bool> DeleteIntentAsync(string name, CancellationToken ct)
+        {
+            var success = true;
+            var id = await GetIntentIDAsync(name, ct);
+            if (id != null)
+            {
+                var response = await DeleteAsync($"intents/{id}", ct);
+                success = response.IsSuccessStatusCode;
+            }
+            return success;
+        }
+
+        public async Task<bool> CreateIntentAsync(string name, CancellationToken ct)
+        {
+            var intent = new JObject();
+            intent["name"] = name;
+            var response = await PostAsync("intents", intent, ct);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> CreatePhraseListAsync(dynamic phraseList, CancellationToken ct)
+        {
+            var response = await PostAsync("phraselists", phraseList, ct);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<JArray> GetPhraseListsAsync(CancellationToken ct)
+        {
+            JArray result = null;
+            var response = await GetAsync("phraselists", ct);
+            if (response.IsSuccessStatusCode)
+            {
+                result = JArray.Parse(await response.Content.ReadAsStringAsync());
+            }
+            return result;
+        }
+
+        public async Task<string> GetPhraseListIDAsync(string name, CancellationToken ct)
+        {
+            string id = null;
+            var phrases = await GetPhraseListsAsync(ct);
+            if (phrases != null)
+            {
+                foreach(var phrase in phrases)
+                {
+                    if ((string)phrase["name"] == name)
+                    {
+                        id = (string)phrase["id"];
+                        break;
+                    }
+                }
+            }
+            return id;
+        }
+
+        public async Task<bool> DeletePhraseListAsync(string name, CancellationToken ct)
+        {
+            var ok = true;
+            var id = await GetPhraseListIDAsync(name, ct);
+            if (id != null)
+            {
+                var response = await DeleteAsync($"phraselists/{id}", ct);
+                ok = response.IsSuccessStatusCode;
+            }
+            return ok;
+        }
+
+        public async Task<JToken> QueryAsync(string query, bool verbose, bool allowLogging, CancellationToken ct)
+        {
+            var uri = $"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/{ApplicationID}?subscription-key={_subscription.Key}&q={query}";
+            if (verbose)
+            {
+                uri += "&verbose=true";
+            }
+            if (allowLogging)
+            {
+                uri += "&allowSampling=true";
+            }
+            var response = await Retry(async () => await _subscription.Client.GetAsync(uri, ct));
+            JObject val = null;
+            if (response.IsSuccessStatusCode)
+            {
+                val = JObject.Parse(await response.Content.ReadAsStringAsync());
+            }
+            return val;
+        }
+
+        public IEnumerablePage<JObject> GetUtterances(CancellationToken ct, int? take = null)
+        {
+            return EnumerablePage<JObject>("examples", ct, take);
+        }
+
+        public async Task<IEnumerable<JObject>> GetUtterancesForIntents(IEnumerable<string> names, CancellationToken ct)
+        {
+            var set = new HashSet<string>(names);
+            return await GetUtterances(ct).AllAsync((u) => set.Contains((string)u["intentLabel"]));
+        }
+
+        public async Task<bool> DeleteUtteranceAsync(JObject utterance, CancellationToken ct)
+        {
+            var id = (string)utterance["id"];
+            var response = await DeleteAsync($"examples/{id}", ct);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

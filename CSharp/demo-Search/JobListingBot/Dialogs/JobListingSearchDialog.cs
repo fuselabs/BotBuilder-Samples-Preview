@@ -39,7 +39,7 @@ namespace JobListingBot.Dialogs
             }
             var cts = new CancellationTokenSource();
             var subscription = new Subscription("westus.api.cognitive.microsoft.com", key);
-            var application = await subscription.GetOrCreateApplicationAsync(
+            var application = await subscription.GetOrImportApplicationAsync(
                         Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
                         context.CancellationToken);
             var id = application.ApplicationID;
