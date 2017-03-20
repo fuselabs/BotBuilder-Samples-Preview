@@ -16,15 +16,17 @@ namespace Microsoft.LUIS.API
     {
         public readonly string Domain;
         public readonly string Key;
-        public HttpClient Client;
+        private SemaphoreSlim _semaphore;
+        private HttpClient _client;
 
-        public Subscription(string domain, string subscription)
+        public Subscription(string domain, string subscription, int maxRequests = 30)
         {
             this.Domain = domain;
             Key = subscription;
-            Client = new HttpClient();
-            Client.Timeout = new TimeSpan(0, 2, 0);
-            Client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Key);
+            _semaphore = new SemaphoreSlim(maxRequests, maxRequests);
+            _client = new HttpClient();
+            _client.Timeout = new TimeSpan(0, 2, 0);
+            _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Key);
         }
 
         public Uri BaseUri(string api)
@@ -32,29 +34,63 @@ namespace Microsoft.LUIS.API
             return new Uri($"https://{Domain}/luis/api/v2.0/{api}");
         }
 
+        private async Task<HttpClient> ClientAsync()
+        {
+            await _semaphore.WaitAsync();
+            return _client;
+        }
+
+        public async Task<HttpResponseMessage> RawGetAsync(string uri, CancellationToken ct)
+        {
+            var client = await ClientAsync();
+            try
+            {
+                return await client.GetAsync(uri, ct);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
         public async Task<HttpResponseMessage> GetAsync(string api, CancellationToken ct)
         {
-            var uri = BaseUri(api);
-            return await Client.GetAsync(uri, ct);
+            return await RawGetAsync(BaseUri(api).ToString(), ct);
         }
 
         public async Task<HttpResponseMessage> PostAsync(string api, JToken json, CancellationToken ct)
         {
-            var uri = BaseUri(api);
-            HttpResponseMessage response;
-            var byteData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(json));
-            using (var content = new ByteArrayContent(byteData))
+            var client = await ClientAsync();
+            try
             {
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                response = await Client.PostAsync(uri, content, ct);
+                var uri = BaseUri(api);
+                HttpResponseMessage response;
+                var byteData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(json));
+                using (var content = new ByteArrayContent(byteData))
+                {
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    response = await client.PostAsync(uri, content, ct);
+                }
+                return response;
             }
-            return response;
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string api, CancellationToken ct)
         {
-            var uri = BaseUri(api);
-            return await Client.DeleteAsync(uri, ct);
+            var client = await ClientAsync();
+            try
+            {
+                var uri = BaseUri(api);
+                return await client.DeleteAsync(uri, ct);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         private IEnumerablePage<T> EnumerablePage<T>(string api, CancellationToken ct, int? take = null)

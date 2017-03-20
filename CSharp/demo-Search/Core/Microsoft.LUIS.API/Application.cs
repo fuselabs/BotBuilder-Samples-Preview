@@ -18,7 +18,7 @@ namespace Microsoft.LUIS.API
         private readonly JObject _model;
         private readonly int? _take;
         private const int TooManyRequests = 429;
-        private const int MaxRetry = 1000;
+        private const int MaxRetry = 200;
         private const int MaxPageSize = 500;
 
         internal Application(Subscription subscription, JObject model, int? take = MaxPageSize)
@@ -39,7 +39,7 @@ namespace Microsoft.LUIS.API
                 take = take ?? _take;
                 if (take.HasValue)
                 {
-                    api += $"&take={take}";
+                    uri += $"&take={take}";
                 }
                 var response = await GetAsync(uri, ct);
                 if (response.IsSuccessStatusCode)
@@ -63,29 +63,10 @@ namespace Microsoft.LUIS.API
         {
             HttpResponseMessage response = null;
             int retries = 0;
-            bool continueTrying = false;
             do
             {
-                try
-                {
-                    do
-                    {
-                        continueTrying = false;
-                        response = await func();
-                    } while ((int)response.StatusCode == TooManyRequests && ++retries < MaxRetry);
-                }
-                catch (TaskCanceledException)
-                {
-                    if (++retries >= MaxRetry)
-                    {
-                        throw;
-                    }
-                    else
-                    {
-                        continueTrying = true;
-                    }
-                }
-            } while (continueTrying);
+                response = await func();
+            } while ((int)response.StatusCode == TooManyRequests && ++retries < MaxRetry);
             return response;
         }
 
@@ -241,7 +222,7 @@ namespace Microsoft.LUIS.API
             var phrases = await GetPhraseListsAsync(ct);
             if (phrases != null)
             {
-                foreach(var phrase in phrases)
+                foreach (var phrase in phrases)
                 {
                     if ((string)phrase["name"] == name)
                     {
@@ -276,7 +257,10 @@ namespace Microsoft.LUIS.API
             {
                 uri += "&allowSampling=true";
             }
-            var response = await Retry(async () => await _subscription.Client.GetAsync(uri, ct));
+            var response = await Retry(async () =>
+            {
+                return await _subscription.RawGetAsync(uri, ct);
+            });
             JObject val = null;
             if (response.IsSuccessStatusCode)
             {
