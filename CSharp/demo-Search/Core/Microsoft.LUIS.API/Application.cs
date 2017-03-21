@@ -18,7 +18,7 @@ namespace Microsoft.LUIS.API
         private readonly JObject _model;
         private readonly int? _take;
         private const int TooManyRequests = 429;
-        private const int MaxRetry = 200;
+        private const int MaxRetry = 300;
         private const int MaxPageSize = 500;
 
         internal Application(Subscription subscription, JObject model, int? take = MaxPageSize)
@@ -248,7 +248,8 @@ namespace Microsoft.LUIS.API
 
         public async Task<JToken> QueryAsync(string query, bool verbose, bool allowLogging, CancellationToken ct)
         {
-            var uri = $"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/{ApplicationID}?subscription-key={_subscription.Key}&q={query}";
+            var escQuery = Uri.EscapeDataString(query);
+            var uri = $"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/{ApplicationID}?subscription-key={_subscription.Key}&q={escQuery}";
             if (verbose)
             {
                 uri += "&verbose=true";
