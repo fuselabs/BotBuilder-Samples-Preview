@@ -120,7 +120,7 @@ namespace Microsoft.LUIS.API
                         var status = model.details.statusId;
                         if (status == TrainingStatus.Fail)
                         {
-                            throw new Exception(model.Details.FailureReason);
+                            throw new Exception($"Training failed: {model.details.FailureReason}");
                         }
                         else if (status == TrainingStatus.InProgress)
                         {
