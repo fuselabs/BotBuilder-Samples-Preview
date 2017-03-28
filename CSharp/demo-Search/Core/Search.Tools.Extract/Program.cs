@@ -153,7 +153,7 @@ namespace Search.Tools.Extract
             Console.WriteLine(
                 "-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 100.  LUIS allows a total of 5000.");
             Console.WriteLine(
-                "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.");
+                "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.  Will use key field if sortable and filterable.");
             Environment.Exit(-1);
         }
 
@@ -223,7 +223,17 @@ namespace Search.Tools.Extract
             {
                 if (sortable == null)
                 {
-                    Usage("You must specify a field with -v.");
+                    foreach(var field in schema.Fields.Values)
+                    {
+                        if (field.IsKey && field.IsSortable && field.IsFilterable)
+                        {
+                            sortable = field.Name;
+                        }
+                    }
+                    if (sortable == null)
+                    {
+                        Usage("You must specify a field with -v.");
+                    }
                 }
                 var indexClient = new SearchIndexClient(serviceName, indexName, new SearchCredentials(adminKey));
                 if (facets == null)

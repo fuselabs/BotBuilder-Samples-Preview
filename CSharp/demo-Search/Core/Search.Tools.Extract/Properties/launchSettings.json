@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Search.Tools.Extract": {
+      "commandName": "Project",
+      "commandLineArgs": "realestate-sample listings 5D990AEFD184FB9DD91B50C9F72CAA03 -g new-RealEstateBot-histogram.bin  -h new-RealEstateBot-histogram.bin -o ..\\..\\..\\RealEstateBot\\Dialogs\\RealEstateBot.json "
+    }
+  }
+}

@@ -393,7 +393,7 @@
             Console.WriteLine("The template can be the included SearchTemplate.json file or can be downloaded from LUIS.");
             Console.WriteLine("The resulting LUIS model can be saved as a file or automatically uploaded to LUIS.");
             Console.WriteLine("-d <LUIS Domain> : LUIS domain which defaults to westus.api.cognitive.microsoft.com.");
-            Console.WriteLine("-l <LUIS subscription key> : LUIS subscription key.");
+            Console.WriteLine($"-l <LUIS subscription key> : LUIS subscription key, default is environment variable from {SubscriptionKey}.");
             Console.WriteLine("-m <modelName> : Output LUIS model name.  By default will be <schemaFileName>Model.");
             Console.WriteLine("-o <outputFile> : Output LUIS JSON file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
             Console.WriteLine("-ot <outputFile> : Output template to <outputFile>.");

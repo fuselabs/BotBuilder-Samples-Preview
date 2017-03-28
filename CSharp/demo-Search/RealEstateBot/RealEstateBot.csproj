@@ -148,6 +148,7 @@
   <ItemGroup>
     <Content Include="Dialogs\RealEstate.json" />
     <Content Include="packages.config" />
+    <Content Include="BuildLUIS.cmd" />
     <None Include="Properties\PublishProfiles\catalogbot - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\catalogbot - Web Deploy.pubxml" />
     <Content Include="Readme.md" />
