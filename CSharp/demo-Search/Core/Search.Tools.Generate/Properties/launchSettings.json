@@ -2,7 +2,7 @@
   "profiles": {
     "Search.Tools.Generate": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\JobListingBot\\Dialogs\\JobListing.json -o ..\\..\\JobListingBot\\Dialogs\\JobsListingModel.json  -u"
+      "commandLineArgs": "..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -o ..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json  -u -d dialogice2.cloudapp.net -p \"DiceDev:15Af429A9781490eB8326dA22e4Ff727\""
     }
   }
 }

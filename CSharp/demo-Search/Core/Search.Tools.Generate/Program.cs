@@ -22,10 +22,10 @@
 
         static void Clear(dynamic model)
         {
-            dynamic properties = Feature(model, "Properties");
-            properties.words = "";
-            dynamic attributes = Feature(model, "Attributes");
-            attributes.words = "";
+            dynamic properties = ClosedList(model, "Properties");
+            properties.subLists = new JArray();
+            dynamic attributes = ClosedList(model, "Attributes");
+            attributes.subLists = new JArray();
         }
 
         static string Normalize(string word)
@@ -46,13 +46,22 @@
             return builder.ToString();
         }
 
-        static string AddValueSynonyms(string original, IEnumerable<Synonyms> synonyms)
+        static void AddToClosedList(dynamic model, string closedList, Synonyms synonym)
         {
-            foreach (var synonym in synonyms)
+            var list = ClosedList(model, closedList);
+            var sublists = (JArray)list.subLists;
+            var sublist = new JObject();
+            var words = new JArray();
+            sublist.Add("canonicalForm", synonym.Canonical);
+            foreach (var word in synonym.Alternatives)
             {
-                original = AddSynonyms(original, synonym);
+                if (!string.IsNullOrEmpty(word))
+                {
+                    words.Add(Normalize(word));
+                }
             }
-            return original;
+            sublist.Add("list", words);
+            sublists.Add(sublist);
         }
 
         static void AddDescription(dynamic model, string appName, string[] args)
@@ -75,10 +84,23 @@
             return match;
         }
 
+        static dynamic ClosedList(dynamic model, string name)
+        {
+            dynamic match = null;
+            foreach (var list in model.closedLists)
+            {
+                if (list.name == name)
+                {
+                    match = list;
+                    break;
+                }
+            }
+            return match;
+        }
+
         static void AddComparison(dynamic model, SearchField field)
         {
-            var feature = Feature(model, "Properties");
-            feature.words = AddSynonyms((string)feature.words, field.NameSynonyms);
+            AddToClosedList(model, "Properties", field.NameSynonyms);
         }
 
         static void AddNamed(dynamic model, string feature, dynamic entry)
@@ -171,29 +193,17 @@
 
         static void AddAttribute(dynamic model, SearchField field)
         {
-            var feature = Feature(model, "Properties");
-            feature.words = AddSynonyms((string)feature.words, field.NameSynonyms);
-            var rand = new Random(0);
-            var attributes = Feature(model, "Attributes");
-            var builder = new StringBuilder((string)attributes.words);
-            var prefix = builder.Length > 0 ? "," : "";
+            AddToClosedList(model, "Properties", field.NameSynonyms);
             foreach (var synonym in field.ValueSynonyms)
             {
-                foreach (var alt in synonym.Alternatives)
-                {
-                    builder.Append(prefix);
-                    builder.Append(alt);
-                    prefix = ",";
-                }
+                AddToClosedList(model, "Attributes", synonym);
             }
-            attributes.words = builder.ToString();
         }
 
         static void ExpandFacetExamples(dynamic model)
         {
-            var rand = new Random(0);
-            var facetFeature = Feature(model, "Properties");
-            var facetNames = ((string)facetFeature.words).Split(',');
+            var closedList = (JArray) ClosedList(model, "Properties").subLists;
+            var facetNames = closedList.SelectMany((dynamic l) => ((JArray)l.list));
             foreach (var utterance in model.utterances)
             {
                 if (utterance.intent == "Facet")
@@ -204,20 +214,14 @@
             }
             foreach (var facet in facetNames)
             {
-                dynamic entity = new JObject();
-                entity.entity = "Property";
-                entity.startPos = 0;
-                entity.endPos = facet.Split(' ').Count() - 1;
-
                 dynamic utterance = new JObject();
                 utterance.text = facet;
                 utterance.intent = "Facet";
-                utterance.entities = new JArray(entity);
                 model.utterances.Add(utterance);
             }
         }
 
-        static void ReplaceToken(dynamic utterance, List<string> tokens, int i, string replacement, dynamic property)
+        static void ReplaceToken(dynamic utterance, List<string> tokens, int i, string replacement)
         {
             var wordTokens = replacement.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             tokens.RemoveAt(i);
@@ -228,11 +232,11 @@
             {
                 foreach (var entity in utterance.entities)
                 {
-                    if (entity.startPos > property.startPos)
+                    if (entity.startPos > i)
                     {
                         entity.startPos += offset;
                     }
-                    if (entity.endPos >= property.startPos)
+                    if (entity.endPos >= i)
                     {
                         entity.endPos += offset;
                     }
@@ -245,48 +249,43 @@
             // Use a fixed random sequence to minimize random churn
             var rand = new Random(0);
             var propertyNames = fields.SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
-            var attributes = ((string)Feature(model, "Attributes").words).Split(',');
+            var attributes = fields.SelectMany((f) => f.ValueSynonyms.SelectMany((v) => v.Alternatives)).ToArray();
             var toRemove = new List<dynamic>();
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
                 var tokens = text.Split(' ').ToList();
-                var properties = (from prop in (IEnumerable<dynamic>)utterance.entities where prop.entity == "Property" || prop.entity == "Attribute" orderby prop.startPos ascending select prop).ToList();
-                if (properties.Any())
+                var failed = false;
+                for (var i = 0; i < tokens.Count();)
                 {
-                    var failed = false;
-                    for (var i = 0; i < tokens.Count();)
+                    var token = tokens[i];
+                    string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
+                    if (choices != null)
                     {
-                        var token = tokens[i];
-                        string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
-                        if (choices != null)
+                        if (choices.Any())
                         {
-                            if (properties.Any())
-                            {
-                                var word = choices[rand.Next(choices.Length)];
-                                ReplaceToken(utterance, tokens, i, word, properties.First());
-                                properties.RemoveAt(0);
-                            }
-                            else
-                            {
-                                failed = true;
-                                break;
-                            }
+                            var word = choices[rand.Next(choices.Length)];
+                            ReplaceToken(utterance, tokens, i, word);
                         }
                         else
                         {
-                            ++i;
+                            failed = true;
+                            break;
                         }
-                    }
-                    if (failed)
-                    {
-                        Console.WriteLine($"{text} is tagged improperly in the template.");
-                        toRemove.Add(utterance);
                     }
                     else
                     {
-                        utterance.text = string.Join(" ", tokens);
+                        ++i;
                     }
+                }
+                if (failed)
+                {
+                    // We have no attrributes so remove all of them
+                    toRemove.Add(utterance);
+                }
+                else
+                {
+                    utterance.text = string.Join(" ", tokens);
                 }
             }
             foreach (var failed in toRemove)
@@ -304,7 +303,11 @@
                 cts.Cancel();
             };
 
-            var subscription = new Subscription(p.Domain, p.SubscriptionKey);
+            var subscription = new Subscription(p.Domain, p.SubscriptionKey, basicAuth:p.BasicAuth);
+            // TODO: Remove
+            var apps = (from app in subscription.GetApps(cts.Token) select app).ToArray();
+            var app2 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"C:\tmp\example.json")), cts.Token);
+
             var schema = SearchSchema.Load(p.SchemaPath);
             dynamic template;
             if (p.TemplatePath != null)
@@ -355,7 +358,7 @@
                     AddComparison(template, field);
                 }
             }
-            ReplaceGenericNames(template, from field in schema.Fields.Values where field.Type.IsNumeric() select field);
+            ReplaceGenericNames(template, from field in schema.Fields.Values where field.Type.IsNumeric() || field.ValueSynonyms.Any() select field);
             ExpandFacetExamples(template);
 
             if (p.OutputPath != null)
@@ -397,6 +400,7 @@
             Console.WriteLine("-m <modelName> : Output LUIS model name.  By default will be <schemaFileName>Model.");
             Console.WriteLine("-o <outputFile> : Output LUIS JSON file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
             Console.WriteLine("-ot <outputFile> : Output template to <outputFile>.");
+            Console.WriteLine("-p <userName:password> : Use basic auth--only useful for LUIS internal.");
             Console.WriteLine("-tf <templateFile> : LUIS Template file to modify based on schema.  By default this is SearchTemplate.json.");
             Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
             Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");
@@ -436,6 +440,7 @@
             public string OutputName;
             public string OutputTemplate;
             public string Domain = "westus.api.cognitive.microsoft.com";
+            public string BasicAuth = null;
             public string SubscriptionKey;
             public bool Upload = false;
             public bool UploadTemplate = false;
@@ -460,6 +465,7 @@
                     case "-m": p.OutputName = NextArg(++i, args); break;
                     case "-o": p.OutputPath = NextArg(++i, args); break;
                     case "-ot": p.OutputTemplate = NextArg(++i, args); break;
+                    case "-p": p.BasicAuth = NextArg(++i, args); break;
                     case "-tf": p.TemplatePath = NextArg(++i, args); break;
                     case "-tm": p.TemplateName = NextArg(++i, args); break;
                     case "-u": p.Upload = true; break;

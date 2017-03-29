@@ -19,7 +19,7 @@ namespace Microsoft.LUIS.API
         private SemaphoreSlim _semaphore;
         private HttpClient _client;
 
-        public Subscription(string domain, string subscription, int maxRequests = 30)
+        public Subscription(string domain, string subscription, int maxRequests = 30, string basicAuth = null)
         {
             this.Domain = domain;
             Key = subscription;
@@ -27,11 +27,18 @@ namespace Microsoft.LUIS.API
             _client = new HttpClient();
             _client.Timeout = new TimeSpan(0, 2, 0);
             _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Key);
+            if (basicAuth != null)
+            {
+                var byteArray = Encoding.ASCII.GetBytes(basicAuth);
+                _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            }
         }
 
         public Uri BaseUri(string api)
         {
-            return new Uri($"https://{Domain}/luis/api/v2.0/{api}");
+            return _client.DefaultRequestHeaders.Contains("Authorization") 
+                ? new Uri($"https://{Domain}/api/v2.0/{api}") 
+                : new Uri($"https://{Domain}/luis/api/v2.0/{api}");
         }
 
         private async Task<HttpClient> ClientAsync()

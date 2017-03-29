@@ -287,5 +287,11 @@ namespace Microsoft.LUIS.API
             var response = await DeleteAsync($"examples/{id}", ct);
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<string> CreateClosedListAsync(dynamic closedList, CancellationToken ct)
+        {
+            var response = await PostAsync("closedlists", closedList, ct);
+            return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : null;
+        }
     }
 }
