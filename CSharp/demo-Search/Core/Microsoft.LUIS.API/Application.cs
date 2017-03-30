@@ -102,6 +102,7 @@ namespace Microsoft.LUIS.API
             Fail = 1,
             UpToDate = 2,
             InProgress = 3,
+            Queued = 9
         };
 
         public async Task<bool> TrainAsync(CancellationToken ct)
@@ -122,7 +123,7 @@ namespace Microsoft.LUIS.API
                         {
                             throw new Exception($"Training failed: {model.details.FailureReason}");
                         }
-                        else if (status == TrainingStatus.InProgress)
+                        else if (status == TrainingStatus.InProgress || status == TrainingStatus.Queued)
                         {
                             isTrained = false;
                             break;

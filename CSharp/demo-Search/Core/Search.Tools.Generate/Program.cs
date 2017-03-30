@@ -305,8 +305,8 @@
 
             var subscription = new Subscription(p.Domain, p.SubscriptionKey, basicAuth:p.BasicAuth);
             // TODO: Remove
-            var apps = (from app in subscription.GetApps(cts.Token) select app).ToArray();
-            var app2 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"C:\tmp\example.json")), cts.Token);
+            var app2 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"C:\tmp\newTemplate.json")), cts.Token);
+            // var app3 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"C:\tmp\example.json")), cts.Token);
 
             var schema = SearchSchema.Load(p.SchemaPath);
             dynamic template;

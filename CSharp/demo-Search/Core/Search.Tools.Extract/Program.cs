@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Search.Azure;
 using Search.Models;
 using Search.Utilities;
+using Newtonsoft.Json.Linq;
 
 namespace Search.Tools.Extract
 {
@@ -34,7 +35,7 @@ namespace Search.Tools.Extract
             var total = 0;
             object lastValue = null;
             object lastID = null;
-            sp.OrderBy = new string[] {valueField};
+            sp.OrderBy = new string[] { valueField };
             sp.Top = page;
             var results = client.Documents.Search(text, sp).Results;
             while (total < max && results.Any())
@@ -98,11 +99,44 @@ namespace Search.Tools.Extract
             return total;
         }
 
+        private static int StreamApply(TextReader stream, Action<int, SearchResult> function, int samples)
+        {
+            string line;
+            int count = 0;
+            var schema = JsonConvert.DeserializeObject<SearchSchema>(stream.ReadLine());
+            while ((line = stream.ReadLine()) != null && count < samples)
+            {
+                var result = new SearchResult();
+                result.Document = new Document();
+                var doc = JsonConvert.DeserializeObject<Document>(line);
+                foreach(var entry in doc)
+                {
+                    if (entry.Value is JArray)
+                    {
+                        result.Document[entry.Key] = (from val in (entry.Value as JArray) select (string) val).ToArray<string>();
+                    }
+                    else
+                    {
+                        result.Document[entry.Key] = entry.Value;
+                    }
+                }
+                function(count++, result);
+            }
+            return count;
+        }
+
         private static void Process(int count,
             SearchResult result,
-            IEnumerable<string> fields, Dictionary<string, Histogram<object>> histograms)
+            IEnumerable<string> fields,
+            Dictionary<string, Histogram<object>> histograms,
+            TextWriter copyStream)
         {
             var doc = result.Document;
+            if (copyStream != null)
+            {
+                var jsonDoc = JsonConvert.SerializeObject(doc);
+                copyStream.WriteLine(jsonDoc);
+            }
             foreach (var field in fields)
             {
                 var value = doc[field];
@@ -126,7 +160,7 @@ namespace Search.Tools.Extract
                     }
                 }
             }
-            if (count%100 == 0)
+            if (count % 100 == 0)
             {
                 Console.Write($"\n{count}: ");
             }
@@ -139,8 +173,12 @@ namespace Search.Tools.Extract
         private static void Usage(string msg = null)
         {
             Console.WriteLine(
-                "extract <serviceName> <indexName> <adminKey> [-f <facetList>] [-g <histogramPath>] [-h <histogramPath>] [-o <outputPath>]");
+                "extract <serviceName> <indexName> <adminKey> [-a <file>] [-c <file>] [-f <facetList>] [-g <histogramPath>] [-h <histogramPath>] [-o <outputPath>]");
             Console.WriteLine("Generate <indexName>.json schema file.");
+            Console.WriteLine(
+                "-a <file> : Apply analysis to JSON file rather than search index.");
+            Console.WriteLine(
+                "-c <file> : Copy search index to local JSON file.");
             Console.WriteLine(
                 "-f <facetList>: Comma seperated list of facet names for histogram.  By default all schema facets.");
             Console.WriteLine(
@@ -183,6 +221,8 @@ namespace Search.Tools.Extract
             string[] facets = null;
             string generatePath = null;
             string histogramPath = null;
+            string copyPath = null;
+            string applyPath = null;
             var schemaPath = indexName + ".json";
             var samples = int.MaxValue;
             var uniqueValueThreshold = 100;
@@ -192,6 +232,12 @@ namespace Search.Tools.Extract
                 var arg = args[i];
                 switch (arg)
                 {
+                    case "-a":
+                        applyPath = NextArg(++i, args);
+                        break;
+                    case "-c":
+                        copyPath = NextArg(++i, args);
+                        break;
                     case "-f":
                         facets = NextArg(++i, args).Split(',').ToArray<string>();
                         break;
@@ -223,7 +269,7 @@ namespace Search.Tools.Extract
             {
                 if (sortable == null)
                 {
-                    foreach(var field in schema.Fields.Values)
+                    foreach (var field in schema.Fields.Values)
                     {
                         if (field.IsKey && field.IsSortable && field.IsFilterable)
                         {
@@ -239,19 +285,29 @@ namespace Search.Tools.Extract
                 if (facets == null)
                 {
                     facets = (from field in schema.Fields.Values
-                        where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable
-                        select field.Name).ToArray();
+                              where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable
+                              select field.Name).ToArray();
                 }
                 var id = schema.Fields.Values.First((f) => f.IsKey);
                 var histograms = new Dictionary<string, Histogram<object>>();
                 var sp = new SearchParameters();
                 var timer = Stopwatch.StartNew();
-                var results = Apply(indexClient, sortable, id.Name, null, sp,
-                    (count, result) => { Process(count, result, facets, histograms); },
-                    samples
-                );
+                var copyStream = copyPath == null ? null : new StreamWriter(new FileStream(copyPath, FileMode.Create));
+                if (copyStream != null)
+                {
+                    copyStream.WriteLine(JsonConvert.SerializeObject(schema));
+                }
+                var applyStream = applyPath == null ? null : new StreamReader(new FileStream(applyPath, FileMode.Open));
+                var results = applyStream == null
+                    ? Apply(indexClient, sortable, id.Name, null, sp,
+                    (count, result) => { Process(count, result, facets, histograms, copyStream); },
+                    samples)
+                : StreamApply(applyStream, (count, result) => Process(count, result, facets, histograms, null), samples);
                 Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
-
+                if (copyStream != null)
+                {
+                    copyStream.Dispose();
+                }
                 using (var stream = new FileStream(generatePath, FileMode.Create))
                 {
 #if !NETSTANDARD1_6
@@ -272,9 +328,11 @@ namespace Search.Tools.Extract
                     var deserializer = new BinaryFormatter();
                     histograms = (Dictionary<string, Histogram<object>>) deserializer.Deserialize(stream);
 #else
-                    TextReader reader = new StreamReader(stream);
-                    var text = reader.ReadToEnd();
-                    histograms = JsonConvert.DeserializeObject<Dictionary<string, Histogram<object>>>(text, jsonSettings);
+                    using (TextReader reader = new StreamReader(stream))
+                    {
+                        var text = reader.ReadToEnd();
+                        histograms = JsonConvert.DeserializeObject<Dictionary<string, Histogram<object>>>(text, jsonSettings);
+                    }
 #endif
 
                     foreach (var histogram in histograms)

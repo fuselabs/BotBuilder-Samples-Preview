@@ -268,3 +268,8 @@ paket-files/
 /CSharp/demo-Search/Microsoft.LUIS.API/Microsoft.LUIS.API.vpj
 /CSharp/demo-Search/JobListingBot/JobListingBot.vpj
 /CSharp/demo-Search/Core/Search.Tools.Extract/new-RealEstateBot-histogram.bin
+/CSharp/demo-Search/Core/Search.Tools.Extract/new2-RealEstateBot-histogram.bin
+/CSharp/demo-Search/Core/Search.Tools.Extract/foo.bin
+/CSharp/demo-Search/Core/Search.Tools.Extract/RealEstateBotData.json
+/CSharp/demo-Search/Core/Search.Tools.Extract/small.json
+/CSharp/demo-Search/Core/Search.Tools.Extract/listings.json
