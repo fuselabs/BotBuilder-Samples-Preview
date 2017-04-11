@@ -54,8 +54,8 @@
     {
       "name": "Comparison",
       "children": [
-        "Operator",
         "Value",
+        "Operator",
         "Property"
       ]
     },
@@ -116,7 +116,7 @@
       ]
     },
     {
-      "name": "Removals",
+      "name": "RemovalOperator",
       "subLists": [
         {
           "canonicalForm": "Removal",
