@@ -96,6 +96,21 @@ namespace Microsoft.LUIS.API
             return response.IsSuccessStatusCode;
         }
 
+        public string GetModelName(string id, CancellationToken ct)
+        {
+            string name = null;
+            var models = EnumerablePage<dynamic>("models", ct);
+            foreach(var model in models)
+            {
+                if (model.id == id)
+                {
+                    name = (string)model.name;
+                    break;
+                }
+            }
+            return name;
+        }
+
         public enum TrainingStatus
         {
             Success = 0,
@@ -121,7 +136,9 @@ namespace Microsoft.LUIS.API
                         var status = model.details.statusId;
                         if (status == TrainingStatus.Fail)
                         {
-                            throw new Exception($"Training failed: {model.details.FailureReason}");
+                            var id = (string) model.modelId;
+                            var name = GetModelName(id, ct);
+                            throw new Exception($"Training failed for {name}: {model.details.failureReason}");
                         }
                         else if (status == TrainingStatus.InProgress || status == TrainingStatus.Queued)
                         {

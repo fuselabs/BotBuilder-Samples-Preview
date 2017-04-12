@@ -35,18 +35,6 @@
   ],
   "entities": [
     {
-      "name": "Attribute"
-    },
-    {
-      "name": "Operator"
-    },
-    {
-      "name": "Property"
-    },
-    {
-      "name": "RemovalOperator"
-    },
-    {
       "name": "Value"
     }
   ],
@@ -55,15 +43,15 @@
       "name": "Comparison",
       "children": [
         "Value",
-        "Operator",
-        "Property"
+        "Operators",
+        "Properties"
       ]
     },
     {
       "name": "Removal",
       "children": [
-        "RemovalOperator",
-        "Property"
+        "RemovalOperators",
+        "Properties"
       ]
     }
   ],
@@ -116,7 +104,7 @@
       ]
     },
     {
-      "name": "RemovalOperator",
+      "name": "RemovalOperators",
       "subLists": [
         {
           "canonicalForm": "Removal",
@@ -354,7 +342,7 @@
       "entities": []
     },
     {
-      "text": "no more than 4 propertyname and and at most 2 propertyname",
+      "text": "no more than 4 propertyname and at most 2 propertyname",
       "intent": "Filter",
       "entities": [
         {
@@ -364,8 +352,8 @@
         },
         {
           "entity": "Comparison",
-          "startPos": 36,
-          "endPos": 57
+          "startPos": 32,
+          "endPos": 53
         },
         {
           "entity": "Value",
@@ -374,8 +362,8 @@
         },
         {
           "entity": "Value",
-          "startPos": 44,
-          "endPos": 44
+          "startPos": 40,
+          "endPos": 40
         }
       ]
     },
@@ -825,22 +813,12 @@
       "text": "attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 0,
-          "endPos": 12
-        }
       ]
     },
     {
       "text": "3+ propertyname in attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 19,
-          "endPos": 31
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -977,22 +955,12 @@
       "text": "a attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 2,
-          "endPos": 14
-        }
       ]
     },
     {
       "text": "3+ propertyname attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 16,
-          "endPos": 28
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -1009,11 +977,6 @@
       "text": "between 3 and 4 propertyname with a attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 36,
-          "endPos": 48
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -1062,11 +1025,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Attribute",
-          "startPos": 24,
-          "endPos": 36
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 22
@@ -1097,11 +1055,6 @@
       "text": "between 3 and 4 propertyname attributename for no more than $950k",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 29,
-          "endPos": 41
-        },
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -1134,11 +1087,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Attribute",
-          "startPos": 17,
-          "endPos": 29
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 15
@@ -1159,11 +1107,6 @@
       "text": "an attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 3,
-          "endPos": 15
-        }
       ]
     },
     {
@@ -1314,16 +1257,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Attribute",
-          "startPos": 16,
-          "endPos": 28
-        },
-        {
-          "entity": "Attribute",
-          "startPos": 46,
-          "endPos": 58
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 14
@@ -1349,11 +1282,6 @@
       "text": "3+ propertyname attributename in yword with a zword for less than $600k",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Attribute",
-          "startPos": 16,
-          "endPos": 28
-        },
         {
           "entity": "Comparison",
           "startPos": 0,

@@ -192,6 +192,7 @@ namespace Search.Tools.Extract
                 "-u <uniqueThreshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 100.  LUIS allows a total of 5000.");
             Console.WriteLine(
                 "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.  Will use key field if sortable and filterable.");
+            Console.WriteLine("{} can be used to comment out arguments.");
             Environment.Exit(-1);
         }
 
@@ -230,38 +231,51 @@ namespace Search.Tools.Extract
             for (var i = 3; i < args.Length; ++i)
             {
                 var arg = args[i];
-                switch (arg)
+                if (arg.StartsWith("{"))
                 {
-                    case "-a":
-                        applyPath = NextArg(++i, args);
+                    while (!args[i].EndsWith("}") && ++i < args.Count())
+                    {
+                    }
+                    if (i == args.Count())
+                    {
                         break;
-                    case "-c":
-                        copyPath = NextArg(++i, args);
-                        break;
-                    case "-f":
-                        facets = NextArg(++i, args).Split(',').ToArray<string>();
-                        break;
-                    case "-g":
-                        generatePath = NextArg(++i, args);
-                        break;
-                    case "-h":
-                        histogramPath = NextArg(++i, args);
-                        break;
-                    case "-o":
-                        schemaPath = NextArg(++i, args);
-                        break;
-                    case "-s":
-                        samples = int.Parse(NextArg(++i, args));
-                        break;
-                    case "-u":
-                        uniqueValueThreshold = int.Parse(NextArg(++i, args));
-                        break;
-                    case "-v":
-                        sortable = NextArg(++i, args);
-                        break;
-                    default:
-                        Usage($"{arg} is not understood.");
-                        break;
+                    }
+                }
+                else
+                {
+                    switch (arg)
+                    {
+                        case "-a":
+                            applyPath = NextArg(++i, args);
+                            break;
+                        case "-c":
+                            copyPath = NextArg(++i, args);
+                            break;
+                        case "-f":
+                            facets = NextArg(++i, args).Split(',').ToArray<string>();
+                            break;
+                        case "-g":
+                            generatePath = NextArg(++i, args);
+                            break;
+                        case "-h":
+                            histogramPath = NextArg(++i, args);
+                            break;
+                        case "-o":
+                            schemaPath = NextArg(++i, args);
+                            break;
+                        case "-s":
+                            samples = int.Parse(NextArg(++i, args));
+                            break;
+                        case "-u":
+                            uniqueValueThreshold = int.Parse(NextArg(++i, args));
+                            break;
+                        case "-v":
+                            sortable = NextArg(++i, args);
+                            break;
+                        default:
+                            Usage($"{arg} is not understood.");
+                            break;
+                    }
                 }
             }
             var schema = SearchTools.GetIndexSchema(serviceName, adminKey, indexName);

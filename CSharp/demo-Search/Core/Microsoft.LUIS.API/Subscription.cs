@@ -177,7 +177,21 @@ namespace Microsoft.LUIS.API
             var response = await PostAsync($"apps/import?appName={appName}", model, ct);
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception(response.ReasonPhrase);
+                var msg = response.ReasonPhrase;
+                try
+                {
+                    var text = await response.Content.ReadAsStringAsync();
+                    var obj = JObject.Parse(text);
+                    dynamic err = obj == null ? null : (JObject)obj["error"];
+                    if (err != null)
+                    {
+                        msg = $"{err.code}: {err.message}";
+                    }
+                }
+                finally
+                {
+                    throw new Exception(msg);
+                }
             }
             var id = await response.Content.ReadAsStringAsync();
             return await GetApplicationAsync(id.Replace("\"", ""), ct);

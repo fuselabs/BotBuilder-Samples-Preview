@@ -11,6 +11,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -202,7 +203,7 @@
 
         static void ExpandFacetExamples(dynamic model)
         {
-            var closedList = (JArray) ClosedList(model, "Properties").subLists;
+            var closedList = (JArray)ClosedList(model, "Properties").subLists;
             var facetNames = closedList.SelectMany((dynamic l) => ((JArray)l.list));
             foreach (var utterance in model.utterances)
             {
@@ -217,32 +218,12 @@
                 dynamic utterance = new JObject();
                 utterance.text = facet;
                 utterance.intent = "Facet";
+                utterance.entities = new JArray();
                 model.utterances.Add(utterance);
             }
         }
 
-        static void ReplaceToken(dynamic utterance, List<string> tokens, int i, string replacement)
-        {
-            var wordTokens = replacement.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            tokens.RemoveAt(i);
-            tokens.InsertRange(i, wordTokens);
-            i += wordTokens.Length;
-            var offset = wordTokens.Count() - 1;
-            if (offset > 0)
-            {
-                foreach (var entity in utterance.entities)
-                {
-                    if (entity.startPos > i)
-                    {
-                        entity.startPos += offset;
-                    }
-                    if (entity.endPos >= i)
-                    {
-                        entity.endPos += offset;
-                    }
-                }
-            }
-        }
+        static Regex PropertyOrAttribute = new Regex($"{propertyName}|{attributeName}", RegexOptions.IgnoreCase);
 
         static void ReplaceGenericNames(dynamic model, IEnumerable<SearchField> fields)
         {
@@ -254,38 +235,41 @@
             foreach (var utterance in model.utterances)
             {
                 var text = (string)utterance.text;
-                var tokens = text.Split(' ').ToList();
+                var offset = 0;
                 var failed = false;
-                for (var i = 0; i < tokens.Count();)
+                utterance.text = PropertyOrAttribute.Replace(text, (match) =>
                 {
-                    var token = tokens[i];
-                    string[] choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
-                    if (choices != null)
+                    var token = match.Value.ToLower();
+                    var word = "";
+                    var choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
+                    if (choices == null)
                     {
-                        if (choices.Any())
-                        {
-                            var word = choices[rand.Next(choices.Length)];
-                            ReplaceToken(utterance, tokens, i, word);
-                        }
-                        else
-                        {
-                            failed = true;
-                            break;
-                        }
+                        failed = true;
                     }
                     else
                     {
-                        ++i;
+                        word = choices[rand.Next(choices.Length)];
+                        var index = match.Index + offset;
+                        var difference = word.Length - match.Length;
+                        foreach (var entity in utterance.entities)
+                        {
+                            if (entity.startPos > index)
+                            {
+                                entity.startPos += difference;
+                            }
+                            if (entity.endPos >= index)
+                            {
+                                entity.endPos += difference;
+                            }
+                        }
+                        offset += difference;
                     }
-                }
+                    return word;
+                });
                 if (failed)
                 {
-                    // We have no attrributes so remove all of them
+                    // We have no properties or attributes so remove the utterance
                     toRemove.Add(utterance);
-                }
-                else
-                {
-                    utterance.text = string.Join(" ", tokens);
                 }
             }
             foreach (var failed in toRemove)
@@ -303,9 +287,9 @@
                 cts.Cancel();
             };
 
-            var subscription = new Subscription(p.Domain, p.SubscriptionKey, basicAuth:p.BasicAuth);
+            var subscription = new Subscription(p.Domain, p.SubscriptionKey, basicAuth: p.BasicAuth);
             // TODO: Remove
-            var app2 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"SearchTemplate.json")), cts.Token);
+            // var app2 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"SearchTemplate.json")), cts.Token);
             // var app3 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"C:\tmp\example.json")), cts.Token);
 
             var schema = SearchSchema.Load(p.SchemaPath);
@@ -405,6 +389,7 @@
             Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
             Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");
             Console.WriteLine("-ut: Upload template to LUIS.  Must also specify -l.");
+            Console.WriteLine("Use {} to comment out arguments.");
             Console.WriteLine("Common usage:");
             Console.WriteLine("generate <schema> : Generate <schema>Model.json in the directory with <schema> from the SearchTemplate.json.");
             Console.WriteLine("generate <schema> -l <LUIS key> -u : Update the existing <schemaFileName>Model LUIS model and upload it to LUIS.");
@@ -458,19 +443,32 @@
             for (var i = 1; i < args.Count(); ++i)
             {
                 var arg = args[i];
-                switch (arg.Trim().ToLower())
+                if (arg.StartsWith("{"))
                 {
-                    case "-d": p.Domain = NextArg(++i, args); break;
-                    case "-l": p.SubscriptionKey = NextArg(++i, args); break;
-                    case "-m": p.OutputName = NextArg(++i, args); break;
-                    case "-o": p.OutputPath = NextArg(++i, args); break;
-                    case "-ot": p.OutputTemplate = NextArg(++i, args); break;
-                    case "-p": p.BasicAuth = NextArg(++i, args); break;
-                    case "-tf": p.TemplatePath = NextArg(++i, args); break;
-                    case "-tm": p.TemplateName = NextArg(++i, args); break;
-                    case "-u": p.Upload = true; break;
-                    case "-ut": p.UploadTemplate = true; break;
-                    default: Usage($"Unknown parameter {arg}"); break;
+                    while (!args[i].EndsWith("}") && ++i < args.Count())
+                    {
+                    }
+                    if (i == args.Count())
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (arg.Trim().ToLower())
+                    {
+                        case "-d": p.Domain = NextArg(++i, args); break;
+                        case "-l": p.SubscriptionKey = NextArg(++i, args); break;
+                        case "-m": p.OutputName = NextArg(++i, args); break;
+                        case "-o": p.OutputPath = NextArg(++i, args); break;
+                        case "-ot": p.OutputTemplate = NextArg(++i, args); break;
+                        case "-p": p.BasicAuth = NextArg(++i, args); break;
+                        case "-tf": p.TemplatePath = NextArg(++i, args); break;
+                        case "-tm": p.TemplateName = NextArg(++i, args); break;
+                        case "-u": p.Upload = true; break;
+                        case "-ut": p.UploadTemplate = true; break;
+                        default: Usage($"Unknown parameter {arg}"); break;
+                    }
                 }
             }
             if ((p.Upload || p.TemplateName != null || p.UploadTemplate) && p.SubscriptionKey == null)
