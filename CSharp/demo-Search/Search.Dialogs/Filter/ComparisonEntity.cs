@@ -24,8 +24,8 @@ namespace Search.Dialogs.Filter
                     case "Currency": AddNumber(entity); break;
                     case "Value": AddNumber(entity); break;
                     case "Dimension": AddNumber(entity); break;
-                    case "Operator": Operator = entity; break;
-                    case "Property": Property = entity; break;
+                    case "Operators": Operator = entity; break;
+                    case "Properties": Property = entity; break;
                 }
             }
         }

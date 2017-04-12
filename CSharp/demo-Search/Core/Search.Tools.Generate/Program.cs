@@ -316,7 +316,7 @@
                 if (p.OutputTemplate != null)
                 {
                     Console.WriteLine($"Writing template to {p.OutputTemplate}");
-                    using (var stream = new StreamWriter(new FileStream(p.OutputTemplate, FileMode.OpenOrCreate)))
+                    using (var stream = new StreamWriter(new FileStream(p.OutputTemplate, FileMode.Create)))
                     {
                         stream.Write(JsonConvert.SerializeObject(template, Formatting.Indented));
                     }
@@ -348,7 +348,7 @@
             if (p.OutputPath != null)
             {
                 Console.WriteLine($"Writing generated model to {p.OutputPath}");
-                using (var stream = new StreamWriter(new FileStream(p.OutputPath, FileMode.OpenOrCreate)))
+                using (var stream = new StreamWriter(new FileStream(p.OutputPath, FileMode.Create)))
                 {
                     stream.Write(JsonConvert.SerializeObject(template, Formatting.Indented));
                 }

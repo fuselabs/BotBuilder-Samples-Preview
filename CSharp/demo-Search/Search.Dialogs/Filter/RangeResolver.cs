@@ -1,18 +1,18 @@
 ﻿using System;
 using Search.Models;
+using Search.Utilities;
 using Microsoft.Bot.Builder.Luis.Models;
+using System.Linq;
 
 namespace Search.Dialogs.Filter
 {
     internal class RangeResolver
     {
-        private readonly Canonicalizer fieldCanonicalizer;
         private readonly SearchSchema schema;
 
-        public RangeResolver(SearchSchema schema, Canonicalizer fieldCanonicalizer)
+        public RangeResolver(SearchSchema schema)
         {
             this.schema = schema;
-            this.fieldCanonicalizer = fieldCanonicalizer;
         }
 
         public Range Resolve(ComparisonEntity c, string originalText, string defaultProperty)
@@ -24,7 +24,7 @@ namespace Search.Dialogs.Filter
             object upper = c.Upper == null ? double.PositiveInfinity : ParseValue(c.Upper, out isUpperCurrency);
             var isCurrency = isLowerCurrency || isUpperCurrency;
 
-            var propertyName = c.Property?.Entity;
+            var propertyName = c.Property?.FirstResolution();
             if (propertyName == null)
             {
                 if (isCurrency)
@@ -35,10 +35,6 @@ namespace Search.Dialogs.Filter
                 {
                     propertyName = defaultProperty;
                 }
-            }
-            else
-            {
-                propertyName = fieldCanonicalizer.Canonicalize(c.Property.Entity);
             }
 
             if (propertyName != null)
@@ -57,37 +53,26 @@ namespace Search.Dialogs.Filter
                     }
                     else
                     {
-                        switch (c.Operator.Entity)
+                        switch (c.Operator.FirstResolution())
                         {
                             case ">=":
-                            case "+":
-                            case "greater than or equal":
-                            case "at least":
-                            case "no less than":
                                 range.IncludeLower = true;
                                 range.IncludeUpper = true;
                                 upper = double.PositiveInfinity;
                                 break;
 
                             case ">":
-                            case "greater than":
-                            case "more than":
                                 range.IncludeLower = false;
                                 range.IncludeUpper = true;
                                 upper = double.PositiveInfinity;
                                 break;
 
-                            case "-":
                             case "between":
-                            case "and":
-                            case "or":
                                 range.IncludeLower = true;
                                 range.IncludeUpper = true;
                                 break;
 
                             case "<=":
-                            case "no more than":
-                            case "less than or equal":
                                 range.IncludeLower = true;
                                 range.IncludeUpper = true;
                                 upper = lower;
@@ -95,7 +80,6 @@ namespace Search.Dialogs.Filter
                                 break;
 
                             case "<":
-                            case "less than":
                                 range.IncludeLower = true;
                                 range.IncludeUpper = false;
                                 upper = lower;
@@ -103,7 +87,6 @@ namespace Search.Dialogs.Filter
                                 break;
 
                             case "any":
-                            case "any number of":
                                 upper = double.PositiveInfinity;
                                 lower = double.NegativeInfinity;
                                 break;

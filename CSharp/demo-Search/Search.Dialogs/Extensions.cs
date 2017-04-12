@@ -1,4 +1,5 @@
-﻿using Search.Dialogs.UserInteraction;
+﻿using Microsoft.Bot.Builder.Luis.Models;
+using Search.Dialogs.UserInteraction;
 using Search.Models;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,11 @@ namespace Search.Dialogs
                 builder.AppendLine();
             }
             return builder.ToString();
+        }
+
+        public static string FirstResolution(this EntityRecommendation entity)
+        {
+            return entity.Resolution.Values.First();
         }
     }
 }

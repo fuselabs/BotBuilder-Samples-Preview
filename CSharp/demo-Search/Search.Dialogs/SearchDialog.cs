@@ -49,8 +49,6 @@ namespace Search.Dialogs
         protected bool SkipIntro = false;
 
         [NonSerialized]
-        protected Canonicalizer FieldCanonicalizer;
-        [NonSerialized]
         protected Dictionary<string, CanonicalValue> ValueCanonicalizers;
 
         #endregion Members
@@ -157,8 +155,8 @@ namespace Search.Dialogs
         [LuisIntent("Facet")]
         public async Task Facet(IDialogContext context, LuisResult result)
         {
-            Canonicalizers();
-            Refiner = FieldCanonicalizer.Canonicalize(result.AlteredQuery ?? result.Query);
+            var property = result.Entities.First((e) => e.Type == "Properties");
+            Refiner = property?.FirstResolution();
             if (Refiner == null)
             {
                 await Filter(context, result);
@@ -210,7 +208,7 @@ namespace Search.Dialogs
         public async Task Filter(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
-            var rangeResolver = new RangeResolver(SearchClient.Schema, FieldCanonicalizer);
+            var rangeResolver = new RangeResolver(SearchClient.Schema);
 
             var entities = result.Entities ?? new List<EntityRecommendation>();
             var comparisons = (from entity in entities
@@ -229,15 +227,14 @@ namespace Search.Dialogs
             {
                 foreach (var entity in entities)
                 {
-                    if (entity.Type == "Property"
+                    if (entity.Type == "Properties"
                         && entity.StartIndex >= removal.StartIndex
                         && entity.EndIndex <= removal.EndIndex)
                     {
                         if (QueryBuilder.Spec.Filter != null)
                         {
-                            QueryBuilder.Spec.Filter =
-                                QueryBuilder.Spec.Filter.Remove(
-                                    SearchClient.Schema.Field(FieldCanonicalizer.Canonicalize(entity.Entity)));
+                            QueryBuilder.Spec.Filter = 
+                                QueryBuilder.Spec.Filter.Remove(SearchClient.Schema.Field(entity.FirstResolution()));
                         }
                         else
                         {
@@ -461,25 +458,21 @@ namespace Search.Dialogs
 
         private void Canonicalizers()
         {
-            if (FieldCanonicalizer == null)
+            if (ValueCanonicalizers == null)
             {
-                FieldCanonicalizer = new Canonicalizer();
                 ValueCanonicalizers = new Dictionary<string, CanonicalValue>();
                 foreach (var field in SearchClient.Schema.Fields.Values)
                 {
-                    FieldCanonicalizer.Add(field.NameSynonyms);
                     foreach (var synonym in field.ValueSynonyms)
                     {
-                        foreach (var alt in synonym.Alternatives)
-                        {
-                            ValueCanonicalizers.Add(Normalize(alt),
+                        // TODO: We should not normalize, but currently LUIS does
+                        ValueCanonicalizers.Add(Normalize(synonym.Canonical),
                                 new CanonicalValue
                                 {
                                     Field = field,
                                     Value = synonym.Canonical,
                                     Description = synonym.Description
                                 });
-                        }
                     }
                 }
             }
@@ -490,12 +483,14 @@ namespace Search.Dialogs
             return source.Trim().ToLower();
         }
 
-        private CanonicalValue CanonicalAttribute(dynamic entity)
+        private CanonicalValue CanonicalAttribute(EntityRecommendation entity)
         {
             CanonicalValue canonical = null;
-            if (entity.Type != "Attribute" || !ValueCanonicalizers.TryGetValue(Normalize(entity.Entity), out canonical))
+            if (entity.Type == "Attributes")
             {
-                canonical = null;
+                // TODO: We should not normalize, but currently LUIS does
+                var key = Normalize(entity.FirstResolution());
+                ValueCanonicalizers.TryGetValue(key, out canonical);
             }
             return canonical;
         }

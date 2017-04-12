@@ -51,7 +51,7 @@ namespace Search.Models
 
         public void Save(string path)
         {
-            using (var output = new StreamWriter(new FileStream(path, FileMode.OpenOrCreate)))
+            using (var output = new StreamWriter(new FileStream(path, FileMode.Create)))
             {
                 output.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
             }
