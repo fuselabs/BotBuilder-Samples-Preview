@@ -105,37 +105,11 @@ namespace Search.Dialogs.Filter
 
         private object ParseValue(EntityRecommendation entity, out bool isCurrency)
         {
-            object result = ParseNumber(entity.Entity, out isCurrency);
-            if (result is double && double.IsNaN((double) result))
+            object result = entity.Entity;
+            isCurrency = entity.Type == "builtin.currency";
+            if (entity.Type == "builtin.currency" || entity.Type == "builtin.number")
             {
-                result = entity.Entity;
-            }
-            return result;
-        }
-
-        private double ParseNumber(string entity, out bool isCurrency)
-        {
-            isCurrency = false;
-            var multiply = 1.0;
-            if (entity.StartsWith("$"))
-            {
-                isCurrency = true;
-                entity = entity.Substring(1);
-            }
-            if (entity.EndsWith("k"))
-            {
-                multiply = 1000.0;
-                entity = entity.Substring(0, entity.Length - 1);
-            }
-            double result;
-            var str = entity.Replace(",", "").Replace(" ", "");
-            if (double.TryParse(str, out result))
-            {
-                result *= multiply;
-            }
-            else
-            {
-                result = double.NaN;
+                result = double.Parse(entity.Resolution("value"));
             }
             return result;
         }

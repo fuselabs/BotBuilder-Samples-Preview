@@ -47,6 +47,28 @@ namespace Microsoft.LUIS.API
             return _client;
         }
 
+        public async Task ThrowIfError(HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                var msg = response.ReasonPhrase;
+                try
+                {
+                    var text = await response.Content.ReadAsStringAsync();
+                    var obj = JObject.Parse(text);
+                    dynamic err = obj == null ? null : (JObject)obj["error"];
+                    if (err != null)
+                    {
+                        msg = $"{err.code}: {err.message}";
+                    }
+                }
+                finally
+                {
+                    throw new Exception(msg);
+                }
+            }
+        }
+
         public async Task<HttpResponseMessage> RawGetAsync(string uri, CancellationToken ct)
         {
             var client = await ClientAsync();
@@ -65,7 +87,7 @@ namespace Microsoft.LUIS.API
             return await RawGetAsync(BaseUri(api).ToString(), ct);
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string api, JToken json, CancellationToken ct)
+        private async Task<HttpResponseMessage> PutPostAsync(bool put, string api, JToken json, CancellationToken ct)
         {
             var client = await ClientAsync();
             try
@@ -76,7 +98,7 @@ namespace Microsoft.LUIS.API
                 using (var content = new ByteArrayContent(byteData))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    response = await client.PostAsync(uri, content, ct);
+                    response = put ? await client.PutAsync(uri, content, ct) : await client.PostAsync(uri, content, ct);
                 }
                 return response;
             }
@@ -84,6 +106,16 @@ namespace Microsoft.LUIS.API
             {
                 _semaphore.Release();
             }
+        }
+
+        public async Task<HttpResponseMessage> PostAsync(string api, JToken json, CancellationToken ct)
+        {
+            return await PutPostAsync(false, api, json, ct);
+        }
+
+        public async Task<HttpResponseMessage> PutAsync(string api, JToken json, CancellationToken ct)
+        {
+            return await PutPostAsync(true, api, json, ct);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string api, CancellationToken ct)
@@ -175,24 +207,7 @@ namespace Microsoft.LUIS.API
         public async Task<Application> ImportApplicationAsync(string appName, JObject model, CancellationToken ct)
         {
             var response = await PostAsync($"apps/import?appName={appName}", model, ct);
-            if (!response.IsSuccessStatusCode)
-            {
-                var msg = response.ReasonPhrase;
-                try
-                {
-                    var text = await response.Content.ReadAsStringAsync();
-                    var obj = JObject.Parse(text);
-                    dynamic err = obj == null ? null : (JObject)obj["error"];
-                    if (err != null)
-                    {
-                        msg = $"{err.code}: {err.message}";
-                    }
-                }
-                finally
-                {
-                    throw new Exception(msg);
-                }
-            }
+            await ThrowIfError(response);
             var id = await response.Content.ReadAsStringAsync();
             return await GetApplicationAsync(id.Replace("\"", ""), ct);
         }
@@ -227,6 +242,13 @@ namespace Microsoft.LUIS.API
                 throw;
             }
             return newApp;
+        }
+
+        public async Task<bool> AddExternalKey(dynamic  key, CancellationToken ct)
+        {
+            var response = await PostAsync("externalKeys", key, ct);
+            await ThrowIfError(response);
+            return true;
         }
 
         /// <summary>

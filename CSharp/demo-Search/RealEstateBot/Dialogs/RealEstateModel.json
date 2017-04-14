@@ -2,7 +2,7 @@
   "luis_schema_version": "2.0.0",
   "versionId": "0.1",
   "name": "RealEstateModel",
-  "desc": "LUIS model generated via the command generate ..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -o ..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -u {-d dialogice2.cloudapp.net -p DiceDev:15Af429A9781490eB8326dA22e4Ff727 -l 1a8dc589b6894e2b9ca44deb237d6943 }",
+  "desc": "LUIS model generated via the command generate ..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -o ..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -u -s 9e768bb58e0d4a91ab3c501b71c0e8ac {-d dialogice2.cloudapp.net -p DiceDev:15Af429A9781490eB8326dA22e4Ff727 -l 1a8dc589b6894e2b9ca44deb237d6943 } -ut",
   "culture": "en-us",
   "intents": [
     {
@@ -628,16 +628,13 @@
       ]
     }
   ],
-  "bing_entities": [],
+  "bing_entities": [
+    "number",
+    "money"
+  ],
   "actions": [],
   "model_features": [],
-  "regex_features": [
-    {
-      "name": "Number",
-      "pattern": "\\$?[0-9\\,\\.]+k?",
-      "activated": true
-    }
-  ],
+  "regex_features": [],
   "utterances": [
     {
       "text": "3+ Type",

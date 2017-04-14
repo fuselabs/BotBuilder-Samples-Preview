@@ -21,10 +21,16 @@ namespace Search.Dialogs.Filter
             {
                 switch (entity.Type)
                 {
-                    case "Currency": AddNumber(entity); break;
+                    case "builtin.number": AddNumber(entity); break;
+                    case "builtin.currency": AddNumber(entity); break;
                     case "Value": AddNumber(entity); break;
                     case "Dimension": AddNumber(entity); break;
-                    case "Operators": Operator = entity; break;
+                    case "Operators":
+                        if (Operator == null || entity.Contains(Operator))
+                        {
+                            Operator = entity;
+                        }
+                        break;
                     case "Properties": Property = entity; break;
                 }
             }
@@ -36,14 +42,40 @@ namespace Search.Dialogs.Filter
             {
                 Lower = entity;
             }
-            else if (entity.StartIndex < Lower.StartIndex)
+            else if (entity.Congruent(Lower))
             {
-                Upper = Lower;
+                if (entity.Type.StartsWith("builtin."))
+                {
+                    Lower = entity;
+                }
+            }
+            else if (entity.Contains(Lower))
+            {
                 Lower = entity;
             }
-            else
+            else if (Upper != null)
+            {
+                if (entity.Congruent(Upper))
+                {
+                    if (entity.Type.StartsWith("builtin."))
+                    {
+                        Upper = entity;
+                    }
+                }
+                else if (entity.Contains(Upper))
+                {
+                    Upper = entity;
+                }
+            }
+            else if (!Lower.Overlaps(entity))
             {
                 Upper = entity;
+            }
+            if (Lower != null && Upper != null && Upper.StartIndex < Lower.StartIndex)
+            {
+                var lower = Lower;
+                Lower = Upper;
+                Upper = lower;
             }
         }
     }

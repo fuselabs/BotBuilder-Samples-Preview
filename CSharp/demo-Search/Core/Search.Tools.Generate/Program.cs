@@ -288,10 +288,6 @@
             };
 
             var subscription = new Subscription(p.Domain, p.SubscriptionKey, basicAuth: p.BasicAuth);
-            // TODO: Remove
-            // var app2 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"SearchTemplate.json")), cts.Token);
-            // var app3 = await subscription.ReplaceApplicationAsync(JObject.Parse(File.ReadAllText(@"C:\tmp\example.json")), cts.Token);
-
             var schema = SearchSchema.Load(p.SchemaPath);
             dynamic template;
             if (p.TemplatePath != null)
@@ -326,6 +322,7 @@
             Console.WriteLine($"Generating {p.OutputName} from schema {p.SchemaPath}");
             Clear(template);
             AddDescription(template, p.OutputName, args);
+            bool usesNumbers = false;
             foreach (var field in schema.Fields.Values)
             {
                 if ((field.Type == typeof(string)
@@ -334,13 +331,26 @@
                 {
                     AddAttribute(template, field);
                 }
-                else if (field.Type.IsNumeric()
-                    || (field.IsFacetable
+                else if (field.Type.IsNumeric() && field.IsFilterable)
+                {
+                    usesNumbers = true;
+                    AddComparison(template, field);
+                }
+                else if ((field.IsFacetable || field.IsFilterable)
                         && (field.Type == typeof(string)
-                            || field.Type == typeof(string[]))))
+                            || field.Type == typeof(string[])))
                 {
                     AddComparison(template, field);
                 }
+            }
+            var bing = (JArray)template.bing_entities;
+            if (usesNumbers)
+            {
+                bing.Add("number");
+            }
+            if (schema.DefaultCurrencyProperty != null)
+            {
+                bing.Add("money");
             }
             ReplaceGenericNames(template, from field in schema.Fields.Values where field.Type.IsNumeric() || field.ValueSynonyms.Any() select field);
             ExpandFacetExamples(template);
@@ -364,6 +374,18 @@
                 }
                 else
                 {
+                    if (p.SpellingKey != null)
+                    {
+                        try
+                        {
+                            await app.AddExternalKey(JObject.Parse($@"{{""type"":""BingSpellCheck"", ""value"":""{p.SpellingKey}""}}"), cts.Token);
+                            Console.WriteLine("Added spelling");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"Could not add spelling\n{e.Message}");
+                        }
+                    }
                     Console.WriteLine($"New LUIS app key is {app.ApplicationID}");
                 }
             }
@@ -385,6 +407,7 @@
             Console.WriteLine("-o <outputFile> : Output LUIS JSON file to generate. By default this will be <schemaFileName>Model.json in the same directory as <schemaFile>.");
             Console.WriteLine("-ot <outputFile> : Output template to <outputFile>.");
             Console.WriteLine("-p <userName:password> : Use basic auth--only useful for LUIS internal.");
+            Console.WriteLine("-s <spelling API Key> : Enable spelling using supplied API key.");
             Console.WriteLine("-tf <templateFile> : LUIS Template file to modify based on schema.  By default this is SearchTemplate.json.");
             Console.WriteLine("-tm <modelName> : LUIS model to use as template. Must also specify -l.");
             Console.WriteLine("-u: Upload resulting model to LUIS.  Must also specify -l.");
@@ -418,15 +441,16 @@
                 OutputName = Path.GetFileNameWithoutExtension(schemaPath) + "Model";
             }
 
-            public string SchemaPath;
-            public string TemplatePath;
-            public string TemplateName;
+            public string BasicAuth = null;
+            public string Domain = "westus.api.cognitive.microsoft.com";
             public string OutputPath;
             public string OutputName;
             public string OutputTemplate;
-            public string Domain = "westus.api.cognitive.microsoft.com";
-            public string BasicAuth = null;
+            public string SchemaPath;
+            public string SpellingKey;
             public string SubscriptionKey;
+            public string TemplatePath;
+            public string TemplateName;
             public bool Upload = false;
             public bool UploadTemplate = false;
         }
@@ -463,6 +487,7 @@
                         case "-o": p.OutputPath = NextArg(++i, args); break;
                         case "-ot": p.OutputTemplate = NextArg(++i, args); break;
                         case "-p": p.BasicAuth = NextArg(++i, args); break;
+                        case "-s": p.SpellingKey = NextArg(++i, args); break;
                         case "-tf": p.TemplatePath = NextArg(++i, args); break;
                         case "-tm": p.TemplateName = NextArg(++i, args); break;
                         case "-u": p.Upload = true; break;

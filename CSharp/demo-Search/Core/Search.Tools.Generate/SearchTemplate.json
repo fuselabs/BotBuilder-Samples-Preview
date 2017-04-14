@@ -116,13 +116,7 @@
   "bing_entities": [],
   "actions": [],
   "model_features": [],
-  "regex_features": [
-    {
-      "name": "Number",
-      "pattern": "\\$?[0-9\\,\\.]+k?",
-      "activated": true
-    }
-  ],
+  "regex_features": [],
   "utterances": [
     {
       "text": "3+ propertyname",

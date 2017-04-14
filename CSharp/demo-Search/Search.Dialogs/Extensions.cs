@@ -57,7 +57,33 @@ namespace Search.Dialogs
 
         public static string FirstResolution(this EntityRecommendation entity)
         {
-            return entity.Resolution.Values.First();
+            return entity.Resolution?.Values.First();
+        }
+
+        public static string Resolution(this EntityRecommendation entity, string name)
+        {
+            return entity.Resolution?[name];
+        }
+
+        // Entity2 is congruent or entirely inside entity1
+        public static bool Contains(this EntityRecommendation entity1, EntityRecommendation entity2)
+        {
+            return entity1.StartIndex <= entity2.StartIndex
+                && entity1.EndIndex >= entity2.EndIndex;
+        }
+
+        // Entity1 and entity2 share a range
+        public static bool Overlaps(this EntityRecommendation entity1, EntityRecommendation entity2)
+        {
+            return (entity1.StartIndex >= entity2.StartIndex && entity1.StartIndex <= entity2.EndIndex)
+                || (entity1.EndIndex >= entity2.StartIndex && entity1.EndIndex <= entity2.EndIndex);
+        }
+
+        // Entity1 and entity2 cover the exact same span
+        public static bool Congruent(this EntityRecommendation entity1, EntityRecommendation entity2)
+        {
+            return entity1.StartIndex == entity2.StartIndex
+                && entity1.EndIndex == entity2.EndIndex;
         }
     }
 }

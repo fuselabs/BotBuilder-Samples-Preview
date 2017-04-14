@@ -80,6 +80,11 @@ namespace Microsoft.LUIS.API
             return await Retry(async () => await _subscription.PostAsync(AppAPI(api), json, ct));
         }
 
+        public async Task<HttpResponseMessage> PutAsync(string api, JToken json, CancellationToken ct)
+        {
+            return await Retry(async () => await _subscription.PutAsync(AppAPI(api), json, ct));
+        }
+
         public async Task<HttpResponseMessage> DeleteAsync(string api, CancellationToken ct)
         {
             return await Retry(async () => await _subscription.DeleteAsync(AppAPI(api), ct));
@@ -165,6 +170,13 @@ namespace Microsoft.LUIS.API
             return response.IsSuccessStatusCode
                 ? JObject.Parse(await response.Content.ReadAsStringAsync())
                 : null;
+        }
+
+        public async Task<bool> AddExternalKey(dynamic key, CancellationToken ct)
+        {
+            var response = await PutAsync("externalKeys", key, ct);
+            await _subscription.ThrowIfError(response);
+            return true;
         }
 
         public async Task<bool> UploadUtteranceAsync(dynamic utterance, CancellationToken ct)
