@@ -40,6 +40,7 @@ namespace Search.Dialogs
         protected readonly PromptStyler PromptStyler;
         protected Button[] Refiners;
         protected readonly ISearchClient SearchClient;
+        protected readonly bool UseSuggestedActions;
 
         protected string DefaultProperty = null;
         protected Button[] LastButtons = null;
@@ -67,7 +68,8 @@ namespace Search.Dialogs
             PromptStyler promptStyler = null,
             ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
-            IEnumerable<string> refiners = null)
+            IEnumerable<string> refiners = null,
+            bool useSuggestedActions = true)
             : base(new LuisService(new LuisModelAttribute(model, key)))
         {
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out Prompts, nameof(Prompts), prompts);
@@ -76,8 +78,9 @@ namespace Search.Dialogs
             QueryBuilder = queryBuilder ?? new SearchQueryBuilder();
             LastQueryBuilder = new SearchQueryBuilder();
             HitStyler = searchHitStyler ?? new SearchHitStyler();
-            PromptStyler = promptStyler ?? new PromptStyler();
+            PromptStyler = promptStyler ?? new PromptStyler(PromptStyle.Keyboard);
             MultipleSelection = multipleSelection;
+            UseSuggestedActions = useSuggestedActions;
             InitializeRefiners(refiners);
         }
 
@@ -155,6 +158,7 @@ namespace Search.Dialogs
         [LuisIntent("Facet")]
         public async Task Facet(IDialogContext context, LuisResult result)
         {
+            Canonicalizers();
             var property = result.Entities.First((e) => e.Type == "Properties");
             Refiner = property?.FirstResolution();
             if (Refiner == null)
@@ -233,7 +237,7 @@ namespace Search.Dialogs
                     {
                         if (QueryBuilder.Spec.Filter != null)
                         {
-                            QueryBuilder.Spec.Filter = 
+                            QueryBuilder.Spec.Filter =
                                 QueryBuilder.Spec.Filter.Remove(SearchClient.Schema.Field(entity.FirstResolution()));
                         }
                         else

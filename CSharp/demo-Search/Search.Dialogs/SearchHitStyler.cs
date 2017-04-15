@@ -26,7 +26,7 @@ namespace Search.Dialogs
                     var actions = new List<CardAction>();
                     foreach (var button in buttons)
                     {
-                        actions.Add(new CardAction(ActionTypes.ImBack, button.Label,
+                        actions.Add(new CardAction(ActionTypes.PostBack, button.Label,
                             value: string.Format(button.Message, h.Key)));
                     }
                     return new ThumbnailCard
