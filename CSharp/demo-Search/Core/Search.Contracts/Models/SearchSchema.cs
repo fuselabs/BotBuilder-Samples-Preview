@@ -27,6 +27,8 @@ namespace Search.Models
 
         public string DefaultGeoProperty { get; set; }
 
+        public string Keywords { get; set; }
+
         public List<SearchFragment> Fragments = new List<SearchFragment>();
 
         public SearchSchema()
