@@ -1,4 +1,5 @@
 ﻿using Microsoft.Bot.Builder.Luis.Models;
+using Newtonsoft.Json.Linq;
 using Search.Dialogs.UserInteraction;
 using Search.Models;
 using System;
@@ -57,12 +58,12 @@ namespace Search.Dialogs
 
         public static string FirstResolution(this EntityRecommendation entity)
         {
-            return entity.Resolution?.Values.First();
+            return (string) (entity.Resolution?["values"] as JArray)?.First();
         }
 
         public static string Resolution(this EntityRecommendation entity, string name)
         {
-            return entity.Resolution?[name];
+            return (string) (entity.Resolution?[name]);
         }
 
         // Entity2 is congruent or entirely inside entity1

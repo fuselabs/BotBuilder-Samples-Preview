@@ -74,14 +74,14 @@ namespace Search.Azure.Services
             {
                 switch (expression.Operator)
                 {
-                    case Operator.And:
+                    case FilterOperator.And:
                     {
                         var left = ExtractFullText((FilterExpression) expression.Values[0], searchExpression);
                         var right = ExtractFullText((FilterExpression) expression.Values[1], searchExpression);
                         filter = FilterExpression.Combine(left, right);
                     }
                         break;
-                    case Operator.FullText:
+                    case FilterOperator.FullText:
                     {
                         searchExpression.Add(expression);
                         filter = null;
@@ -103,42 +103,42 @@ namespace Search.Azure.Services
                 string op = null;
                 switch (expression.Operator)
                 {
-                    case Operator.And:
+                    case FilterOperator.And:
                     {
                         var left = BuildFilter((FilterExpression) expression.Values[0]);
                         var right = BuildFilter((FilterExpression) expression.Values[1]);
                         filter = $"({left}) and ({right})";
                         break;
                     }
-                    case Operator.Or:
+                    case FilterOperator.Or:
                     {
                         var left = BuildFilter((FilterExpression) expression.Values[0]);
                         var right = BuildFilter((FilterExpression) expression.Values[1]);
                         filter = $"({left}) or ({right})";
                         break;
                     }
-                    case Operator.Not:
+                    case FilterOperator.Not:
                     {
                         var child = BuildFilter((FilterExpression) expression.Values[0]);
                         filter = $"not ({child})";
                         break;
                     }
-                    case Operator.FullText:
+                    case FilterOperator.FullText:
                         throw new ArgumentException("Cannot handle complex full text expressions.");
 
-                    case Operator.LessThan:
+                    case FilterOperator.LessThan:
                         op = "lt";
                         break;
-                    case Operator.LessThanOrEqual:
+                    case FilterOperator.LessThanOrEqual:
                         op = "le";
                         break;
-                    case Operator.Equal:
+                    case FilterOperator.Equal:
                         op = "eq";
                         break;
-                    case Operator.GreaterThanOrEqual:
+                    case FilterOperator.GreaterThanOrEqual:
                         op = "ge";
                         break;
-                    case Operator.GreaterThan:
+                    case FilterOperator.GreaterThan:
                         op = "gt";
                         break;
                     default:
@@ -150,7 +150,7 @@ namespace Search.Azure.Services
                     var value = SearchTools.Constant(expression.Values[1]);
                     if (field.Type == typeof(string[]))
                     {
-                        if (expression.Operator != Operator.Equal)
+                        if (expression.Operator != FilterOperator.Equal)
                         {
                             throw new NotSupportedException();
                         }

@@ -5,14 +5,14 @@ namespace Search.Dialogs.Filter
 {
     public static class FilterExpressionBuilder
     {
-        public static FilterExpression Build(IEnumerable<Range> ranges, Operator connector,
+        public static FilterExpression Build(IEnumerable<Range> ranges, FilterOperator connector,
             FilterExpression soFar = null)
         {
             var filter = soFar;
             foreach (var range in ranges)
             {
-                var lowercmp = range.IncludeLower ? Operator.GreaterThanOrEqual : Operator.GreaterThan;
-                var uppercmp = range.IncludeUpper ? Operator.LessThanOrEqual : Operator.LessThan;
+                var lowercmp = range.IncludeLower ? FilterOperator.GreaterThanOrEqual : FilterOperator.GreaterThan;
+                var uppercmp = range.IncludeUpper ? FilterOperator.LessThanOrEqual : FilterOperator.LessThan;
                 if (range.Lower is double && double.IsNegativeInfinity((double)range.Lower))
                 {
                     if (range.Upper is double && !double.IsPositiveInfinity((double)range.Upper))
@@ -30,14 +30,14 @@ namespace Search.Dialogs.Filter
                 {
                     filter = FilterExpression.Combine(filter,
                         new FilterExpression(range.Description,
-                            range.Lower is string && range.Property.IsSearchable ? Operator.FullText : Operator.Equal,
+                            range.Lower is string && range.Property.IsSearchable ? FilterOperator.FullText : FilterOperator.Equal,
                             range.Property, range.Lower), connector);
                 }
                 else
                 {
                     //Only add the description to the combination to avoid description duplication and limit the tree traversal
                     var child = FilterExpression.Combine(new FilterExpression(lowercmp, range.Property, range.Lower),
-                        new FilterExpression(uppercmp, range.Property, range.Upper), Operator.And, range.Description);
+                        new FilterExpression(uppercmp, range.Property, range.Upper), FilterOperator.And, range.Description);
                     filter = FilterExpression.Combine(filter, child, connector);
                 }
             }

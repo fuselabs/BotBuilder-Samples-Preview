@@ -30,7 +30,7 @@ namespace Search.Models
             Sort.RemoveAll((s) => s.Field == field.Name);
         }
 
-        public void Merge(SearchSpec other, Operator filterCombine)
+        public void Merge(SearchSpec other, FilterOperator filterCombine)
         {
             this.Phrases = this.Phrases.Union(other.Phrases).ToList();
             if (Filter == null)
@@ -58,6 +58,24 @@ namespace Search.Models
                 Skip = this.Skip,
                 Top = this.Top
             };
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as SearchSpec;
+            return other != null
+                && Skip.Equals(other.Skip)
+                && Top.Equals(other.Top)
+                && (Filter == other.Filter || (Filter != null && Filter.Equals(other.Filter)))
+                && Phrases.SequenceEqual(other.Phrases)
+                && Sort.SequenceEqual(other.Sort)
+                && Selection.SequenceEqual(other.Selection)
+                ;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         private int? Merge(int? current, int? newVal)

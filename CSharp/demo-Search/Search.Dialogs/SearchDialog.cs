@@ -206,28 +206,47 @@ namespace Search.Dialogs
             }
         }
 
-
+        // Return all top-level entities
+        private IEnumerable<EntityRecommendation> TopEntities(IEnumerable<EntityRecommendation> entities)
+        {
+            var sorted = (from entity in entities orderby entity.StartIndex, entity.EndIndex descending select entity).ToArray();
+            if (sorted.Any())
+            {
+                var root = sorted.First();
+                foreach (var child in sorted)
+                {
+                    if (child.StartIndex > root.EndIndex)
+                    {
+                        yield return root;
+                        root = child;
+                    }
+                }
+                yield return root;
+            }
+        }
 
         [LuisIntent("Filter")]
         public async Task Filter(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
+            var query = result.AlteredQuery ?? result.Query;
             var rangeResolver = new RangeResolver(SearchClient.Schema);
 
             var entities = result.Entities ?? new List<EntityRecommendation>();
-            var comparisons = (from entity in entities
+            var topEntities = TopEntities(entities).ToArray();
+            var comparisons = (from entity in topEntities
                                where entity.Type == "Comparison"
                                select new ComparisonEntity(entity)).ToList();
-
-            var attributes = from entity in entities
+            var attributes = from entity in topEntities
                              let canonical = CanonicalAttribute(entity)
                              where canonical != null
-                             select new FilterExpression(entity.Entity, Operator.Equal, canonical.Field, canonical.Value);
-
-            var removals = from entity in entities where entity.Type == "Removal" select entity;
-            var substrings = Keywords.ExtractPhrases(entities, result.AlteredQuery ?? result.Query);
-
-            foreach (var removal in removals)
+                             select new FilterExpression(entity.Entity, FilterOperator.Equal, canonical.Field, canonical.Value);
+            var removeProperties = from entity in topEntities where entity.Type == "Removal" select entity;
+            var removeKeywords = from entity in topEntities where entity.Type == "RemoveKeyword" select entity;
+            var bareRemoves = from entity in topEntities where entity.Type == "RemoveKeywords" select entity;
+            var nonEntities = Keywords.NonEntityRanges(entities, query.Length).ToList();
+            // Remove property constraints
+            foreach (var removal in removeProperties)
             {
                 foreach (var entity in entities)
                 {
@@ -248,6 +267,60 @@ namespace Search.Dialogs
                 }
             }
 
+            var removePhrases = new List<string>();
+            var removeRanges = new List<Keywords.Range>();
+            foreach (var remove in bareRemoves)
+            {
+                foreach (var nonEntity in nonEntities)
+                {
+                    if (nonEntity.Start - 1 == remove.EndIndex)
+                    {
+                        removeRanges.Add(nonEntity);
+                        break;
+                    }
+                    else if (nonEntity.Start > remove.EndIndex)
+                    {
+                        break;
+                    }
+                }
+            }
+            foreach (var range in removeRanges)
+            {
+                removePhrases.AddRange(query.Substring(range.Start, range.End - range.Start).Phrases());
+                nonEntities.Remove(range);
+            }
+
+            var addKeywords = Keywords.ExtractPhrases(query, nonEntities).ToList();
+            // Bare keywords are keywords
+            foreach (var entity in topEntities)
+            {
+                if (entity.Type == "Keyword")
+                {
+                    foreach (var phrase in entity.Entity.Phrases())
+                    {
+                        addKeywords.Add(phrase);
+                    }
+                }
+            }
+
+            if (QueryBuilder.Spec.Phrases != null && (removeKeywords.Any() || removePhrases.Any()))
+            {
+                // Remove keywords from the filter
+                foreach (var removeKeyword in removeKeywords)
+                {
+                    foreach (var entity in entities)
+                    {
+                        if (entity.Type == "Keyword"
+                            && entity.StartIndex >= removeKeyword.StartIndex
+                            && entity.EndIndex <= removeKeyword.EndIndex)
+                        {
+                            removePhrases.AddRange(entity.Entity.Phrases());
+                        }
+                    }
+                }
+                QueryBuilder.Spec.Phrases = QueryBuilder.Spec.Phrases.Except(removePhrases).ToList();
+            }
+
             foreach (var entity in entities)
             {
                 foreach (var comparison in comparisons)
@@ -260,19 +333,19 @@ namespace Search.Dialogs
                          let range = rangeResolver.Resolve(comparison, result.Query, DefaultProperty)
                          where range != null
                          select range;
-            var filter = FilterExpressionBuilder.Build(ranges, Operator.And);
-            filter = attributes.GenerateFilterExpression(Operator.And, filter);
+            var filter = FilterExpressionBuilder.Build(ranges, FilterOperator.And);
+            filter = attributes.GenerateFilterExpression(FilterOperator.And, filter);
 
             if (QueryBuilder.Spec.Filter != null)
             {
                 QueryBuilder.Spec.Filter = FilterExpression.Combine(QueryBuilder.Spec.Filter.Remove(filter), filter,
-                    Operator.And);
+                    FilterOperator.And);
             }
             else
             {
                 QueryBuilder.Spec.Filter = filter;
             }
-            QueryBuilder.Spec.Phrases = QueryBuilder.Spec.Phrases.Union(substrings).ToList();
+            QueryBuilder.Spec.Phrases = QueryBuilder.Spec.Phrases.Union(addKeywords).ToList();
             DefaultProperty = null;
             await Search(context);
         }
@@ -338,28 +411,37 @@ namespace Search.Dialogs
 
         public async Task Search(IDialogContext context)
         {
-            var response = await ExecuteSearchAsync();
             var prompt = Prompts.RefinePrompt;
-            if (!response.Results.Any())
+            if (QueryBuilder.Spec.Equals(LastQueryBuilder.Spec))
             {
-                QueryBuilder = LastQueryBuilder;
-                response = await ExecuteSearchAsync();
-                prompt = Prompts.NoResultsPrompt;
+                prompt = Prompts.NotUnderstoodPrompt;
             }
-            var message = context.MakeMessage();
-            Found = response.Results.ToList();
-            HitStyler.Show(
-                ref message,
-                (IReadOnlyList<SearchHit>)Found,
-                SearchDescription(),
-                Prompts.Add
-            );
-            await context.PostAsync(message);
+            else
+            {
+                var response = await ExecuteSearchAsync();
+                if (!response.Results.Any())
+                {
+                    QueryBuilder = LastQueryBuilder;
+                    prompt = Prompts.NoResultsPrompt;
+                }
+                else
+                {
+                    var message = context.MakeMessage();
+                    Found = response.Results.ToList();
+                    HitStyler.Show(
+                        ref message,
+                        (IReadOnlyList<SearchHit>)Found,
+                        SearchDescription(),
+                        Prompts.Add
+                    );
+                    await context.PostAsync(message);
+                    LastQueryBuilder = QueryBuilder.DeepCopy();
+                    LastQueryBuilder.PageNumber = 0;
+                }
+            }
             await
                 PromptAsync(context, prompt, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished,
                     Prompts.Quit, Prompts.StartOver);
-            LastQueryBuilder = QueryBuilder.DeepCopy();
-            LastQueryBuilder.PageNumber = 0;
             context.Wait(MessageReceived);
         }
 

@@ -3,6 +3,7 @@
   "DefaultCurrencyProperty": "price",
   "DefaultNumericProperty": null,
   "DefaultGeoProperty": null,
+  "Keywords": "acreage of land,apartment residence,appliances,attached garage,automatic sprinklers,bachelor apartment,beach,beautiful bedroom floors,beautiful hardwood floors,beautiful home,bosch appliances,bungalow,ceilings,closet,coastal views,community pool,condition,condo,condominium,crown mouldings,cul-,culs-,cultisac,dead end road,dead end street,deck,den,detached garage,dream home,duplex residence,entertaining,features,features bosch appliances,features high end kitchen appliances,features miele appliances,features stainless steel appliances,features sub,features thermador appliances,features viking appliances,finished basement,flatlet,formal dining room,french doors,garden,gas log fireplace,gated community,generous backyard,gleaming hardwood floors,granite countertops,great room,great starter home,guest house,guest room,heated pool,heated towel racks,high ceilings,high end kitchen appliances,home,home office,huge bonus room,lake,lakefront property,lap pool,large laundry room,large lot,large walk,line appliances,master suites,media room,miele appliances,mountain,mountain views,multi-storey house,multi-story residence,ocean,ocean views,oceanfrontage,office,outlet,owner financing available,panoramic views,parks,pool table,porch,property,ranch style house,ready,river,road,sac,sauna,schools,semi-detached house,shopping,short sale,small lake,spacious living room,stainless steel appliances,steam room,storage,story residence,swimming pool,tenement house,tennis court,thermador appliances,towel racks,townhouse,views,viking appliances,walking distance,wall of windows,water frontage,wet bar,wood burning fireplace,wood floors",
   "Fields": {
     "listingId": {
       "Name": "listingId",
@@ -35,7 +36,10 @@
       "NameSynonyms": {
         "Canonical": "beds",
         "Alternatives": [
-          "Bedrooms", "bed", "bedroom", "beds"
+          "Bedrooms",
+          "bed",
+          "bedroom",
+          "beds"
         ]
       },
       "ValueSynonyms": []
@@ -146,7 +150,7 @@
         },
         {
           "Canonical": "sold",
-          "Alternatives":  ["sold"]
+          "Alternatives": [ "sold" ]
         }
       ]
     },
@@ -163,7 +167,8 @@
       "NameSynonyms": {
         "Canonical": "source",
         "Alternatives": [
-          "Listing Agent", "source"
+          "Listing Agent",
+          "source"
         ]
       },
       "ValueSynonyms": []
@@ -198,7 +203,8 @@
       "NameSynonyms": {
         "Canonical": "street",
         "Alternatives": [
-          "Street", "st"
+          "Street",
+          "st"
         ]
       },
       "ValueSynonyms": []
@@ -278,7 +284,7 @@
       "FilterPreference": 0,
       "NameSynonyms": {
         "Canonical": "cityPhonetic",
-        "Alternatives":  []
+        "Alternatives": []
       },
       "ValueSynonyms": []
     },
@@ -298,7 +304,7 @@
           "District"
         ]
       },
-      "ValueSynonyms": [ ]
+      "ValueSynonyms": []
     },
     "region": {
       "Name": "region",
@@ -313,92 +319,109 @@
       "NameSynonyms": {
         "Canonical": "region",
         "Alternatives": [
-          "State", "region", "area"
+          "State",
+          "region",
+          "area"
         ]
       },
       "ValueSynonyms": [
         {
           "Canonical": "ak",
           "Alternatives": [
-            "Alaska", "ak"
+            "Alaska",
+            "ak"
           ]
         },
         {
           "Canonical": "al",
           "Alternatives": [
-            "Alabama", "al"
+            "Alabama",
+            "al"
           ]
         },
         {
           "Canonical": "ar",
           "Alternatives": [
-            "Arkansas", "ar"
+            "Arkansas",
+            "ar"
           ]
         },
         {
           "Canonical": "az",
           "Alternatives": [
-            "Arizona", "az"
+            "Arizona",
+            "az"
           ]
         },
         {
           "Canonical": "ca",
           "Alternatives": [
-            "California", "ca"
+            "California",
+            "ca"
           ]
         },
         {
           "Canonical": "co",
           "Alternatives": [
-            "Colorado", "co"
+            "Colorado",
+            "co"
           ]
         },
         {
           "Canonical": "ct",
           "Alternatives": [
-            "Connecticut", "ct"
+            "Connecticut",
+            "ct"
           ]
         },
         {
           "Canonical": "dc",
           "Alternatives": [
-            "Washington DC", "district of columbia", "dc"
+            "Washington DC",
+            "district of columbia",
+            "dc"
           ]
         },
         {
           "Canonical": "de",
           "Alternatives": [
-            "Delaware", "de"
+            "Delaware",
+            "de"
           ]
         },
         {
           "Canonical": "fl",
           "Alternatives": [
-            "Florida", "fl"
+            "Florida",
+            "fl"
           ]
         },
         {
           "Canonical": "ga",
           "Alternatives": [
-            "Georgia", "ga"
+            "Georgia",
+            "ga"
           ]
         },
         {
           "Canonical": "ia",
           "Alternatives": [
-            "Iowa", "ia"
+            "Iowa",
+            "ia"
           ]
         },
         {
           "Canonical": "id",
           "Alternatives": [
-            "Idaho", "id"
+            "Idaho",
+            "id"
           ]
         },
         {
           "Canonical": "il",
           "Alternatives": [
-            "Illinois", "il"
+            "Illinois",
+            "il"
           ]
         },
         {
@@ -410,211 +433,246 @@
         {
           "Canonical": "ks",
           "Alternatives": [
-            "Kansas", "ks"
+            "Kansas",
+            "ks"
           ]
         },
         {
           "Canonical": "ky",
           "Alternatives": [
-            "Kentucky", "ky"
+            "Kentucky",
+            "ky"
           ]
         },
         {
           "Canonical": "la",
           "Alternatives": [
-            "Louisiana", "la"
+            "Louisiana",
+            "la"
           ]
         },
         {
           "Canonical": "ma",
           "Alternatives": [
-            "Massachusetts", "ma"
+            "Massachusetts",
+            "ma"
           ]
         },
         {
           "Canonical": "md",
           "Alternatives": [
-            "Maryland", "md"
+            "Maryland",
+            "md"
           ]
         },
         {
           "Canonical": "me",
           "Alternatives": [
-            "Maine", "me"
+            "Maine",
+            "me"
           ]
         },
         {
           "Canonical": "mi",
           "Alternatives": [
-            "Michigan", "mi"
+            "Michigan",
+            "mi"
           ]
         },
         {
           "Canonical": "mn",
           "Alternatives": [
-            "Minnesota", "mn"
+            "Minnesota",
+            "mn"
           ]
         },
         {
           "Canonical": "mo",
           "Alternatives": [
-            "Missouri", "mo"
+            "Missouri",
+            "mo"
           ]
         },
         {
           "Canonical": "ms",
           "Alternatives": [
-            "Mississippi", "ms"
+            "Mississippi",
+            "ms"
           ]
         },
         {
           "Canonical": "mt",
           "Alternatives": [
-            "Montana", "mt"
+            "Montana",
+            "mt"
           ]
         },
         {
           "Canonical": "nc",
           "Alternatives": [
-            "North Carolina", "nc"
+            "North Carolina",
+            "nc"
           ]
         },
         {
           "Canonical": "nd",
           "Alternatives": [
-            "North Dakota", "nd"
+            "North Dakota",
+            "nd"
           ]
         },
         {
           "Canonical": "ne",
           "Alternatives": [
-            "Nebraska", "ne"
+            "Nebraska",
+            "ne"
           ]
         },
         {
           "Canonical": "nh",
           "Alternatives": [
-            "New Hampshire", "nh"
+            "New Hampshire",
+            "nh"
           ]
         },
         {
           "Canonical": "nj",
           "Alternatives": [
-            "New Jersey", "nj"
+            "New Jersey",
+            "nj"
           ]
         },
         {
           "Canonical": "nm",
           "Alternatives": [
-            "New Mexico", "nm"
+            "New Mexico",
+            "nm"
           ]
         },
         {
           "Canonical": "nv",
           "Alternatives": [
-            "Nevada", "nv"
+            "Nevada",
+            "nv"
           ]
         },
         {
           "Canonical": "ny",
           "Alternatives": [
-            "New York", "ny"
+            "New York",
+            "ny"
           ]
         },
         {
           "Canonical": "oh",
           "Alternatives": [
-            "Ohio", "oh"
+            "Ohio",
+            "oh"
           ]
         },
         {
           "Canonical": "ok",
           "Alternatives": [
-            "Oklahoma", "ok"
+            "Oklahoma",
+            "ok"
           ]
         },
         {
           "Canonical": "or",
           "Alternatives": [
-            "Oregon", "or"
+            "Oregon",
+            "or"
           ]
         },
         {
           "Canonical": "pa",
           "Alternatives": [
-            "Pennsylvania", "pa"
+            "Pennsylvania",
+            "pa"
           ]
         },
         {
           "Canonical": "pr",
           "Alternatives": [
-            "Puerto Rico", "pr"
+            "Puerto Rico",
+            "pr"
           ]
         },
         {
           "Canonical": "ri",
           "Alternatives": [
-            "Rhode Island", "ri"
+            "Rhode Island",
+            "ri"
           ]
         },
         {
           "Canonical": "sc",
           "Alternatives": [
-            "South Carolina", "sc"
+            "South Carolina",
+            "sc"
           ]
         },
         {
           "Canonical": "tn",
           "Alternatives": [
-            "Tennessee", "tn"
+            "Tennessee",
+            "tn"
           ]
         },
         {
           "Canonical": "tx",
           "Alternatives": [
-            "Texas", "tx"
+            "Texas",
+            "tx"
           ]
         },
         {
           "Canonical": "ut",
           "Alternatives": [
-            "Utah", "ut"
+            "Utah",
+            "ut"
           ]
         },
         {
           "Canonical": "va",
           "Alternatives": [
-            "Virginia", "va"
+            "Virginia",
+            "va"
           ]
         },
         {
           "Canonical": "vt",
           "Alternatives": [
-            "Vermont", "vt"
+            "Vermont",
+            "vt"
           ]
         },
         {
           "Canonical": "wa",
           "Alternatives": [
-            "Washington", "wa"
+            "Washington",
+            "wa"
           ]
         },
         {
           "Canonical": "wi",
           "Alternatives": [
-            "Wisconsin", "wi"
+            "Wisconsin",
+            "wi"
           ]
         },
         {
           "Canonical": "wv",
           "Alternatives": [
-            "West Virginia", "wv"
+            "West Virginia",
+            "wv"
           ]
         },
         {
           "Canonical": "wy",
           "Alternatives": [
-            "Wyoming", "wy"
+            "Wyoming",
+            "wy"
           ]
         }
       ]
@@ -648,7 +706,8 @@
       "NameSynonyms": {
         "Canonical": "countryCode",
         "Alternatives": [
-          "country", "country Code"
+          "country",
+          "country Code"
         ]
       },
       "ValueSynonyms": []
@@ -666,7 +725,8 @@
       "NameSynonyms": {
         "Canonical": "location",
         "Alternatives": [
-          "location", "located"
+          "location",
+          "located"
         ]
       },
       "ValueSynonyms": []
@@ -684,7 +744,9 @@
       "NameSynonyms": {
         "Canonical": "price",
         "Alternatives": [
-          "Price", "cost", "costs"
+          "Price",
+          "cost",
+          "costs"
         ]
       },
       "ValueSynonyms": []
@@ -701,7 +763,7 @@
       "FilterPreference": 0,
       "NameSynonyms": {
         "Canonical": "thumbnail",
-        "Alternatives": [ ]
+        "Alternatives": []
       },
       "ValueSynonyms": []
     }

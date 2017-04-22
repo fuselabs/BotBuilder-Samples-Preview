@@ -19,6 +19,7 @@
     {
         private const string propertyName = "propertyname";
         private const string attributeName = "attributename";
+        private const string keyword = "keyword";
         private const string SubscriptionKey = "LUISSubscriptionKey";
 
         static void Clear(dynamic model)
@@ -223,59 +224,151 @@
             }
         }
 
-        static Regex PropertyOrAttribute = new Regex($"{propertyName}|{attributeName}", RegexOptions.IgnoreCase);
+        static Dictionary<int, List<string>> SplitByWords(IEnumerable<string> phrases)
+        {
+            var result = new Dictionary<int, List<string>>();
+            foreach (var phrase in phrases)
+            {
+                var words = phrase.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var count = words.Length;
+                List<string> candidates;
+                if (result.TryGetValue(words.Length, out candidates))
+                {
+                    candidates.Add(phrase);
+                }
+                else
+                {
+                    result[count] = new List<string> { phrase };
+                }
+            }
+            return result;
+        }
 
-        static void ReplaceGenericNames(dynamic model, IEnumerable<SearchField> fields)
+        static bool ReplaceNames(dynamic utterance, Func<string, string> tokenReplacement, out bool failed)
+        {
+            var text = (string)utterance.text;
+            var offset = 0;
+            var hasKeyword = false;
+            var replacedAll = true;
+            utterance.text = PropertyOrAttribute.Replace(text, (match) =>
+            {
+                var token = match.Value.ToLower();
+                var replacement = tokenReplacement(token);
+                if (replacement == null)
+                {
+                    replacedAll = false;
+                }
+                else
+                {
+                    if (token == keyword)
+                    {
+                        hasKeyword = true;
+                    }
+                    var index = match.Index + offset;
+                    var difference = replacement.Length - match.Length;
+                    foreach (var entity in utterance.entities)
+                    {
+                        if (entity.startPos > index)
+                        {
+                            entity.startPos += difference;
+                        }
+                        if (entity.endPos >= index)
+                        {
+                            entity.endPos += difference;
+                        }
+                    }
+                    offset += difference;
+                }
+                return replacement;
+            });
+            failed = !replacedAll;
+            return hasKeyword;
+        }
+
+        static Regex PropertyOrAttribute = new Regex($"{propertyName}|{attributeName}|{keyword}", RegexOptions.IgnoreCase);
+
+        static void ReplaceGenericNames(dynamic model, IEnumerable<SearchField> fields, string keywordList)
         {
             // Use a fixed random sequence to minimize random churn
             var rand = new Random(0);
             var propertyNames = fields.SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
             var attributes = fields.SelectMany((f) => f.ValueSynonyms.SelectMany((v) => v.Alternatives)).ToArray();
+            var allKeywords = SplitByWords(keywordList.Split(',').Select(w => w.Trim()));
+            var keywords = allKeywords.First().Value.ToArray();
             var toRemove = new List<dynamic>();
+            var toAdd = new List<dynamic>();
             foreach (var utterance in model.utterances)
             {
-                var text = (string)utterance.text;
-                var offset = 0;
-                var failed = false;
-                utterance.text = PropertyOrAttribute.Replace(text, (match) =>
+                var original = new JObject(utterance);
+                Func<string, string> replaceToken = (token) =>
                 {
-                    var token = match.Value.ToLower();
-                    var word = "";
-                    var choices = (token == propertyName ? propertyNames : (token == attributeName ? attributes : null));
-                    if (choices == null)
+                    string[] choices = null;
+                    if (token == propertyName)
                     {
-                        failed = true;
+                        choices = propertyNames;
                     }
-                    else
+                    else if (token == attributeName)
                     {
-                        word = choices[rand.Next(choices.Length)];
-                        var index = match.Index + offset;
-                        var difference = word.Length - match.Length;
-                        foreach (var entity in utterance.entities)
-                        {
-                            if (entity.startPos > index)
-                            {
-                                entity.startPos += difference;
-                            }
-                            if (entity.endPos >= index)
-                            {
-                                entity.endPos += difference;
-                            }
-                        }
-                        offset += difference;
+                        choices = attributes;
                     }
-                    return word;
-                });
+                    else if (token == keyword)
+                    {
+                        choices = keywords;
+                    }
+                    return choices == null ? null : choices[rand.Next(choices.Length)];
+                };
+                bool failed;
+                bool hasKeyword = ReplaceNames(utterance, replaceToken, out failed);
                 if (failed)
                 {
-                    // We have no properties or attributes so remove the utterance
                     toRemove.Add(utterance);
+                }
+                if (hasKeyword)
+                {
+                    toAdd.Add(original);
                 }
             }
             foreach (var failed in toRemove)
             {
                 model.utterances.Remove(failed);
             }
+            foreach (var vals in allKeywords.Values.Skip(1))
+            {
+                var keywordChoices = vals.ToArray();
+                Func<string, string> replaceToken = (token) =>
+                {
+                    string[] choices = null;
+                    if (token == propertyName)
+                    {
+                        choices = propertyNames;
+                    }
+                    else if (token == attributeName)
+                    {
+                        choices = attributes;
+                    }
+                    else if (token == keyword)
+                    {
+                        choices = keywordChoices;
+                    }
+                    return choices == null ? null : choices[rand.Next(choices.Length)];
+                };
+                foreach (var add in toAdd)
+                {
+                    bool failed = false;
+                    var copy = new JObject(add);
+                    ReplaceNames(copy, replaceToken, out failed);
+                    if (!failed)
+                    {
+                        model.utterances.Add(copy);
+                    }
+                }
+            }
+        }
+
+        static void AddKeywords(dynamic model, string keywords)
+        {
+            var feature = Feature(model, "Keywords");
+            feature.words = keywords;
         }
 
         static async Task MainAsync(string[] args, Parameters p)
@@ -352,7 +445,10 @@
             {
                 bing.Add("money");
             }
-            ReplaceGenericNames(template, from field in schema.Fields.Values where field.Type.IsNumeric() || field.ValueSynonyms.Any() select field);
+            AddKeywords(template, schema.Keywords);
+            ReplaceGenericNames(template,
+                from field in schema.Fields.Values where field.Type.IsNumeric() || field.ValueSynonyms.Any() select field,
+                schema.Keywords);
             ExpandFacetExamples(template);
 
             if (p.OutputPath != null)

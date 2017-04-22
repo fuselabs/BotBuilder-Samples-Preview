@@ -9,6 +9,89 @@ namespace Search.Dialogs.Tools
 {
     public static class Keywords
     {
+        public class Range
+        {
+            public int Start;
+            public int End;
+            public Range(int start, int end)
+            {
+                Start = start;
+                End = end;
+            }
+        }
+
+        public static IEnumerable<Range> NonEntityRanges(IEnumerable<EntityRecommendation> entities, int length)
+        {
+            var ranges = new List<Range>();
+            ranges.Add(new Range(0, length));
+            foreach (var entity in entities)
+            {
+                if (entity.StartIndex.HasValue)
+                {
+                    int i = 0;
+                    while (i < ranges.Count)
+                    {
+                        var range = ranges[i];
+                        if (range.Start > entity.EndIndex)
+                        {
+                            break;
+                        }
+                        if (range.Start == entity.StartIndex)
+                        {
+                            if (range.End <= entity.EndIndex)
+                            {
+                                // Completely contained 
+                                ranges.RemoveAt(i);
+                            }
+                            else
+                            {
+                                // Remove from start
+                                ranges.RemoveAt(i);
+                                ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
+                                ++i;
+                            }
+                        }
+                        else if (range.End == entity.EndIndex)
+                        {
+                            // Remove from end
+                            ranges.RemoveAt(i);
+                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value));
+                            ++i;
+                        }
+                        else if (range.Start < entity.StartIndex && range.End > entity.EndIndex)
+                        {
+                            // Split
+                            ranges.RemoveAt(i);
+                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value));
+                            ranges.Insert(++i, new Range(entity.EndIndex.Value + 1, range.End));
+                            ++i;
+                        }
+                        else if (range.Start > entity.StartIndex && range.End < entity.EndIndex)
+                        {
+                            // Completely contained
+                            ranges.RemoveAt(i);
+                        }
+                        else
+                        {
+                            ++i;
+                        }
+                    }
+                }
+            }
+            return ranges;
+        }
+
+        public static IEnumerable<string> ExtractPhrases(string originalText, IEnumerable<Range> ranges)
+        {
+            IEnumerable<string> substrings = new List<string>();
+            foreach (var range in ranges)
+            {
+                var str = originalText.Substring(range.Start, range.End - range.Start);
+                substrings = substrings.Union(str.Phrases());
+            }
+            return substrings;
+        }
+
         public static IEnumerable<string> ExtractPhrases(IEnumerable<EntityRecommendation> entities, string originalText)
         {
             var ranges = new[] { new { start = 0, end = originalText.Length } }.ToList();
@@ -76,7 +159,7 @@ namespace Search.Dialogs.Tools
         }
 
         // Break string into phrases where noise words or punctuation are breaks
-        private static IEnumerable<string> Phrases(this string str)
+        public static IEnumerable<string> Phrases(this string str)
         {
             var phrase = new StringBuilder();
             var words = str.Split(' ');
@@ -122,7 +205,7 @@ namespace Search.Dialogs.Tools
             }
         }
 
-        public static FilterExpression GenerateFilterExpression(this IEnumerable<FilterExpression> filters, Operator connector = Operator.And, FilterExpression soFar = null)
+        public static FilterExpression GenerateFilterExpression(this IEnumerable<FilterExpression> filters, FilterOperator connector = FilterOperator.And, FilterExpression soFar = null)
         {
             FilterExpression result = soFar;
             foreach (var filter in filters)

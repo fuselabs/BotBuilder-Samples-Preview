@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Search.Models
 {
-    public enum Operator { None, LessThan, LessThanOrEqual, Equal, GreaterThanOrEqual, GreaterThan, And, Or, Not, FullText };
+    public enum FilterOperator { None, LessThan, LessThanOrEqual, Equal, GreaterThanOrEqual, GreaterThan, And, Or, Not, FullText };
 
 #if !NETSTANDARD1_6
     [Serializable]
@@ -15,18 +15,18 @@ namespace Search.Models
 #endif
     public class FilterExpression
     {
-        public Operator Operator { get; }
+        public FilterOperator Operator { get; }
         public object[] Values { get; }
         public string Description { get; }
 
-        public FilterExpression(string description, Operator op, params object[] values)
+        public FilterExpression(string description, FilterOperator op, params object[] values)
         {
             Description = description;
             Operator = op;
             Values = values;
         }
 
-        public FilterExpression(Operator op, params object[] values) : this(null, op, values) { }
+        public FilterExpression(FilterOperator op, params object[] values) : this(null, op, values) { }
 
         public FilterExpression DeepCopy()
         {
@@ -60,19 +60,19 @@ namespace Search.Models
         public FilterExpression Remove(SearchField field)
         {
             FilterExpression result = null;
-            if (Operator == Operator.And
-                || Operator == Operator.Or)
+            if (Operator == FilterOperator.And
+                || Operator == FilterOperator.Or)
             {
                 var child1 = (Values[0] as FilterExpression).Remove(field);
                 var child2 = (Values[1] as FilterExpression).Remove(field);
                 result = FilterExpression.Combine(child1, child2, Operator, Description);
             }
-            else if (Operator == Operator.Not)
+            else if (Operator == FilterOperator.Not)
             {
                 var child = (Values[0] as FilterExpression).Remove(field);
                 if (child != null)
                 {
-                    result = new FilterExpression(Description, Operator.Not, child);
+                    result = new FilterExpression(Description, FilterOperator.Not, child);
                 }
             }
             else
@@ -85,7 +85,7 @@ namespace Search.Models
             return result;
         }
 
-        public static FilterExpression Combine(FilterExpression child1, FilterExpression child2, Operator combination = Operator.And, string description = null)
+        public static FilterExpression Combine(FilterExpression child1, FilterExpression child2, FilterOperator combination = FilterOperator.And, string description = null)
         {
             FilterExpression filter;
             if (child1 != null)
@@ -105,6 +105,22 @@ namespace Search.Models
             }
             return filter;
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as FilterExpression;
+            return other != null
+                && Operator.Equals(other.Operator)
+                && Values.SequenceEqual(other.Values)
+                && Description.Equals(other.Description)
+                ;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public override string ToString()
         {
             var builder = new StringBuilder();
@@ -151,9 +167,9 @@ namespace Search.Models
 
         private IEnumerable<SearchField> AllFields()
         {
-            if (Operator == Operator.And
-                || Operator == Operator.Or
-                || Operator == Operator.Not)
+            if (Operator == FilterOperator.And
+                || Operator == FilterOperator.Or
+                || Operator == FilterOperator.Not)
             {
                 foreach(FilterExpression child in Values)
                 {
