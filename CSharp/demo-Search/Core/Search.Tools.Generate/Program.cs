@@ -474,8 +474,9 @@
                     {
                         try
                         {
+                            Console.WriteLine("Adding spelling");
                             await app.AddExternalKey(JObject.Parse($@"{{""type"":""BingSpellCheck"", ""value"":""{p.SpellingKey}""}}"), cts.Token);
-                            Console.WriteLine("Added spelling");
+                            await app.PublishAsync(false, cts.Token);
                         }
                         catch (Exception e)
                         {

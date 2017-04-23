@@ -110,6 +110,11 @@ namespace Search.Dialogs
             }
         }
 
+        protected override LuisRequest MakeLuisRequest(string text)
+        {
+            return new LuisRequest(query: text, spellCheck: true);
+        }
+
         protected override IntentRecommendation BestIntentFrom(LuisResult result)
         {
             var best = (from intent in result.Intents
