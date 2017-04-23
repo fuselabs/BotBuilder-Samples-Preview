@@ -91,8 +91,8 @@ namespace Search.Dialogs
         protected async Task PromptAsync(IDialogContext context, string prompt, params Button[] buttons)
         {
             var msg = context.MakeMessage();
-            PromptStyler.Apply(ref msg, prompt, (from button in buttons select button.Label).ToList(),
-                (from button in buttons select button.Message).ToList());
+            PromptStyler.Apply(ref msg, prompt, (from button in buttons select button.Message).ToList(),
+                (from button in buttons select button.Label).ToList());
             LastButtons = buttons;
             await context.PostAsync(msg);
         }
@@ -105,7 +105,7 @@ namespace Search.Dialogs
             }
             else
             {
-                await PromptAsync(context, Prompts.InitialPrompt, Prompts.Browse, Prompts.Quit);
+                await PromptAsync(context, Prompts.InitialPrompt, Prompts.Refine, Prompts.Quit);
                 context.Wait(MessageReceived);
             }
         }
@@ -159,49 +159,56 @@ namespace Search.Dialogs
         public async Task Facet(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
-            var property = result.Entities.First((e) => e.Type == "Properties");
-            Refiner = property?.FirstResolution();
-            if (Refiner == null)
+            if (result.Entities.Count() == 1 && result.Entities.First().Type == "KeywordFacet")
             {
-                await Filter(context, result);
+                await RemoveKeywords(context);
             }
             else
             {
-                var field = SearchClient.Schema.Field(Refiner);
-                var desc = field.Description();
-                var anyButton = new Button(
-                    string.Format(field.Type.IsNumeric() ? Prompts.AnyNumberLabel : Prompts.AnyLabel, desc),
-                    string.Format(Prompts.AnyMessage, desc));
-                var preference = field.FilterPreference;
-                if (preference == PreferredFilter.Facet
-                    || preference == PreferredFilter.MinValue
-                    || preference == PreferredFilter.MaxValue)
+                var property = result.Entities.First((e) => e.Type == "Properties");
+                Refiner = property?.FirstResolution();
+                if (Refiner == null)
                 {
-                    var search = await ExecuteSearchAsync(Refiner);
-                    var choices = from facet in search.Facets[Refiner]
-                                  let facetDesc = FacetDisplay.Describe(facet, ValueCanonicalizers)
-                                  orderby facetDesc ascending
-                                  select new GenericFacet() { Value = facetDesc, Count = facet.Count };
-
-                    var buttons = FacetDisplay.Buttons(preference, choices, field, desc);
-
-                    if (buttons.Any())
-                    {
-                        buttons.Add(anyButton);
-                        await PromptAsync(context, string.Format(Prompts.FacetValuePrompt, desc), buttons.ToArray());
-                        context.Wait(MessageReceived);
-                    }
-                    else
-                    {
-                        await PromptAsync(context, string.Format(Prompts.NoValuesPrompt, desc));
-                        context.Wait(MessageReceived);
-                    }
+                    await Filter(context, result);
                 }
                 else
                 {
-                    await PromptAsync(context, string.Format(Prompts.FilterPrompt, desc), anyButton);
-                    DefaultProperty = Refiner;
-                    context.Wait(MessageReceived);
+                    var field = SearchClient.Schema.Field(Refiner);
+                    var desc = field.Description();
+                    var anyButton = new Button(
+                        string.Format(field.Type.IsNumeric() ? Prompts.AnyNumberLabel : Prompts.AnyLabel, desc),
+                        string.Format(Prompts.AnyMessage, desc));
+                    var preference = field.FilterPreference;
+                    if (preference == PreferredFilter.Facet
+                        || preference == PreferredFilter.MinValue
+                        || preference == PreferredFilter.MaxValue)
+                    {
+                        var search = await ExecuteSearchAsync(Refiner);
+                        var choices = from facet in search.Facets[Refiner]
+                                      let facetDesc = FacetDisplay.Describe(facet, ValueCanonicalizers)
+                                      orderby facetDesc ascending
+                                      select new GenericFacet() { Value = facetDesc, Count = facet.Count };
+
+                        var buttons = FacetDisplay.Buttons(preference, choices, field, desc);
+
+                        if (buttons.Any())
+                        {
+                            buttons.Add(anyButton);
+                            await PromptAsync(context, string.Format(Prompts.FacetValuePrompt, desc), buttons.ToArray());
+                            context.Wait(MessageReceived);
+                        }
+                        else
+                        {
+                            await PromptAsync(context, string.Format(Prompts.NoValuesPrompt, desc));
+                            context.Wait(MessageReceived);
+                        }
+                    }
+                    else
+                    {
+                        await PromptAsync(context, string.Format(Prompts.FilterPrompt, desc), anyButton);
+                        DefaultProperty = Refiner;
+                        context.Wait(MessageReceived);
+                    }
                 }
             }
         }
@@ -225,14 +232,32 @@ namespace Search.Dialogs
             }
         }
 
+        private async Task RemoveKeywords(IDialogContext context)
+        {
+            if (QueryBuilder.Spec.Phrases.Any())
+            {
+                var buttons = new List<Button>();
+                foreach (var phrase in QueryBuilder.Spec.Phrases.OrderBy(k => k))
+                {
+                    buttons.Add(new Button(phrase, string.Format(Prompts.RemoveKeywordMessage, phrase)));
+                }
+                await PromptAsync(context, Prompts.AddOrRemoveKeywordPrompt, buttons.ToArray());
+            }
+            else
+            {
+                await PromptAsync(context, Prompts.AddKeywordPrompt);
+            }
+            context.Wait(MessageReceived);
+        }
+
         [LuisIntent("Filter")]
         public async Task Filter(IDialogContext context, LuisResult result)
         {
             Canonicalizers();
             var query = result.AlteredQuery ?? result.Query;
-            var rangeResolver = new RangeResolver(SearchClient.Schema);
-
             var entities = result.Entities ?? new List<EntityRecommendation>();
+            var nonEntities = Keywords.NonEntityRanges(entities, query.Length).ToList();
+            var rangeResolver = new RangeResolver(SearchClient.Schema);
             var topEntities = TopEntities(entities).ToArray();
             var comparisons = (from entity in topEntities
                                where entity.Type == "Comparison"
@@ -244,7 +269,6 @@ namespace Search.Dialogs
             var removeProperties = from entity in topEntities where entity.Type == "Removal" select entity;
             var removeKeywords = from entity in topEntities where entity.Type == "RemoveKeyword" select entity;
             var bareRemoves = from entity in topEntities where entity.Type == "RemoveKeywords" select entity;
-            var nonEntities = Keywords.NonEntityRanges(entities, query.Length).ToList();
             // Remove property constraints
             foreach (var removal in removeProperties)
             {
@@ -440,7 +464,7 @@ namespace Search.Dialogs
                 }
             }
             await
-                PromptAsync(context, prompt, Prompts.Browse, Prompts.NextPage, Prompts.List, Prompts.Finished,
+                PromptAsync(context, prompt, Prompts.Refine, Prompts.NextPage, Prompts.List, Prompts.Finished,
                     Prompts.Quit, Prompts.StartOver);
             context.Wait(MessageReceived);
         }
@@ -510,7 +534,7 @@ namespace Search.Dialogs
                 await context.PostAsync(message);
                 await
                     PromptAsync(context, Prompts.RefinePrompt, Prompts.Finished, Prompts.Quit, Prompts.StartOver,
-                        Prompts.Browse);
+                        Prompts.Refine);
             }
             context.Wait(MessageReceived);
         }
@@ -524,20 +548,28 @@ namespace Search.Dialogs
             if (refiners == null)
             {
                 var defaultRefiners = new List<string>();
-                foreach (var field in SearchClient.Schema.Fields.Values)
+                foreach (var field in SearchClient.Schema.Fields.Values.OrderBy(f => f.Name))
                 {
                     if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
                     {
                         defaultRefiners.Add(field.Name);
                     }
                 }
+                defaultRefiners.Add(Prompts.Keyword.Label);
                 refiners = defaultRefiners;
             }
             var buttons = new List<Button>();
             foreach (var refiner in refiners)
             {
-                var field = SearchClient.Schema.Field(refiner);
-                buttons.Add(new Button(field.Description()));
+                if (refiner == Prompts.Keyword.Label)
+                {
+                    buttons.Add(Prompts.Keyword);
+                }
+                else
+                {
+                    var field = SearchClient.Schema.Field(refiner);
+                    buttons.Add(new Button(field.Description()));
+                }
             }
             Refiners = buttons.ToArray();
         }

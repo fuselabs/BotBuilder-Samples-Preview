@@ -164,6 +164,15 @@
           ]
         }
       ]
+    },
+    {
+      "name": "KeywordFacet",
+      "subLists": [
+        {
+          "canonicalForm": "keyword",
+          "list": [ "keyword", "keywords" ]
+        }
+      ]
     }
   ],
   "bing_entities": [],
@@ -172,7 +181,7 @@
     {
       "name": "Keywords",
       "mode": true,
-      "words": "keyword",
+      "words": "keywordname",
       "activated": true
     }
   ],
@@ -1356,13 +1365,13 @@
       ]
     },
     {
-      "text": "between 2 & 4 propertyname and remove keyword",
+      "text": "between 2 & 4 propertyname and remove keywordname",
       "intent": "Filter",
       "entities": [
         {
           "entity": "RemoveKeyword",
           "startPos": 31,
-          "endPos": 44
+          "endPos": 48
         },
         {
           "entity": "Comparison",
@@ -1382,60 +1391,60 @@
         {
           "entity": "Keyword",
           "startPos": 38,
-          "endPos": 44
+          "endPos": 48
         }
       ]
     },
     {
-      "text": "remove keyword and at least 3 propertyname",
+      "text": "remove keywordname and at least 3 propertyname",
       "intent": "Filter",
       "entities": [
         {
           "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 13
+          "endPos": 17
         },
         {
           "entity": "Comparison",
-          "startPos": 19,
-          "endPos": 41
+          "startPos": 23,
+          "endPos": 45
         },
         {
           "entity": "Value",
-          "startPos": 28,
-          "endPos": 28
+          "startPos": 32,
+          "endPos": 32
         },
         {
           "entity": "Keyword",
           "startPos": 7,
-          "endPos": 13
+          "endPos": 17
         }
       ]
     },
     {
-      "text": "remove keyword",
+      "text": "remove keywordname",
       "intent": "Filter",
       "entities": [
         {
           "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 13
+          "endPos": 17
         },
         {
           "entity": "Keyword",
           "startPos": 7,
-          "endPos": 13
+          "endPos": 17
         }
       ]
     },
     {
-      "text": "keyword",
+      "text": "keywordname",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Keyword",
           "startPos": 0,
-          "endPos": 6
+          "endPos": 10
         }
       ]
     },
@@ -1544,6 +1553,11 @@
     },
     {
       "text": "propertyname",
+      "intent": "Facet",
+      "entities": []
+    },
+    {
+      "text": "keyword",
       "intent": "Facet",
       "entities": []
     },

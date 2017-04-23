@@ -7,10 +7,12 @@ namespace Search.Dialogs.UserInteraction
     {
         // Prompts
         public const string InitialPrompt = "Please describe in your own words what you would like to find?";
-        public const string RefinePrompt = "Refine your search";
-        public const string FacetPrompt = "What facet would you like to refine by?";
+        public const string RefinePrompt = "Refine your search or select an operation.";
+        public const string FacetPrompt = "What would you like to refine by?";
         public const string FacetValuePrompt = "What value for {0} would you like to filter by?";
-        public const string NotUnderstoodPrompt = "I did not understand what you said";
+        public const string AddKeywordPrompt = "Type a keyword phrase to search for.";
+        public const string AddOrRemoveKeywordPrompt = "Type a keyword phrase to search for, or select what you would like to remove.";
+        public const string NotUnderstoodPrompt = "I did not understand what you said.";
         public const string UnknownItemPrompt = "That is not an item in the current results.";
         public const string AddedToListPrompt = "{0} was added to your list.";
         public const string RemovedFromListPrompt = "{0} was removed from your list.";
@@ -21,7 +23,7 @@ namespace Search.Dialogs.UserInteraction
         public const string NoResultsPrompt = "Your search found no results so I undid your last constraint.  You can refine again.";
 
         // Buttons
-        public readonly Button Browse = new Button("Browse");
+        public readonly Button Refine = new Button("Refine");
         public readonly Button NextPage = new Button("Next Page");
         public readonly Button List = new Button("List");
         public readonly Button Add = new Button("Add to List", "ADD:{0}");
@@ -29,6 +31,7 @@ namespace Search.Dialogs.UserInteraction
         public readonly Button Quit = new Button("Quit");
         public readonly Button Finished = new Button("Finished");
         public readonly Button StartOver = new Button("Start Over");
+        public readonly Button Keyword = new Button("Keyword");
 
         // Status
         public const string Filter = "**Filter**: {0}";
@@ -40,9 +43,10 @@ namespace Search.Dialogs.UserInteraction
         public const string Ascending = "Ascending";
         public const string Descending = "Descending";
 
-        // Facet messages
+        // Messages
         public const string AnyNumberLabel = "Any number of {0}";
         public const string AnyLabel = "Any {0}";
         public const string AnyMessage = "Any";
+        public const string RemoveKeywordMessage = "remove {0}";
     }
 }

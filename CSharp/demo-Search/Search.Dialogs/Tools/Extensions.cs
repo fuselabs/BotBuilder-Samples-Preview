@@ -47,7 +47,10 @@ namespace Search.Dialogs.Tools
                             {
                                 // Remove from start
                                 ranges.RemoveAt(i);
-                                ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
+                                if (entity.EndIndex.Value + 1 < range.End)
+                                {
+                                    ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
+                                }
                                 ++i;
                             }
                         }

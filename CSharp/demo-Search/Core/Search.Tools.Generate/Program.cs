@@ -19,7 +19,7 @@
     {
         private const string propertyName = "propertyname";
         private const string attributeName = "attributename";
-        private const string keyword = "keyword";
+        private const string keyword = "keywordname";
         private const string SubscriptionKey = "LUISSubscriptionKey";
 
         static void Clear(dynamic model)

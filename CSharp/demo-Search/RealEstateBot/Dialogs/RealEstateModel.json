@@ -647,6 +647,18 @@
           ]
         }
       ]
+    },
+    {
+      "name": "KeywordFacet",
+      "subLists": [
+        {
+          "canonicalForm": "keyword",
+          "list": [
+            "keyword",
+            "keywords"
+          ]
+        }
+      ]
     }
   ],
   "bing_entities": [
@@ -2026,6 +2038,11 @@
     {
       "text": "reset",
       "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "keyword",
+      "intent": "Facet",
       "entities": []
     },
     {
