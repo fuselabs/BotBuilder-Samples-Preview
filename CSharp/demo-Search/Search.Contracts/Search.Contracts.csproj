@@ -66,9 +66,6 @@
     <Compile Include="..\Core\Search.Contracts\Models\SearchHit.cs">
       <Link>Models\SearchHit.cs</Link>
     </Compile>
-    <Compile Include="..\Core\Search.Contracts\Models\SearchQueryBuilder.cs">
-      <Link>Models\SearchQueryBuilder.cs</Link>
-    </Compile>
     <Compile Include="..\Core\Search.Contracts\Models\SearchSchema.cs">
       <Link>Models\SearchSchema.cs</Link>
     </Compile>

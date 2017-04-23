@@ -14,12 +14,27 @@ namespace Search.Models
 #endif
     public class SearchSpec
     {
+        private const int DefaultHitsPerPage = 5;
+        private const int DefaultMaxFacets = 100;
+
+        public int HitsPerPage { get; set; } = DefaultHitsPerPage;
+        public int MaxFacets { get; set; } = DefaultMaxFacets;
         public List<string> Phrases { get; set; } = new List<string>();
         public FilterExpression Filter { get; set; }
         public List<SortKey> Sort { get; set; } = new List<SortKey>();
         public List<string> Selection { get; set; } = new List<string>();
-        public int? Skip { get; set; }
-        public int? Top { get; set; }
+        public int Skip { get; set; }
+
+        public int PageNumber
+        {
+            get { return Skip / HitsPerPage; }
+            set { Skip = value * HitsPerPage;  }
+        }
+
+        public bool HasNoConstraints
+        {
+            get { return Filter == null && !Phrases.Any(); }
+        }
 
         public void Remove(SearchField field)
         {
@@ -43,20 +58,19 @@ namespace Search.Models
             }
             this.Sort.AddRange(other.Sort);
             this.Selection.AddRange(other.Selection);
-            this.Skip = Merge(this.Skip, other.Skip);
-            this.Top = Merge(this.Top, other.Top);
         }
 
         public SearchSpec DeepCopy()
         {
             return new SearchSpec
             {
+                HitsPerPage = this.HitsPerPage,
+                MaxFacets = this.MaxFacets,
                 Filter = this.Filter?.DeepCopy(),
                 Phrases = this.Phrases.ToList(),
                 Sort = this.Sort.ToList(),
                 Selection = this.Selection.ToList(),
                 Skip = this.Skip,
-                Top = this.Top
             };
         }
 
@@ -65,7 +79,7 @@ namespace Search.Models
             var other = obj as SearchSpec;
             return other != null
                 && Skip.Equals(other.Skip)
-                && Top.Equals(other.Top)
+                && HitsPerPage.Equals(other.HitsPerPage)
                 && (Filter == other.Filter || (Filter != null && Filter.Equals(other.Filter)))
                 && Phrases.SequenceEqual(other.Phrases)
                 && Sort.SequenceEqual(other.Sort)
@@ -76,23 +90,6 @@ namespace Search.Models
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        private int? Merge(int? current, int? newVal)
-        {
-            int? result = current;
-            if (current.HasValue)
-            {
-                if (newVal.HasValue)
-                {
-                    result = Math.Max(current.Value, newVal.Value);
-                }
-            }
-            else if (newVal.HasValue)
-            {
-                result = newVal;
-            }
-            return result;
         }
     }
 }

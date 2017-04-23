@@ -112,7 +112,7 @@ namespace Search.Models
             return other != null
                 && Operator.Equals(other.Operator)
                 && Values.SequenceEqual(other.Values)
-                && Description.Equals(other.Description)
+                && (Description == other.Description || (Description != null && Description.Equals(other.Description)))
                 ;
         }
 

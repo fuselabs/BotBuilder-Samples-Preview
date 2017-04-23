@@ -6,6 +6,6 @@ namespace Search.Services
     public interface ISearchClient
     {
         SearchSchema Schema { get; }
-        Task<GenericSearchResult> SearchAsync(SearchQueryBuilder queryBuilder, string refiner = null);
+        Task<GenericSearchResult> SearchAsync(SearchSpec spec, string refiner = null);
     }
 }

@@ -26,8 +26,8 @@ namespace RealEstateBot.Dialogs
         private const string QueryKey = "LastQuery";
         private const string LUISKeyKey = "LUISSubscriptionKey";
         private readonly ISearchClient SearchClient;
-        private SearchQueryBuilder Query = new SearchQueryBuilder();
-        private SearchQueryBuilder LastQuery = null;
+        private SearchSpec Query = new SearchSpec();
+        private SearchSpec LastQuery = null;
         private string LUISKey;
         private string ModelId;
 
@@ -66,7 +66,7 @@ namespace RealEstateBot.Dialogs
                         using (var stream = new MemoryStream(lastQuery))
                         {
                             var formatter = new BinaryFormatter();
-                            this.LastQuery = (SearchQueryBuilder)formatter.Deserialize(stream);
+                            this.LastQuery = (SearchSpec)formatter.Deserialize(stream);
                         }
                         await context.PostAsync($@"**Last Search**
 
@@ -109,7 +109,7 @@ namespace RealEstateBot.Dialogs
             }
             else
             {
-                this.Query = new SearchQueryBuilder();
+                this.Query = new SearchSpec();
             }
             this.LastQuery = null;
             Search(context);
@@ -120,7 +120,7 @@ namespace RealEstateBot.Dialogs
             context.Call(new SearchDialog(new Prompts(),
                 this.SearchClient, this.LUISKey, this.ModelId,
                 multipleSelection: true,
-                queryBuilder: this.Query,
+                query: this.Query,
                 refiners: new string[]
                 {
                     "type", "beds", "baths", "sqft", "price",
@@ -142,7 +142,7 @@ namespace RealEstateBot.Dialogs
             {
                 await context.PostAsync($"Sorry you could not find anything you liked--maybe next time!");
             }
-            if (this.Query.HasNoConstraints())
+            if (this.Query.HasNoConstraints)
             {
                 // Reset name and query if no query
                 context.UserData.RemoveValue(NameKey);

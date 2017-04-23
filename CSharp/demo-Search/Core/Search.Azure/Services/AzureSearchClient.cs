@@ -49,17 +49,17 @@ namespace Search.Azure.Services
             searchClient = client.Indexes.GetClient(indexName);
         }
 
-        public async Task<GenericSearchResult> SearchAsync(SearchQueryBuilder queryBuilder, string refiner)
+        public async Task<GenericSearchResult> SearchAsync(SearchSpec spec, string refiner)
         {
-            var oldFilter = queryBuilder.Spec.Filter;
+            var oldFilter = spec.Filter;
             if (refiner != null && oldFilter != null)
             {
-                queryBuilder.Spec.Filter = queryBuilder.Spec.Filter.Remove(Schema.Field(refiner));
+                spec.Filter = spec.Filter.Remove(Schema.Field(refiner));
             }
             string search;
-            var parameters = BuildSearch(queryBuilder, refiner, out search);
+            var parameters = BuildSearch(spec, refiner, out search);
             var documentSearchResult = await searchClient.Documents.SearchAsync(search, parameters);
-            queryBuilder.Spec.Filter = oldFilter;
+            spec.Filter = oldFilter;
             return mapper.Map(documentSearchResult);
         }
 
@@ -165,25 +165,25 @@ namespace Search.Azure.Services
             return filter;
         }
 
-        private SearchParameters BuildSearch(SearchQueryBuilder queryBuilder, string facet, out string search)
+        private SearchParameters BuildSearch(SearchSpec spec, string facet, out string search)
         {
             var parameters = new SearchParameters
             {
-                Top = queryBuilder.HitsPerPage,
-                Skip = queryBuilder.PageNumber*queryBuilder.HitsPerPage,
+                Top = spec.HitsPerPage,
+                Skip = spec.Skip,
                 SearchMode = SearchMode.Any
             };
 
             if (facet != null)
             {
-                parameters.Facets = new List<string> {$"{facet},count:{queryBuilder.MaxFacets}"};
+                parameters.Facets = new List<string> {$"{facet},count:{spec.MaxFacets}"};
             }
 
             var searchExpressions = new List<FilterExpression>();
-            var filter = ExtractFullText(queryBuilder.Spec.Filter, searchExpressions);
+            var filter = ExtractFullText(spec.Filter, searchExpressions);
             parameters.QueryType = QueryType.Full;
             parameters.Filter = BuildFilter(filter);
-            search = BuildSearchFilter(queryBuilder.Spec.Phrases, searchExpressions);
+            search = BuildSearchFilter(spec.Phrases, searchExpressions);
             return parameters;
         }
 

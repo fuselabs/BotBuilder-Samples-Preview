@@ -44,8 +44,8 @@ namespace Search.Dialogs
 
         protected string DefaultProperty = null;
         protected Button[] LastButtons = null;
-        protected SearchQueryBuilder LastQueryBuilder;
-        protected SearchQueryBuilder QueryBuilder;
+        protected SearchSpec LastQuery;
+        protected SearchSpec Query;
         protected string Refiner = null;
         protected bool SkipIntro = false;
 
@@ -64,7 +64,7 @@ namespace Search.Dialogs
         #region Constructor
 
         public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model,
-            SearchQueryBuilder queryBuilder = null,
+            SearchSpec query = null,
             PromptStyler promptStyler = null,
             ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
@@ -74,9 +74,9 @@ namespace Search.Dialogs
         {
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out Prompts, nameof(Prompts), prompts);
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out SearchClient, nameof(searchClient), searchClient);
-            SkipIntro = queryBuilder != null && !queryBuilder.HasNoConstraints();
-            QueryBuilder = queryBuilder ?? new SearchQueryBuilder();
-            LastQueryBuilder = new SearchQueryBuilder();
+            SkipIntro = query != null && !query.HasNoConstraints;
+            Query = query ?? new SearchSpec();
+            LastQuery = new SearchSpec();
             HitStyler = searchHitStyler ?? new SearchHitStyler();
             PromptStyler = promptStyler ?? new PromptStyler(PromptStyle.Keyboard);
             MultipleSelection = multipleSelection;
@@ -234,10 +234,10 @@ namespace Search.Dialogs
 
         private async Task RemoveKeywords(IDialogContext context)
         {
-            if (QueryBuilder.Spec.Phrases.Any())
+            if (Query.Phrases.Any())
             {
                 var buttons = new List<Button>();
-                foreach (var phrase in QueryBuilder.Spec.Phrases.OrderBy(k => k))
+                foreach (var phrase in Query.Phrases.OrderBy(k => k))
                 {
                     buttons.Add(new Button(phrase, string.Format(Prompts.RemoveKeywordMessage, phrase)));
                 }
@@ -278,10 +278,10 @@ namespace Search.Dialogs
                         && entity.StartIndex >= removal.StartIndex
                         && entity.EndIndex <= removal.EndIndex)
                     {
-                        if (QueryBuilder.Spec.Filter != null)
+                        if (Query.Filter != null)
                         {
-                            QueryBuilder.Spec.Filter =
-                                QueryBuilder.Spec.Filter.Remove(SearchClient.Schema.Field(entity.FirstResolution()));
+                            Query.Filter =
+                                Query.Filter.Remove(SearchClient.Schema.Field(entity.FirstResolution()));
                         }
                         else
                         {
@@ -327,7 +327,7 @@ namespace Search.Dialogs
                 }
             }
 
-            if (QueryBuilder.Spec.Phrases != null && (removeKeywords.Any() || removePhrases.Any()))
+            if (Query.Phrases != null && (removeKeywords.Any() || removePhrases.Any()))
             {
                 // Remove keywords from the filter
                 foreach (var removeKeyword in removeKeywords)
@@ -342,7 +342,7 @@ namespace Search.Dialogs
                         }
                     }
                 }
-                QueryBuilder.Spec.Phrases = QueryBuilder.Spec.Phrases.Except(removePhrases).ToList();
+                Query.Phrases = Query.Phrases.Except(removePhrases).ToList();
             }
 
             foreach (var entity in entities)
@@ -360,16 +360,16 @@ namespace Search.Dialogs
             var filter = FilterExpressionBuilder.Build(ranges, FilterOperator.And);
             filter = attributes.GenerateFilterExpression(FilterOperator.And, filter);
 
-            if (QueryBuilder.Spec.Filter != null)
+            if (Query.Filter != null)
             {
-                QueryBuilder.Spec.Filter = FilterExpression.Combine(QueryBuilder.Spec.Filter.Remove(filter), filter,
+                Query.Filter = FilterExpression.Combine(Query.Filter.Remove(filter), filter,
                     FilterOperator.And);
             }
             else
             {
-                QueryBuilder.Spec.Filter = filter;
+                Query.Filter = filter;
             }
-            QueryBuilder.Spec.Phrases = QueryBuilder.Spec.Phrases.Union(addKeywords).ToList();
+            Query.Phrases = Query.Phrases.Union(addKeywords).ToList();
             DefaultProperty = null;
             await Search(context);
         }
@@ -377,7 +377,7 @@ namespace Search.Dialogs
         [LuisIntent("NextPage")]
         public async Task NextPage(IDialogContext context, LuisResult result)
         {
-            QueryBuilder.PageNumber++;
+            Query.PageNumber++;
             await Search(context);
         }
 
@@ -397,7 +397,7 @@ namespace Search.Dialogs
         [LuisIntent("StartOver")]
         public async Task StartOver(IDialogContext context, LuisResult result)
         {
-            QueryBuilder.Reset();
+            Query = new SearchSpec();
             await Search(context);
         }
 
@@ -421,7 +421,7 @@ namespace Search.Dialogs
 
         private string SearchDescription()
         {
-            var description = QueryBuilder.Description();
+            var description = Query.Description();
             if (Selected.Any())
             {
                 var builder = new StringBuilder();
@@ -436,7 +436,7 @@ namespace Search.Dialogs
         public async Task Search(IDialogContext context)
         {
             var prompt = Prompts.RefinePrompt;
-            if (QueryBuilder.Spec.Equals(LastQueryBuilder.Spec))
+            if (Query.Equals(LastQuery))
             {
                 prompt = Prompts.NotUnderstoodPrompt;
             }
@@ -445,7 +445,7 @@ namespace Search.Dialogs
                 var response = await ExecuteSearchAsync();
                 if (!response.Results.Any())
                 {
-                    QueryBuilder = LastQueryBuilder;
+                    Query = LastQuery;
                     prompt = Prompts.NoResultsPrompt;
                 }
                 else
@@ -459,8 +459,8 @@ namespace Search.Dialogs
                         Prompts.Add
                     );
                     await context.PostAsync(message);
-                    LastQueryBuilder = QueryBuilder.DeepCopy();
-                    LastQueryBuilder.PageNumber = 0;
+                    LastQuery = Query.DeepCopy();
+                    LastQuery.PageNumber = 0;
                 }
             }
             await
@@ -471,7 +471,7 @@ namespace Search.Dialogs
 
         protected async Task<GenericSearchResult> ExecuteSearchAsync(string facet = null)
         {
-            return await SearchClient.SearchAsync(QueryBuilder, facet);
+            return await SearchClient.SearchAsync(Query, facet);
         }
 
         #endregion Search
@@ -483,7 +483,7 @@ namespace Search.Dialogs
             var hit = Found.SingleOrDefault(h => h.Key == selection);
             if (hit == null)
             {
-                await PromptAsync(context, Prompts.UnknownItemPrompt);
+                await PromptAsync(context, Prompts.UnknownItemPrompt, LastButtons);
                 context.Wait(MessageReceived);
             }
             else
@@ -495,7 +495,7 @@ namespace Search.Dialogs
 
                 if (MultipleSelection)
                 {
-                    await PromptAsync(context, string.Format(Prompts.AddedToListPrompt, hit.Title));
+                    await PromptAsync(context, string.Format(Prompts.AddedToListPrompt, hit.Title), LastButtons);
                     context.Wait(MessageReceived);
                 }
                 else
@@ -507,17 +507,24 @@ namespace Search.Dialogs
 
         protected virtual async Task RemoveSelectedItem(IDialogContext context, string selection)
         {
-            var hit = Found.SingleOrDefault(h => h.Key == selection);
+            var hit = Selected.SingleOrDefault(h => h.Key == selection);
             if (hit == null)
             {
-                await PromptAsync(context, Prompts.UnknownItemPrompt);
+                await PromptAsync(context, Prompts.UnknownItemPrompt, LastButtons);
                 context.Wait(MessageReceived);
             }
             else
             {
                 await PromptAsync(context, string.Format(Prompts.RemovedFromListPrompt, hit.Title));
                 Selected.Remove(hit);
-                await ShowList(context);
+                if (Selected.Any())
+                {
+                    await ShowList(context);
+                }
+                else
+                {
+                    await PromptAsync(context, Prompts.RefinePrompt, LastButtons);
+                }
             }
         }
 

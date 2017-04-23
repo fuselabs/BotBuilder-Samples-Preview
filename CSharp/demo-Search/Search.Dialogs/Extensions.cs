@@ -12,12 +12,12 @@ namespace Search.Dialogs
 {
     public static partial class Extensions
     {
-        public static string Description(this SearchQueryBuilder query)
+        public static string Description(this SearchSpec spec)
         {
             var builder = new StringBuilder();
-            var filter = query.Spec.Filter;
-            var phrases = query.Spec.Phrases;
-            var sorts = query.Spec.Sort;
+            var filter = spec.Filter;
+            var phrases = spec.Phrases;
+            var sorts = spec.Sort;
             if (filter != null)
             {
                 builder.AppendLine(string.Format(Prompts.Filter, filter.ToUserFriendlyString()));
@@ -48,9 +48,9 @@ namespace Search.Dialogs
                 builder.AppendLine(string.Format(Prompts.Sort, sortBuilder.ToString()));
                 builder.AppendLine();
             }
-            if (query.PageNumber > 0)
+            if (spec.PageNumber > 0)
             {
-                builder.AppendLine(string.Format(Prompts.Page, query.PageNumber));
+                builder.AppendLine(string.Format(Prompts.Page, spec.PageNumber));
                 builder.AppendLine();
             }
             return builder.ToString();
