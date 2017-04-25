@@ -63,14 +63,15 @@ namespace Search.Dialogs
 
         #region Constructor
 
-        public SearchDialog(Prompts prompts, ISearchClient searchClient, string key, string model,
+        public SearchDialog(Prompts prompts, ISearchClient searchClient,
+            LuisModelAttribute luis,
             SearchSpec query = null,
             PromptStyler promptStyler = null,
             ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
             IEnumerable<string> refiners = null,
             bool useSuggestedActions = true)
-            : base(new LuisService(new LuisModelAttribute(model, key)))
+            : base(new LuisService(luis))
         {
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out Prompts, nameof(Prompts), prompts);
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out SearchClient, nameof(searchClient), searchClient);
@@ -108,11 +109,6 @@ namespace Search.Dialogs
                 await PromptAsync(context, Prompts.InitialPrompt, Prompts.Refine, Prompts.Quit);
                 context.Wait(MessageReceived);
             }
-        }
-
-        protected override LuisRequest MakeLuisRequest(string text)
-        {
-            return new LuisRequest(query: text, spellCheck: true);
         }
 
         protected override IntentRecommendation BestIntentFrom(LuisResult result)

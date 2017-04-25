@@ -16,6 +16,7 @@ using Search.Utilities;
 using Microsoft.Bot.Connector;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.LUIS.API;
+using Microsoft.Bot.Builder.Luis;
 
 namespace RealEstateBot.Dialogs
 {
@@ -118,7 +119,8 @@ namespace RealEstateBot.Dialogs
         private void Search(IDialogContext context)
         {
             context.Call(new SearchDialog(new Prompts(),
-                this.SearchClient, this.LUISKey, this.ModelId,
+                this.SearchClient, 
+                new LuisModelAttribute(this.ModelId, this.LUISKey, spellCheck:true),
                 multipleSelection: true,
                 query: this.Query,
                 refiners: new string[]
