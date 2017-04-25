@@ -36,8 +36,9 @@ namespace Search.Dialogs.UserInteraction
                 foreach (var choice in choices)
                 {
                     buttons.Add(
-                        new Button(field.ValueSynonyms.Any() ? $"{choice.Value}" : $"{choice.Value} {desc}",
-                            $"{choice.Value} ({choice.Count})"));
+                        new Button(
+                            $"{choice.Value} ({choice.Count})",
+                            field.ValueSynonyms.Any() ? $"{choice.Value}" : $"{choice.Value} {desc}"));
                 }
             }
             else if (preference == PreferredFilter.MinValue)
@@ -45,7 +46,7 @@ namespace Search.Dialogs.UserInteraction
                 var total = choices.Sum((choice) => choice.Count);
                 foreach (var choice in choices)
                 {
-                    buttons.Add(new Button($"{choice.Value}+ {desc}", $"{choice.Value}+ ({total})"));
+                    buttons.Add(new Button($"{choice.Value}+ ({total})", $"{choice.Value}+ {desc}"));
                     total -= choice.Count;
                 }
             }
@@ -55,7 +56,7 @@ namespace Search.Dialogs.UserInteraction
                 foreach (var choice in choices)
                 {
                     total += choice.Count;
-                    buttons.Add(new Button($"<= {choice.Value} {desc}", $"<= {choice.Value} ({total})"));
+                    buttons.Add(new Button($"<= {choice.Value} ({total})", $"<= {choice.Value} {desc}"));
                 }
             }
             return buttons;
