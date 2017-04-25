@@ -72,7 +72,7 @@ namespace RealEstateBot.Dialogs
                         await context.PostAsync($@"**Last Search**
 
 {this.LastQuery.Description()}");
-                        context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1), UseLastSearch);
+                        context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1, promptStyle:PromptStyle.Keyboard), UseLastSearch);
                     }
                     else
                     {

@@ -23,7 +23,7 @@ namespace Search.Dialogs.Tools
         public static IEnumerable<Range> NonEntityRanges(IEnumerable<EntityRecommendation> entities, int length)
         {
             var ranges = new List<Range>();
-            ranges.Add(new Range(0, length));
+            ranges.Add(new Range(0, length - 1));
             foreach (var entity in entities)
             {
                 if (entity.StartIndex.HasValue)
@@ -47,7 +47,7 @@ namespace Search.Dialogs.Tools
                             {
                                 // Remove from start
                                 ranges.RemoveAt(i);
-                                if (entity.EndIndex.Value + 1 < range.End)
+                                if (range.End > entity.EndIndex.Value)
                                 {
                                     ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
                                 }
@@ -58,14 +58,14 @@ namespace Search.Dialogs.Tools
                         {
                             // Remove from end
                             ranges.RemoveAt(i);
-                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value));
+                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
                             ++i;
                         }
                         else if (range.Start < entity.StartIndex && range.End > entity.EndIndex)
                         {
                             // Split
                             ranges.RemoveAt(i);
-                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value));
+                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
                             ranges.Insert(++i, new Range(entity.EndIndex.Value + 1, range.End));
                             ++i;
                         }
@@ -89,7 +89,7 @@ namespace Search.Dialogs.Tools
             IEnumerable<string> substrings = new List<string>();
             foreach (var range in ranges)
             {
-                var str = originalText.Substring(range.Start, range.End - range.Start);
+                var str = originalText.Substring(range.Start, range.End - range.Start + 1);
                 substrings = substrings.Union(str.Phrases());
             }
             return substrings;
