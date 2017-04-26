@@ -17,6 +17,34 @@ namespace Search.Models
 #endif
     public class SearchField
     {
+        private sealed class TypeConverter : JsonConverter
+
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(Type);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                var fullTypeName = (string) reader.Value;
+                // Use the raw type name to bridge between .net core and normal .net
+                var typeName = fullTypeName.Substring(0, fullTypeName.IndexOf(","));
+                var type = Type.GetType(typeName);
+                if (type == null)
+                {
+                    type = Type.GetType(fullTypeName);
+                }
+                return type;
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                var type = (Type)value;
+                writer.WriteValue(type.AssemblyQualifiedName);
+            }
+        }
+
         public SearchField(string name, params string[] alternatives)
         {
             Name = name;
@@ -34,7 +62,10 @@ namespace Search.Models
         }
 
         public string Name { get; set; }
+
+        [JsonConverter(typeof(TypeConverter))]
         public Type Type { get; set; } = typeof(string);
+
         public bool IsFacetable { get; set; }
         public bool IsFilterable { get; set; }
         public bool IsKey { get; set; }

@@ -7,7 +7,7 @@
   "Fields": {
     "listingId": {
       "Name": "listingId",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": false,
       "IsFilterable": false,
       "IsKey": true,
@@ -25,7 +25,7 @@
     },
     "beds": {
       "Name": "beds",
-      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -46,7 +46,7 @@
     },
     "baths": {
       "Name": "baths",
-      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -67,7 +67,7 @@
     },
     "description": {
       "Name": "description",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": false,
       "IsFilterable": false,
       "IsKey": false,
@@ -85,7 +85,7 @@
     },
     "sqft": {
       "Name": "sqft",
-      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -107,7 +107,7 @@
     },
     "daysOnMarket": {
       "Name": "daysOnMarket",
-      "Type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -125,7 +125,7 @@
     },
     "status": {
       "Name": "status",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -156,7 +156,7 @@
     },
     "source": {
       "Name": "source",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -175,7 +175,7 @@
     },
     "number": {
       "Name": "number",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": false,
       "IsFilterable": false,
       "IsKey": false,
@@ -192,7 +192,7 @@
     },
     "street": {
       "Name": "street",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -211,7 +211,7 @@
     },
     "unit": {
       "Name": "unit",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": false,
       "IsFilterable": false,
       "IsKey": false,
@@ -229,7 +229,7 @@
     },
     "type": {
       "Name": "type",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -256,7 +256,7 @@
     },
     "city": {
       "Name": "city",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -274,7 +274,7 @@
     },
     "cityPhonetic": {
       "Name": "cityPhonetic",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -290,7 +290,7 @@
     },
     "district": {
       "Name": "district",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -308,7 +308,7 @@
     },
     "region": {
       "Name": "region",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -679,7 +679,7 @@
     },
     "zipcode": {
       "Name": "zipcode",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -695,7 +695,7 @@
     },
     "countryCode": {
       "Name": "countryCode",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -733,7 +733,7 @@
     },
     "price": {
       "Name": "price",
-      "Type": "System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.Int64, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": true,
       "IsFilterable": true,
       "IsKey": false,
@@ -753,7 +753,7 @@
     },
     "thumbnail": {
       "Name": "thumbnail",
-      "Type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "Type": "System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
       "IsFacetable": false,
       "IsFilterable": false,
       "IsKey": false,
