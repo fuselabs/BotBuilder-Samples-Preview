@@ -34,49 +34,33 @@ namespace Search.Dialogs.Tools
                         var range = ranges[i];
                         if (range.Start > entity.EndIndex)
                         {
+                            // No overlap and since ranges are in ascending order we are done
                             break;
                         }
-                        if (range.Start == entity.StartIndex)
+                        else if (range.Start >= entity.StartIndex && range.End <= entity.EndIndex)
                         {
-                            if (range.End <= entity.EndIndex)
-                            {
-                                // Completely contained 
-                                ranges.RemoveAt(i);
-                            }
-                            else
-                            {
-                                // Remove from start
-                                ranges.RemoveAt(i);
-                                if (range.End > entity.EndIndex.Value)
-                                {
-                                    ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
-                                }
-                                ++i;
-                            }
-                        }
-                        else if (range.End == entity.EndIndex)
-                        {
-                            // Remove from end
+                            // Completely contained by entity, so remove
                             ranges.RemoveAt(i);
-                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
+                        }
+                        else if (range.End < entity.StartIndex)
+                        {
+                            // Range is before entity
                             ++i;
-                        }
-                        else if (range.Start < entity.StartIndex && range.End > entity.EndIndex)
-                        {
-                            // Split
-                            ranges.RemoveAt(i);
-                            ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
-                            ranges.Insert(++i, new Range(entity.EndIndex.Value + 1, range.End));
-                            ++i;
-                        }
-                        else if (range.Start > entity.StartIndex && range.End < entity.EndIndex)
-                        {
-                            // Completely contained
-                            ranges.RemoveAt(i);
                         }
                         else
                         {
-                            ++i;
+                            // We have overlap, so replace
+                            ranges.RemoveAt(i);
+                            if (range.Start < entity.StartIndex)
+                            {
+                                ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
+                                ++i;
+                            }
+                            if (range.End > entity.EndIndex)
+                            {
+                                ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
+                                ++i;
+                            }
                         }
                     }
                 }
