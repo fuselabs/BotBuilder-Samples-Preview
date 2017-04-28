@@ -177,8 +177,8 @@ namespace Search.Dialogs
                     var field = SearchClient.Schema.Field(Refiner);
                     var desc = field.Description();
                     var anyButton = new Button(
-                        string.Format(field.Type.IsNumeric() ? Prompts.AnyNumberLabel : Prompts.AnyLabel, desc),
-                        string.Format(Prompts.AnyMessage, desc));
+                        string.Format(Prompts.AnyMessage, desc),
+                        string.Format(field.Type.IsNumeric() ? Prompts.AnyNumberLabel : Prompts.AnyLabel, desc));
                     var preference = field.FilterPreference;
                     if (preference == PreferredFilter.Facet
                         || preference == PreferredFilter.MinValue
