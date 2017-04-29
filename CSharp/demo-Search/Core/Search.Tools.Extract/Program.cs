@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Collections;
+using Microsoft.Spatial;
 
 namespace Search.Tools.Extract
 {
@@ -167,7 +168,7 @@ namespace Search.Tools.Extract
             }
             if (parameters.KeywordFields != null)
             {
-                foreach(var field in parameters.KeywordFields)
+                foreach (var field in parameters.KeywordFields)
                 {
                     var value = doc[field];
                     if (value is string[])
@@ -218,6 +219,10 @@ namespace Search.Tools.Extract
 
         private static void Usage(string msg = null)
         {
+            if (msg != null)
+            {
+                Console.WriteLine(msg);
+            }
             Console.WriteLine(
                 "extract <Service name> <Index name> <Admin key> [-ad <domain>] [-af <fieldList>] [-ak <key>] [-al <language>] [-c <file>] [-f <facetList>] [-g <path>] [-h <path>] [-j <jsonFile>] [-kf <fieldList>] [-km <max>] [-kt <threshold>] [-o <outputPath>] [-u <threshold>] [-v <field>]");
             Console.WriteLine(
@@ -257,6 +262,8 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             Console.WriteLine(
                 "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.  Will use key field if sortable and filterable.");
             Console.WriteLine(
+                "-w : Create a new index from -j JSON file.");
+            Console.WriteLine(
                 "{} can be used to comment out arguments.");
             Environment.Exit(-1);
         }
@@ -283,6 +290,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             public string[] AnalyzeFields = null;
             public string AnalyzeLanguage = "en";
             public string ApplyPath;
+            public bool CopyJSON = false;
             public string CopyPath;
             public string[] Facets;
             public string GeneratePath;
@@ -299,7 +307,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
 
             public void Display(TextWriter writer)
             {
-                foreach(var field in typeof(Parameters).GetFields())
+                foreach (var field in typeof(Parameters).GetFields())
                 {
                     var value = field.GetValue(this);
                     if (value != null)
@@ -307,7 +315,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                         writer.Write($"{field.Name}:");
                         if (value is IEnumerable && !(value is string))
                         {
-                            foreach(var val in value as IEnumerable)
+                            foreach (var val in value as IEnumerable)
                             {
                                 writer.Write($" {val}");
                             }
@@ -322,125 +330,235 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             }
         };
 
+        private static async Task WriteDocs(ISearchIndexClient client, List<Document> docs, string key)
+        {
+            Dictionary<string, Document> keyToDoc = null;
+            while (docs.Any())
+            {
+                try
+                {
+                    await client.Documents.IndexAsync(IndexBatch.MergeOrUpload<Document>(docs));
+                    docs.Clear();
+                }
+                catch (IndexBatchException ex)
+                {
+                    if (keyToDoc == null)
+                    {
+                        foreach (var doc in docs)
+                        {
+                            keyToDoc[(string)doc[key]] = doc;
+                        }
+                    }
+                    docs = (from result in ex.IndexingResults where !result.Succeeded select keyToDoc[result.Key]).ToList();
+                }
+            }
+        }
+
+        private static async Task CopyService(Parameters parameters)
+        {
+            if (parameters.ApplyPath == null)
+            {
+                Usage("-w requries -j to point to the source JSON file.");
+            }
+            Console.WriteLine($"Creating service {parameters.ServiceName} with index {parameters.IndexName}");
+            var reader = new StreamReader(new FileStream(parameters.ApplyPath, FileMode.Open));
+            var schema = JsonConvert.DeserializeObject<SearchSchema>(reader.ReadLine());
+            reader.ReadLine();
+            var client = new SearchServiceClient(parameters.ServiceName, new SearchCredentials(parameters.AdminKey));
+            var index = new Index() { Name = parameters.IndexName };
+            string keyName = null;
+            var fields = new List<Field>();
+            foreach (var field in schema.Fields.Values)
+            {
+                var indexField = new Field(field.Name, field.Type.GetDataType())
+                {
+                    IsFacetable = field.IsFacetable,
+                    IsFilterable = field.IsFilterable,
+                    IsKey = field.IsKey,
+                    IsRetrievable = field.IsRetrievable,
+                    IsSearchable = field.IsSearchable,
+                    IsSortable = field.IsSortable,
+                };
+                fields.Add(indexField);
+                if (field.IsKey)
+                {
+                    keyName = field.Name;
+                }
+            }
+            index.Fields = fields.ToArray();
+            var indexClient = client.Indexes.GetClient(parameters.IndexName);
+            if (indexClient == null)
+            {
+                await client.Indexes.CreateAsync(index);
+                indexClient = client.Indexes.GetClient(parameters.IndexName);
+            }
+
+            Console.WriteLine("Copying data");
+            int count = 0;
+            string line;
+            var docs = new List<Document>();
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (count % 100 == 0)
+                {
+                    Console.Write($"\n{count}: ");
+                }
+                ++count;
+                Console.Write('.');
+                var doc = JsonConvert.DeserializeObject<Document>(line);
+                var newDoc = new Document();
+                // Patch up GeoJSON objects
+                foreach (var field in doc)
+                {
+                    var val = field.Value;
+                    if (val != null && val is JObject)
+                    {
+                        dynamic obj = val as JObject;
+                        var coords = CoordinateSystem.Geography(obj.EpsgId as int?);
+                        var spatial = GeographyPoint.Create(coords, (double) obj.Latitude, (double) obj.Longitude, (double?) obj.Z, (double?) obj.M);
+                        val = spatial;
+                    }
+                    newDoc[field.Key] = val;
+                }
+                docs.Add(newDoc);
+                if (docs.Count() == 1000)
+                {
+                    Console.Write(".");
+                    await WriteDocs(indexClient, docs, keyName);
+                }
+            }
+            if (docs.Any())
+            {
+                await WriteDocs(indexClient, docs, keyName);
+            }
+        }
+
         private static async Task MainAsync(Parameters parameters)
         {
             if (parameters.AnalyzeFields == null ? parameters.AnalyzeKey != null : parameters.AnalyzeKey == null)
             {
                 Console.WriteLine("In order to analyze keywords you need both -ak and -af parameters.");
             }
-            var applyStream = parameters.ApplyPath == null ? null : new StreamReader(new FileStream(parameters.ApplyPath, FileMode.Open));
-            SearchSchema schema;
-            if (applyStream == null)
+            if (parameters.CopyJSON)
             {
-                schema = SearchTools.GetIndexSchema(parameters.ServiceName, parameters.AdminKey, parameters.IndexName);
+                await CopyService(parameters);
             }
             else
             {
-                schema = JsonConvert.DeserializeObject<SearchSchema>(applyStream.ReadLine());
-                applyStream.ReadLine();
-            }
-            if (parameters.GeneratePath != null)
-            {
-                if (parameters.Sortable == null)
+                var applyStream = parameters.ApplyPath == null ? null : new StreamReader(new FileStream(parameters.ApplyPath, FileMode.Open));
+                SearchSchema schema;
+                if (applyStream == null)
                 {
-                    foreach (var field in schema.Fields.Values)
-                    {
-                        if (field.IsKey && field.IsSortable && field.IsFilterable)
-                        {
-                            parameters.Sortable = field.Name;
-                        }
-                    }
+                    schema = SearchTools.GetIndexSchema(parameters.ServiceName, parameters.AdminKey, parameters.IndexName);
+                }
+                else
+                {
+                    schema = JsonConvert.DeserializeObject<SearchSchema>(applyStream.ReadLine());
+                    applyStream.ReadLine();
+                }
+                if (parameters.GeneratePath != null)
+                {
                     if (parameters.Sortable == null)
                     {
-                        Usage("You must specify a field with -v.");
+                        foreach (var field in schema.Fields.Values)
+                        {
+                            if (field.IsKey && field.IsSortable && field.IsFilterable)
+                            {
+                                parameters.Sortable = field.Name;
+                            }
+                        }
+                        if (parameters.Sortable == null)
+                        {
+                            Usage("You must specify a field with -v.");
+                        }
                     }
-                }
-                var indexClient = new SearchIndexClient(parameters.ServiceName, parameters.IndexName, new SearchCredentials(parameters.AdminKey));
-                if (parameters.Facets == null)
-                {
-                    parameters.Facets = (from field in schema.Fields.Values
-                                         where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable
-                                         select field.Name).ToArray();
-                }
-                var id = schema.Fields.Values.First((f) => f.IsKey);
-                var histograms = new Dictionary<string, Histogram<object>>();
-                var sp = new SearchParameters();
-                var timer = Stopwatch.StartNew();
-                var copyStream = parameters.CopyPath == null ? null : new StreamWriter(new FileStream(parameters.CopyPath, FileMode.Create));
-                if (copyStream != null)
-                {
-                    copyStream.WriteLine(JsonConvert.SerializeObject(schema));
-                }
-                var extractor = parameters.AnalyzeKey != null ? new KeywordExtractor(parameters.AnalyzeKey, parameters.AnalyzeLanguage, parameters.AnalyzeDomain) : null;
-                var results = await (applyStream == null
-                    ? Apply(indexClient, parameters.Sortable, id.Name, null, sp,
-                    (count, result) => Process(count, result, parameters, histograms, extractor, copyStream),
-                    parameters.Samples)
-                : StreamApply(applyStream, (count, result) => Process(count, result, parameters, histograms, extractor, null), parameters.Samples));
-                Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
-                if (copyStream != null)
-                {
-                    copyStream.Dispose();
-                }
-                if (parameters.AnalyzeFields != null || parameters.KeywordFields != null)
-                {
-                    var counts = await extractor.KeywordsAsync();
-                    var topN = (from count in counts where count.Value >= parameters.KeywordThreshold orderby count.Value descending select count.Key).Take(parameters.KeywordMax);
-                    var sorted = (from keyword in topN orderby keyword ascending select keyword);
-                    schema.Keywords = string.Join(",", sorted.ToArray());
-                }
-                using (var stream = new FileStream(parameters.GeneratePath, FileMode.Create))
-                {
-#if !NETSTANDARD1_6
-                    var serializer = new BinaryFormatter();
-                    serializer.Serialize(stream, histograms);
-#else
-                    var jsonHistograms = JsonConvert.SerializeObject(histograms);
-                    stream.Write(Encoding.UTF8.GetBytes(jsonHistograms), 0, Encoding.UTF8.GetByteCount(jsonHistograms));
-#endif
-                }
-            }
-            if (parameters.HistogramPath != null)
-            {
-                Dictionary<string, Histogram<object>> histograms;
-                using (var stream = new FileStream(parameters.HistogramPath, FileMode.Open))
-                {
-#if !NETSTANDARD1_6
-                    var deserializer = new BinaryFormatter();
-                    histograms = (Dictionary<string, Histogram<object>>)deserializer.Deserialize(stream);
-#else
-                    using (TextReader reader = new StreamReader(stream))
+                    var indexClient = new SearchIndexClient(parameters.ServiceName, parameters.IndexName, new SearchCredentials(parameters.AdminKey));
+                    if (parameters.Facets == null)
                     {
-                        var text = reader.ReadToEnd();
-                        histograms = JsonConvert.DeserializeObject<Dictionary<string, Histogram<object>>>(text, jsonSettings);
+                        parameters.Facets = (from field in schema.Fields.Values
+                                             where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable
+                                             select field.Name).ToArray();
                     }
+                    var id = schema.Fields.Values.First((f) => f.IsKey);
+                    var histograms = new Dictionary<string, Histogram<object>>();
+                    var sp = new SearchParameters();
+                    var timer = Stopwatch.StartNew();
+                    var copyStream = parameters.CopyPath == null ? null : new StreamWriter(new FileStream(parameters.CopyPath, FileMode.Create));
+                    if (copyStream != null)
+                    {
+                        copyStream.WriteLine(JsonConvert.SerializeObject(schema));
+                    }
+                    var extractor = parameters.AnalyzeKey != null ? new KeywordExtractor(parameters.AnalyzeKey, parameters.AnalyzeLanguage, parameters.AnalyzeDomain) : null;
+                    var results = await (applyStream == null
+                        ? Apply(indexClient, parameters.Sortable, id.Name, null, sp,
+                        (count, result) => Process(count, result, parameters, histograms, extractor, copyStream),
+                        parameters.Samples)
+                    : StreamApply(applyStream, (count, result) => Process(count, result, parameters, histograms, extractor, null), parameters.Samples));
+                    Console.WriteLine($"\nFound {results} in {timer.Elapsed.TotalSeconds}s");
+                    if (copyStream != null)
+                    {
+                        copyStream.Dispose();
+                    }
+                    if (parameters.AnalyzeFields != null || parameters.KeywordFields != null)
+                    {
+                        var counts = await extractor.KeywordsAsync();
+                        var topN = (from count in counts where count.Value >= parameters.KeywordThreshold orderby count.Value descending select count.Key).Take(parameters.KeywordMax);
+                        var sorted = (from keyword in topN orderby keyword ascending select keyword);
+                        schema.Keywords = string.Join(",", sorted.ToArray());
+                    }
+                    using (var stream = new FileStream(parameters.GeneratePath, FileMode.Create))
+                    {
+#if !NETSTANDARD1_6
+                        var serializer = new BinaryFormatter();
+                        serializer.Serialize(stream, histograms);
+#else
+                        var jsonHistograms = JsonConvert.SerializeObject(histograms);
+                        stream.Write(Encoding.UTF8.GetBytes(jsonHistograms), 0, Encoding.UTF8.GetByteCount(jsonHistograms));
+#endif
+                    }
+                }
+                if (parameters.HistogramPath != null)
+                {
+                    Dictionary<string, Histogram<object>> histograms;
+                    using (var stream = new FileStream(parameters.HistogramPath, FileMode.Open))
+                    {
+#if !NETSTANDARD1_6
+                        var deserializer = new BinaryFormatter();
+                        histograms = (Dictionary<string, Histogram<object>>)deserializer.Deserialize(stream);
+#else
+                        using (TextReader reader = new StreamReader(stream))
+                        {
+                            var text = reader.ReadToEnd();
+                            histograms = JsonConvert.DeserializeObject<Dictionary<string, Histogram<object>>>(text, jsonSettings);
+                        }
 #endif
 
-                    foreach (var histogram in histograms)
-                    {
-                        var field = schema.Field(histogram.Key);
-                        var counts = histogram.Value;
-                        if (counts.Counts().Count() < parameters.UniqueValueThreshold
-                            && counts.Values().FirstOrDefault() != null && counts.Values().First() is string)
+                        foreach (var histogram in histograms)
                         {
-                            var vals = new List<Synonyms>();
-                            foreach (var value in counts.Pairs())
+                            var field = schema.Field(histogram.Key);
+                            var counts = histogram.Value;
+                            if (counts.Counts().Count() < parameters.UniqueValueThreshold
+                                && counts.Values().FirstOrDefault() != null && counts.Values().First() is string)
                             {
-                                var canonical = value.Key as string;
-                                if (!string.IsNullOrWhiteSpace(canonical))
+                                var vals = new List<Synonyms>();
+                                foreach (var value in counts.Pairs())
                                 {
-                                    // Remove punctuation and trimming
-                                    var alt = Normalize(canonical);
-                                    var synonyms = new Synonyms(canonical, alt);
-                                    vals.Add(synonyms);
+                                    var canonical = value.Key as string;
+                                    if (!string.IsNullOrWhiteSpace(canonical))
+                                    {
+                                        // Remove punctuation and trimming
+                                        var alt = Normalize(canonical);
+                                        var synonyms = new Synonyms(canonical, alt);
+                                        vals.Add(synonyms);
+                                    }
                                 }
+                                field.ValueSynonyms = vals.ToArray();
                             }
-                            field.ValueSynonyms = vals.ToArray();
                         }
                     }
                 }
+                schema.Save(parameters.SchemaPath);
             }
-            schema.Save(parameters.SchemaPath);
         }
 
         private static void Main(string[] args)
@@ -518,6 +636,9 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                             break;
                         case "-v":
                             parameters.Sortable = NextArg(++i, args);
+                            break;
+                        case "-w":
+                            parameters.CopyJSON = true;
                             break;
                         default:
                             Usage($"{arg} is not understood.");

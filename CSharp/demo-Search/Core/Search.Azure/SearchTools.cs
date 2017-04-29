@@ -24,7 +24,25 @@ namespace Search.Azure
             }
             return schema;
         }
-        
+
+        public static DataType GetDataType(this Type type)
+        {
+            DataType dt;
+            if (type == typeof(Boolean)) dt = DataType.Boolean;
+            else if (type == typeof(DateTime)) dt = DataType.DateTimeOffset;
+            else if (type == typeof(double)) dt = DataType.Double;
+            else if (type == typeof(Int32)) dt = DataType.Int32;
+            else if (type == typeof(Int64)) dt = DataType.Int64;
+            else if (type == typeof(string)) dt = DataType.String;
+            else if (type == typeof(string[])) dt = DataType.Collection(DataType.String);
+            else if (type == typeof(GeographyPoint)) dt = DataType.GeographyPoint;
+            else
+            {
+                throw new ArgumentException($"Cannot map {type} to an Azure Search type");
+            }
+            return dt;
+        }
+
         public static SearchField ToSearchField(Field field)
         {
             Type type;
