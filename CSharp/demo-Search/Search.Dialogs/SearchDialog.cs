@@ -311,7 +311,7 @@ namespace Search.Dialogs
             }
             foreach (var range in removeRanges)
             {
-                removePhrases.AddRange(query.Substring(range.Start, range.End - range.Start).Phrases());
+                removePhrases.AddRange(query.Substring(range.Start, range.End - range.Start + 1).Phrases());
                 nonEntities.Remove(range);
             }
 

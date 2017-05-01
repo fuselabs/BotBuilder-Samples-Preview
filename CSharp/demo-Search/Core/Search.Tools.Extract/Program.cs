@@ -370,6 +370,12 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             var fields = new List<Field>();
             foreach (var field in schema.Fields.Values)
             {
+                if (field.IsKey)
+                {
+                    // Ensure keys can be used to enumerate
+                    field.IsFilterable = true;
+                    field.IsSortable = true;
+                }
                 var indexField = new Field(field.Name, field.Type.GetDataType())
                 {
                     IsFacetable = field.IsFacetable,
@@ -387,10 +393,9 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             }
             index.Fields = fields.ToArray();
             var indexClient = client.Indexes.GetClient(parameters.IndexName);
-            if (indexClient == null)
+            if (!client.Indexes.ListNames().Contains(parameters.IndexName))
             {
                 await client.Indexes.CreateAsync(index);
-                indexClient = client.Indexes.GetClient(parameters.IndexName);
             }
 
             Console.WriteLine("Copying data");
@@ -476,7 +481,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                     if (parameters.Facets == null)
                     {
                         parameters.Facets = (from field in schema.Fields.Values
-                                             where (field.Type == typeof(string) || field.Type == typeof(string[])) && field.IsFilterable
+                                             where (field.Type == typeof(string) || field.Type == typeof(string[]) || field.Type.IsNumeric()) && field.IsFilterable
                                              select field.Name).ToArray();
                     }
                     var id = schema.Fields.Values.First((f) => f.IsKey);
@@ -538,7 +543,8 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                             var field = schema.Field(histogram.Key);
                             var counts = histogram.Value;
                             if (counts.Counts().Count() < parameters.UniqueValueThreshold
-                                && counts.Values().FirstOrDefault() != null && counts.Values().First() is string)
+                                && counts.Values().FirstOrDefault() != null 
+                                && (field.Type == typeof(string) || field.Type == typeof(string[])))
                             {
                                 var vals = new List<Synonyms>();
                                 foreach (var value in counts.Pairs())
@@ -553,6 +559,19 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                                     }
                                 }
                                 field.ValueSynonyms = vals.ToArray();
+                            }
+                            if (field.Type.IsNumeric())
+                            {
+                                double min = double.MaxValue;
+                                double max = double.MinValue;
+                                foreach (var val in counts.Values())
+                                {
+                                    var num = double.Parse((string) val);
+                                    if (num < min) min = num;
+                                    if (num > max) max = num;
+                                }
+                                field.Min = min;
+                                field.Max = max;
                             }
                         }
                     }

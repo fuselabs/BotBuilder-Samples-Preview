@@ -21,7 +21,9 @@
           "listing Id"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "beds": {
       "Name": "beds",
@@ -42,7 +44,9 @@
           "beds"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 1.0,
+      "Max": 5.0
     },
     "baths": {
       "Name": "baths",
@@ -63,7 +67,9 @@
           "bathroom"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 1.0,
+      "Max": 5.0
     },
     "description": {
       "Name": "description",
@@ -81,7 +87,9 @@
           "description"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "sqft": {
       "Name": "sqft",
@@ -103,7 +111,9 @@
           "sq foot"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 607.0,
+      "Max": 15175.0
     },
     "daysOnMarket": {
       "Name": "daysOnMarket",
@@ -121,7 +131,9 @@
           "Days On Market"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 297.0
     },
     "status": {
       "Name": "status",
@@ -152,7 +164,9 @@
           "Canonical": "sold",
           "Alternatives": [ "sold" ]
         }
-      ]
+      ],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "source": {
       "Name": "source",
@@ -171,7 +185,9 @@
           "source"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "number": {
       "Name": "number",
@@ -188,7 +204,9 @@
         "Alternatives": [
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "street": {
       "Name": "street",
@@ -207,7 +225,9 @@
           "st"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "unit": {
       "Name": "unit",
@@ -225,7 +245,9 @@
           "unit"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "type": {
       "Name": "type",
@@ -252,7 +274,9 @@
           "Canonical": "Apartment",
           "Alternatives": [ "Apartment", "apartments", "condo", "condos" ]
         }
-      ]
+      ],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "city": {
       "Name": "city",
@@ -270,7 +294,9 @@
           "City"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "cityPhonetic": {
       "Name": "cityPhonetic",
@@ -286,7 +312,9 @@
         "Canonical": "cityPhonetic",
         "Alternatives": []
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "district": {
       "Name": "district",
@@ -304,7 +332,9 @@
           "District"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "region": {
       "Name": "region",
@@ -675,7 +705,9 @@
             "wy"
           ]
         }
-      ]
+      ],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "zipcode": {
       "Name": "zipcode",
@@ -691,7 +723,9 @@
         "Canonical": "zipcode",
         "Alternatives": [ "Zip Code", "zip", "zipcode" ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "countryCode": {
       "Name": "countryCode",
@@ -710,7 +744,9 @@
           "country Code"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "location": {
       "Name": "location",
@@ -729,7 +765,9 @@
           "located"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     },
     "price": {
       "Name": "price",
@@ -749,7 +787,9 @@
           "costs"
         ]
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 103600.0,
+      "Max": 3872050.0
     },
     "thumbnail": {
       "Name": "thumbnail",
@@ -765,7 +805,9 @@
         "Canonical": "thumbnail",
         "Alternatives": []
       },
-      "ValueSynonyms": []
+      "ValueSynonyms": [],
+      "Min": 0.0,
+      "Max": 0.0
     }
   }
 }

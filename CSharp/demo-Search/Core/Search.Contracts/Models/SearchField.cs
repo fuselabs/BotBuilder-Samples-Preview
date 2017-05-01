@@ -77,5 +77,7 @@ namespace Search.Models
         public PreferredFilter FilterPreference { get; set; }
         public Synonyms NameSynonyms { get; set; }
         public Synonyms[] ValueSynonyms { get; set; } = new Synonyms[0];
+        public double Min { get; set; }
+        public double Max { get; set; }
     }
 }
