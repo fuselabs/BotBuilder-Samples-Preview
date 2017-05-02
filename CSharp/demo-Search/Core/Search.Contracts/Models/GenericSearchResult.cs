@@ -7,5 +7,7 @@
         public IEnumerable<SearchHit> Results { get; set; }
 
         public IDictionary<string, IEnumerable<GenericFacet>> Facets { get; set; }
+
+        public long? TotalCount { get; set; }
     }
 }

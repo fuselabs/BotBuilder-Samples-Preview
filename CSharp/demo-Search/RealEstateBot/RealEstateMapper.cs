@@ -14,7 +14,7 @@ namespace RealEstateBot
             searchResult.Results = documentSearchResult.Results.Select(r => ToSearchHit(r)).ToList();
             searchResult.Facets = documentSearchResult.Facets?.ToDictionary(kv => kv.Key,
                 kv => kv.Value.Select(f => ToFacet(f)));
-
+            searchResult.TotalCount = documentSearchResult.Count;
             return searchResult;
         }
 

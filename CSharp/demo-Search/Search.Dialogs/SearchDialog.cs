@@ -40,7 +40,6 @@ namespace Search.Dialogs
         protected readonly PromptStyler PromptStyler;
         protected Button[] Refiners;
         protected readonly ISearchClient SearchClient;
-        protected readonly bool UseSuggestedActions;
 
         protected string DefaultProperty = null;
         protected Button[] LastButtons = null;
@@ -69,8 +68,7 @@ namespace Search.Dialogs
             PromptStyler promptStyler = null,
             ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
-            IEnumerable<string> refiners = null,
-            bool useSuggestedActions = true)
+            IEnumerable<string> refiners = null)
             : base(new LuisService(luis))
         {
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out Prompts, nameof(Prompts), prompts);
@@ -78,10 +76,10 @@ namespace Search.Dialogs
             SkipIntro = query != null && !query.HasNoConstraints;
             Query = query ?? new SearchSpec();
             LastQuery = new SearchSpec();
+            Query.GetTotalCount = prompts.Count != null;
             HitStyler = searchHitStyler ?? new SearchHitStyler();
             PromptStyler = promptStyler ?? new SearchPromptStyler();
             MultipleSelection = multipleSelection;
-            UseSuggestedActions = useSuggestedActions;
             InitializeRefiners(refiners);
         }
 
@@ -420,9 +418,14 @@ namespace Search.Dialogs
 
         #region Search
 
-        private string SearchDescription()
+        private string SearchDescription(long? totalCount)
         {
-            var description = Query.Description();
+
+            var description = Query.Description(Prompts);
+            if (totalCount != null)
+            {
+                description += Environment.NewLine + string.Format(Prompts.Count, totalCount.Value);
+            }
             if (Selected.Any())
             {
                 var builder = new StringBuilder();
@@ -459,7 +462,7 @@ namespace Search.Dialogs
                     HitStyler.Show(
                         ref message,
                         (IReadOnlyList<SearchHit>)Found,
-                        SearchDescription(),
+                        SearchDescription(response.TotalCount),
                         Prompts.Add
                     );
                     await context.PostAsync(message);

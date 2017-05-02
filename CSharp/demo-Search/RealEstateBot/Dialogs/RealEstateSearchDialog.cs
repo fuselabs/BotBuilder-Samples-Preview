@@ -31,6 +31,7 @@ namespace RealEstateBot.Dialogs
         private SearchSpec LastQuery = null;
         private string LUISKey;
         private string ModelId;
+        private Prompts Prompts = new Prompts();
 
         public RealEstateSearchDialog(ISearchClient searchClient)
         {
@@ -71,7 +72,7 @@ namespace RealEstateBot.Dialogs
                         }
                         await context.PostAsync($@"**Last Search**
 
-{this.LastQuery.Description()}");
+{this.LastQuery.Description(this.Prompts)}");
                         context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1, promptStyle:PromptStyle.Keyboard), UseLastSearch);
                     }
                     else

@@ -6,47 +6,47 @@ namespace Search.Dialogs.UserInteraction
     public class Prompts
     {
         // Prompts
-        public const string AddedToListPrompt = "{0} was added to your list.";
-        public const string AddKeywordPrompt = "Type a keyword phrase to search for.";
-        public const string AddOrRemoveKeywordPrompt = "Type a keyword phrase to search for, or select what you would like to remove.";
-        public const string FacetPrompt = "What would you like to refine by?";
-        public const string FacetValuePrompt = "What value for {0} would you like to filter by?";
-        public const string FilterPrompt = "Enter a filter for {0} like \"no more than 4\".";
-        public const string InitialPrompt = "Please describe in your own words what you would like to find?";
-        public const string ListPrompt = "Here is what you have selected so far.";
-        public const string NoResultsPrompt = "Your search found no results so I undid your last constraint.  You can refine again.";
-        public const string NotAddedPrompt = "You have not added anything yet.";
-        public const string NotUnderstoodPrompt = "I did not understand what you said.";
-        public const string NoValuesPrompt = "There are no values to filter by for {0}.";
-        public const string RefinePrompt = "Refine your search or select an operation.";
-        public const string RemovedFromListPrompt = "{0} was removed from your list.";
-        public const string UnknownItemPrompt = "That is not an item in the current results.";
+        public string AddedToListPrompt = "{0} was added to your list.";
+        public string AddKeywordPrompt = "Type a keyword phrase to search for.";
+        public string AddOrRemoveKeywordPrompt = "Type a keyword phrase to search for, or select what you would like to remove.";
+        public string FacetPrompt = "What would you like to refine by?";
+        public string FacetValuePrompt = "What value for {0} would you like to filter by?";
+        public string FilterPrompt = "Enter a filter for {0} like \"no more than 4\".";
+        public string InitialPrompt = "Please describe in your own words what you would like to find?";
+        public string ListPrompt = "Here is what you have selected so far.";
+        public string NoResultsPrompt = "Your search found no results so I undid your lastraint.  You can refine again.";
+        public string NotAddedPrompt = "You have not added anything yet.";
+        public string NotUnderstoodPrompt = "I did not understand what you said.";
+        public string NoValuesPrompt = "There are no values to filter by for {0}.";
+        public string RefinePrompt = "Refine your search or select an operation.";
+        public string RemovedFromListPrompt = "{0} was removed from your list.";
+        public string UnknownItemPrompt = "That is not an item in the current results.";
 
         // Buttons
-        public readonly Button Add = new Button("Add to List", "ADD:{0}");
-        public readonly Button Finished = new Button("Finished");
-        public readonly Button Keyword = new Button("Keyword");
-        public readonly Button List = new Button("List");
-        public readonly Button NextPage = new Button("Next Page");
-        public readonly Button Quit = new Button("Quit");
-        public readonly Button Refine = new Button("Refine");
-        public readonly Button Remove = new Button("Remove from List", "REMOVE:{0}");
-        public readonly Button StartOver = new Button("Start Over");
+        public Button Add = new Button("Add to List", "ADD:{0}");
+        public Button Finished = new Button("Finished");
+        public Button Keyword = new Button("Keyword");
+        public Button List = new Button("List");
+        public Button NextPage = new Button("Next Page");
+        public Button Quit = new Button("Quit");
+        public Button Refine = new Button("Refine");
+        public Button Remove = new Button("Remove from List", "REMOVE:{0}");
+        public Button StartOver = new Button("Start Over");
 
         // Status
-        public const string Ascending = "Ascending";
-        public const string Count = "**Total results**: {0}";
-        public const string Descending = "Descending";
-        public const string Filter = "**Filter**: {0}";
-        public const string Keywords = "**Keywords**: {0}";
-        public const string Page = "**Page**: {0}";
-        public const string Selected = "**Kept so far**: {0}";
-        public const string Sort = "**Sort**: {0}";
+        public string Ascending = "Ascending";
+        public string Count = "**Total results**: {0}";
+        public string Descending = "Descending";
+        public string Filter = "**Filter**: {0}";
+        public string Keywords = "**Keywords**: {0}";
+        public string Page = "**Page**: {0}";
+        public string Selected = "**Kept so far**: {0}";
+        public string Sort = "**Sort**: {0}";
 
         // Labels (UI) and Messages
-        public const string AnyLabel = "Any {0}";
-        public const string AnyMessage = "Any";
-        public const string AnyNumberLabel = "Any number of {0}";
-        public const string RemoveKeywordMessage = "remove {0}";
+        public string AnyLabel = "Any {0}";
+        public string AnyMessage = "Any";
+        public string AnyNumberLabel = "Any number of {0}";
+        public string RemoveKeywordMessage = "remove {0}";
     }
 }

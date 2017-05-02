@@ -171,7 +171,8 @@ namespace Search.Azure.Services
             {
                 Top = spec.HitsPerPage,
                 Skip = spec.Skip,
-                SearchMode = SearchMode.Any
+                SearchMode = SearchMode.Any,
+                IncludeTotalResultCount = spec.GetTotalCount
             };
 
             if (facet != null)

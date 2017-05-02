@@ -24,6 +24,7 @@ namespace Search.Models
         public List<SortKey> Sort { get; set; } = new List<SortKey>();
         public List<string> Selection { get; set; } = new List<string>();
         public int Skip { get; set; }
+        public bool GetTotalCount { get; set; } = true;
 
         public int PageNumber
         {

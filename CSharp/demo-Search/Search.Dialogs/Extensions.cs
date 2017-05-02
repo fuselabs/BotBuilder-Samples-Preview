@@ -12,7 +12,7 @@ namespace Search.Dialogs
 {
     public static partial class Extensions
     {
-        public static string Description(this SearchSpec spec)
+        public static string Description(this SearchSpec spec, Prompts prompts)
         {
             var builder = new StringBuilder();
             var filter = spec.Filter;
@@ -20,7 +20,7 @@ namespace Search.Dialogs
             var sorts = spec.Sort;
             if (filter != null)
             {
-                builder.AppendLine(string.Format(Prompts.Filter, filter.ToUserFriendlyString()));
+                builder.AppendLine(string.Format(prompts.Filter, filter.ToUserFriendlyString()));
                 builder.AppendLine();
             }
             if (phrases.Any())
@@ -32,7 +32,7 @@ namespace Search.Dialogs
                     phraseBuilder.Append($"{prefix}\"{phrase}\"");
                     prefix = " ";
                 }
-                builder.AppendLine(string.Format(Prompts.Keywords, phraseBuilder.ToString()));
+                builder.AppendLine(string.Format(prompts.Keywords, phraseBuilder.ToString()));
                 builder.AppendLine();
             }
             if (sorts.Any())
@@ -41,16 +41,16 @@ namespace Search.Dialogs
                 var prefix = "";
                 foreach (var sort in sorts)
                 {
-                    var dir = sort.Direction == SortDirection.Ascending ? Prompts.Ascending : Prompts.Descending;
+                    var dir = sort.Direction == SortDirection.Ascending ? prompts.Ascending : prompts.Descending;
                     sortBuilder.Append($"{prefix}{sort.Field} {dir}");
                     prefix = ", ";
                 }
-                builder.AppendLine(string.Format(Prompts.Sort, sortBuilder.ToString()));
+                builder.AppendLine(string.Format(prompts.Sort, sortBuilder.ToString()));
                 builder.AppendLine();
             }
             if (spec.PageNumber > 0)
             {
-                builder.AppendLine(string.Format(Prompts.Page, spec.PageNumber));
+                builder.AppendLine(string.Format(prompts.Page, spec.PageNumber));
                 builder.AppendLine();
             }
             return builder.ToString();
