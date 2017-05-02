@@ -79,7 +79,7 @@ namespace Search.Dialogs
             Query = query ?? new SearchSpec();
             LastQuery = new SearchSpec();
             HitStyler = searchHitStyler ?? new SearchHitStyler();
-            PromptStyler = promptStyler ?? new PromptStyler(PromptStyle.Keyboard);
+            PromptStyler = promptStyler ?? new SearchPromptStyler();
             MultipleSelection = multipleSelection;
             UseSuggestedActions = useSuggestedActions;
             InitializeRefiners(refiners);

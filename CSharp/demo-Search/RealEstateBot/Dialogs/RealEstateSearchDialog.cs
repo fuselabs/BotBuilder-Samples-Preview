@@ -126,7 +126,7 @@ namespace RealEstateBot.Dialogs
                 refiners: new string[]
                 {
                     "type", "beds", "baths", "sqft", "price",
-                    "city", "Keyword", "district", "region",
+                    "Keyword", "city", "district", "region",
                     "daysOnMarket", "status"
                 }), Done);
         }
