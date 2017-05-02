@@ -446,7 +446,10 @@ namespace Search.Dialogs
                 var response = await ExecuteSearchAsync();
                 if (!response.Results.Any())
                 {
+                    var badQuery = Query;
                     Query = LastQuery;
+                    // Ensure the queries are not equal
+                    LastQuery = badQuery;
                     prompt = Prompts.NoResultsPrompt;
                 }
                 else
