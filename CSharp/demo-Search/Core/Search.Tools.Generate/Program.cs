@@ -5,7 +5,6 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Search.Models;
-    using Search.Utilities;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -17,7 +16,9 @@
 
     class Program
     {
-        private const string propertyName = "propertyname";
+        private const string stringName = "stringname";
+        private const string numberName = "numbername";
+        private const string moneyName = "moneyname";
         private const string attributeName = "attributename";
         private const string keyword = "keywordname";
         private const string SubscriptionKey = "LUISSubscriptionKey";
@@ -285,13 +286,15 @@
             return hasKeyword;
         }
 
-        static Regex PropertyOrAttribute = new Regex($"{propertyName}|{attributeName}|{keyword}", RegexOptions.IgnoreCase);
+        static Regex PropertyOrAttribute = new Regex($"{stringName}|{numberName}|{moneyName}|{attributeName}|{keyword}", RegexOptions.IgnoreCase);
 
         static void ReplaceGenericNames(dynamic model, IEnumerable<SearchField> fields, string keywordList)
         {
             // Use a fixed random sequence to minimize random churn
             var rand = new Random(0);
-            var propertyNames = fields.SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
+            var stringNames = (from field in fields where field.Type == typeof(string) || field.Type == typeof(string[]) select field).SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
+            var numberNames = (from field in fields where field.Type.IsNumeric() && !field.IsMoney select field).SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
+            var moneyNames = (from field in fields where field.IsMoney select field).SelectMany((f) => f.NameSynonyms.Alternatives).ToArray();
             var attributes = fields.SelectMany((f) => f.ValueSynonyms.SelectMany((v) => v.Alternatives)).ToArray();
             var allKeywords = SplitByWords(keywordList.Split(',').Select(w => w.Trim()));
             var keywords = allKeywords.First().Value.ToArray();
@@ -303,9 +306,17 @@
                 Func<string, string> replaceToken = (token) =>
                 {
                     string[] choices = null;
-                    if (token == propertyName)
+                    if (token == stringName)
                     {
-                        choices = propertyNames;
+                        choices = stringNames;
+                    }
+                    else if (token == numberName)
+                    {
+                        choices = numberNames;
+                    }
+                    else if (token == moneyName)
+                    {
+                        choices = moneyNames;
                     }
                     else if (token == attributeName)
                     {
@@ -338,9 +349,9 @@
                 Func<string, string> replaceToken = (token) =>
                 {
                     string[] choices = null;
-                    if (token == propertyName)
+                    if (token == stringName)
                     {
-                        choices = propertyNames;
+                        choices = stringNames;
                     }
                     else if (token == attributeName)
                     {
@@ -369,6 +380,27 @@
         {
             var feature = Feature(model, "Keywords");
             feature.words = keywords;
+        }
+
+        // This is a utility to allow replacing names in utterances programatically
+        // Mapper goes from utterance to a token mapper
+        static void ReplaceTokens(dynamic model, Func<string, Func<string, string>> mapper, string outputPath)
+        {
+            foreach (var utterance in model.utterances)
+            {
+                var str = (string)utterance.text;
+                var tokenTransformer = mapper(str);
+                bool failed = false;
+                ReplaceNames(utterance, tokenTransformer, out failed);
+                if (failed)
+                {
+                    throw new Exception($"Failed transforming {str}.");
+                }
+            }
+            using (var stream = new StreamWriter(new FileStream(outputPath, FileMode.Create)))
+            {
+                stream.Write(JsonConvert.SerializeObject(model, Formatting.Indented));
+            }
         }
 
         static async Task MainAsync(string[] args, Parameters p)
@@ -413,6 +445,23 @@
             }
 
             Console.WriteLine($"Generating {p.OutputName} from schema {p.SchemaPath}");
+            /* This is an example of programatically changing the template with entity annotations being updated
+            Func<string, Func<string, string>> mapper =
+                (utterance) =>
+                {
+                    return (token) =>
+                        {
+                            var result = token;
+                            if (token == "propertyname")
+                            {
+                                result = "stringname";
+                            }
+                            return result;
+                        };
+                };
+            ReplaceTokens(template, mapper, "SearchTemplate-new.json");
+            System.Environment.Exit(0);
+            */
             Clear(template);
             AddDescription(template, p.OutputName, args);
             bool usesNumbers = false;
@@ -437,6 +486,7 @@
                 }
             }
             var bing = (JArray)template.bing_entities;
+            bing.Clear();
             if (usesNumbers)
             {
                 bing.Add("number");
@@ -445,6 +495,7 @@
             {
                 bing.Add("money");
             }
+
             AddKeywords(template, schema.Keywords);
             ReplaceGenericNames(template,
                 from field in schema.Fields.Values where field.Type.IsNumeric() || field.ValueSynonyms.Any() select field,

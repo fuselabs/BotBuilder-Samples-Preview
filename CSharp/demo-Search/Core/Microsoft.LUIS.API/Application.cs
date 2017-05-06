@@ -276,18 +276,11 @@ namespace Microsoft.LUIS.API
             return ok;
         }
 
-        public async Task<JToken> QueryAsync(string query, bool verbose, bool allowLogging, CancellationToken ct)
+        public async Task<JToken> QueryAsync(string query, CancellationToken ct, bool log = true, bool spellCheck = false, bool verbose = false)
         {
             var escQuery = Uri.EscapeDataString(query);
-            var uri = $"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/{ApplicationID}?subscription-key={_subscription.Key}&q={escQuery}";
-            if (verbose)
-            {
-                uri += "&verbose=true";
-            }
-            if (allowLogging)
-            {
-                uri += "&allowSampling=true";
-            }
+            var uri = $"https://{this._subscription.Domain}/luis/v2.0/apps/{ApplicationID}?subscription-key={_subscription.Key}&q={escQuery}";
+            uri += $"&log={Uri.EscapeDataString(Convert.ToString(log))}&spellCheck={Uri.EscapeDataString(Convert.ToString(spellCheck))}&verbose={Uri.EscapeDataString(Convert.ToString(verbose))}";
             var response = await Retry(async () =>
             {
                 return await _subscription.RawGetAsync(uri, ct);

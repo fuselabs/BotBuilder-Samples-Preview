@@ -79,5 +79,6 @@ namespace Search.Models
         public Synonyms[] ValueSynonyms { get; set; } = new Synonyms[0];
         public double Min { get; set; }
         public double Max { get; set; }
+        public bool IsMoney { get; set; }
     }
 }

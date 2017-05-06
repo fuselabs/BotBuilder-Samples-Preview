@@ -46,8 +46,8 @@
       "name": "Comparison",
       "children": [
         "Operators",
-        "Properties",
-        "Value"
+        "Value",
+        "Properties"
       ]
     },
     {
@@ -60,8 +60,8 @@
     {
       "name": "RemoveKeyword",
       "children": [
-        "RemoveKeywords",
-        "Keyword"
+        "Keyword",
+        "RemoveKeywords"
       ]
     }
   ],
@@ -73,6 +73,18 @@
           "canonicalForm": "AttributeName",
           "list": [
             "attributename"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KeywordFacet",
+      "subLists": [
+        {
+          "canonicalForm": "keyword",
+          "list": [
+            "keyword",
+            "keywords"
           ]
         }
       ]
@@ -133,9 +145,21 @@
       "name": "Properties",
       "subLists": [
         {
-          "canonicalForm": "propertyName",
+          "canonicalForm": "stringName",
           "list": [
-            "propertyname"
+            "stringname"
+          ]
+        },
+        {
+          "canonicalForm": "numberName",
+          "list": [
+            "numbername"
+          ]
+        },
+        {
+          "canonicalForm": "moneyName",
+          "list": [
+            "moneyname"
           ]
         }
       ]
@@ -164,18 +188,12 @@
           ]
         }
       ]
-    },
-    {
-      "name": "KeywordFacet",
-      "subLists": [
-        {
-          "canonicalForm": "keyword",
-          "list": [ "keyword", "keywords" ]
-        }
-      ]
     }
   ],
-  "bing_entities": [],
+  "bing_entities": [
+    "money",
+    "number"
+  ],
   "actions": [],
   "model_features": [
     {
@@ -188,152 +206,147 @@
   "regex_features": [],
   "utterances": [
     {
-      "text": "at least 3 propertyname",
+      "text": "3 numbername",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
-          "endPos": 22
+          "endPos": 0
         },
         {
-          "entity": "Value",
-          "startPos": 9,
-          "endPos": 9
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 11
         }
       ]
     },
     {
-      "text": "3 propertyname",
+      "text": "3-4 numbername",
       "intent": "Filter",
       "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 13
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
         }
       ]
     },
     {
-      "text": "3-4 propertyname",
+      "text": "no more than 3 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 15
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "2-4 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 15
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
-    },
-    {
-      "text": "no more than 3 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 26
-        },
         {
           "entity": "Value",
           "startPos": 13,
           "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 24
         }
       ]
     },
     {
-      "text": "at least 43 propertyname",
+      "text": "at least 3 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 23
-        },
         {
           "entity": "Value",
           "startPos": 9,
-          "endPos": 10
+          "endPos": 9
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 20
         }
       ]
     },
     {
-      "text": "at most 1 propertyname",
+      "text": "2-4 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 21
-        },
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "3+ propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
         {
           "entity": "Value",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 13
         }
       ]
     },
     {
-      "text": "between 3 and 4 propertyname",
+      "text": "at least 43 numbername",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Value",
+          "startPos": 9,
+          "endPos": 10
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 27
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "at most 1 numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
         },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 19
+        }
+      ]
+    },
+    {
+      "text": "3+ numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 numbername",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 8,
@@ -343,55 +356,50 @@
           "entity": "Value",
           "startPos": 14,
           "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 25
         }
       ]
     },
     {
-      "text": "1+ propertyname",
+      "text": "1+ numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
         {
           "entity": "Value",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
         }
       ]
     },
     {
-      "text": "at most 3 propertyname",
+      "text": "at most 3 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 21
-        },
         {
           "entity": "Value",
           "startPos": 8,
           "endPos": 8
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 19
         }
       ]
     },
     {
-      "text": "no more than 4 propertyname and at most 2 propertyname",
+      "text": "no more than 4 numbername and at most 2 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 26
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 32,
-          "endPos": 53
-        },
         {
           "entity": "Value",
           "startPos": 13,
@@ -399,25 +407,25 @@
         },
         {
           "entity": "Value",
-          "startPos": 40,
-          "endPos": 40
+          "startPos": 38,
+          "endPos": 38
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 24
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 30,
+          "endPos": 49
         }
       ]
     },
     {
-      "text": "between 3-4 propertyname and at least 3 propertyname",
+      "text": "between 3-4 numbername and at least 3 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 23
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 29,
-          "endPos": 51
-        },
         {
           "entity": "Value",
           "startPos": 8,
@@ -430,41 +438,9 @@
         },
         {
           "entity": "Value",
-          "startPos": 38,
-          "endPos": 38
-        }
-      ]
-    },
-    {
-      "text": "find me a 2 propertyname with at least 1 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 10,
-          "endPos": 23
+          "startPos": 36,
+          "endPos": 36
         },
-        {
-          "entity": "Comparison",
-          "startPos": 30,
-          "endPos": 52
-        },
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Value",
-          "startPos": 39,
-          "endPos": 39
-        }
-      ]
-    },
-    {
-      "text": "at most 3 propertyname and 1 propertyname",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Comparison",
           "startPos": 0,
@@ -473,8 +449,40 @@
         {
           "entity": "Comparison",
           "startPos": 27,
-          "endPos": 40
+          "endPos": 47
+        }
+      ]
+    },
+    {
+      "text": "find me a 2 numbername with at least 1 numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 10
         },
+        {
+          "entity": "Value",
+          "startPos": 37,
+          "endPos": 37
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 10,
+          "endPos": 21
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 28,
+          "endPos": 48
+        }
+      ]
+    },
+    {
+      "text": "at most 3 numbername and 1 numbername",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 8,
@@ -482,30 +490,40 @@
         },
         {
           "entity": "Value",
-          "startPos": 27,
-          "endPos": 27
-        }
-      ]
-    },
-    {
-      "text": "no propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 14
-        }
-      ]
-    },
-    {
-      "text": "any number of propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
+          "startPos": 25,
           "endPos": 25
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 19
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 25,
+          "endPos": 36
+        }
+      ]
+    },
+    {
+      "text": "no stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "any number of numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 23
         }
       ]
     },
@@ -513,11 +531,6 @@
       "text": "between 100,000 and 450,000",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 26
-        },
         {
           "entity": "Value",
           "startPos": 8,
@@ -527,17 +540,11 @@
           "entity": "Value",
           "startPos": 20,
           "endPos": 26
-        }
-      ]
-    },
-    {
-      "text": "any propertyname",
-      "intent": "Filter",
-      "entities": [
+        },
         {
-          "entity": "Removal",
+          "entity": "Comparison",
           "startPos": 0,
-          "endPos": 15
+          "endPos": 26
         }
       ]
     },
@@ -546,14 +553,25 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
           "entity": "Value",
           "startPos": 10,
           "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "any stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 13
         }
       ]
     },
@@ -562,13 +580,13 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Value",
+          "startPos": 10,
           "endPos": 13
         },
         {
-          "entity": "Value",
-          "startPos": 10,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 13
         }
       ]
@@ -578,11 +596,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 22
-        },
-        {
           "entity": "Value",
           "startPos": 8,
           "endPos": 12
@@ -590,6 +603,11 @@
         {
           "entity": "Value",
           "startPos": 18,
+          "endPos": 22
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 22
         }
       ]
@@ -599,13 +617,13 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Value",
+          "startPos": 10,
           "endPos": 17
         },
         {
-          "entity": "Value",
-          "startPos": 10,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 17
         }
       ]
@@ -615,13 +633,13 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Value",
+          "startPos": 13,
           "endPos": 17
         },
         {
-          "entity": "Value",
-          "startPos": 13,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 17
         }
       ]
@@ -636,58 +654,53 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
           "entity": "Value",
           "startPos": 10,
           "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 14
         }
       ]
     },
     {
-      "text": "propertyname more than 10",
+      "text": "numbername more than 10",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Value",
+          "startPos": 21,
+          "endPos": 22
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 24
-        },
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "numbername is at least 4",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 23,
-          "endPos": 24
+          "endPos": 23
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 23
         }
       ]
     },
     {
-      "text": "propertyname is at least 4",
+      "text": "between 200 and 400 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 25
-        },
-        {
-          "entity": "Value",
-          "startPos": 25,
-          "endPos": 25
-        }
-      ]
-    },
-    {
-      "text": "between 200 and 400 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 31
-        },
         {
           "entity": "Value",
           "startPos": 8,
@@ -697,23 +710,18 @@
           "entity": "Value",
           "startPos": 16,
           "endPos": 18
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 29
         }
       ]
     },
     {
-      "text": "3 propertyname 2 propertyname",
+      "text": "3 numbername 2 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 13
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 15,
-          "endPos": 28
-        },
         {
           "entity": "Value",
           "startPos": 0,
@@ -721,62 +729,88 @@
         },
         {
           "entity": "Value",
-          "startPos": 15,
-          "endPos": 15
+          "startPos": 13,
+          "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 11
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 13,
+          "endPos": 24
         }
       ]
     },
     {
-      "text": "propertyname less than 500k",
+      "text": "numbername less than 500k",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 26
-        },
-        {
-          "entity": "Value",
-          "startPos": 23,
-          "endPos": 26
-        }
-      ]
-    },
-    {
-      "text": "propertyname between 3 and 4",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 27
-        },
         {
           "entity": "Value",
           "startPos": 21,
-          "endPos": 21
+          "endPos": 24
         },
         {
-          "entity": "Value",
-          "startPos": 27,
-          "endPos": 27
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 24
         }
       ]
     },
     {
-      "text": "1 propertyname 1 propertyname",
+      "text": "numbername between 3 and 4",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Value",
+          "startPos": 19,
+          "endPos": 19
+        },
+        {
+          "entity": "Value",
+          "startPos": 25,
+          "endPos": 25
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "1 numbername 1 numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 13,
           "endPos": 13
         },
         {
           "entity": "Comparison",
-          "startPos": 15,
-          "endPos": 28
+          "startPos": 0,
+          "endPos": 11
         },
+        {
+          "entity": "Comparison",
+          "startPos": 13,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "5 numbername 8 numbername",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 0,
@@ -784,65 +818,18 @@
         },
         {
           "entity": "Value",
-          "startPos": 15,
-          "endPos": 15
-        }
-      ]
-    },
-    {
-      "text": "5 propertyname 8 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
+          "startPos": 13,
           "endPos": 13
         },
         {
           "entity": "Comparison",
-          "startPos": 15,
-          "endPos": 28
-        },
-        {
-          "entity": "Value",
           "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 15,
-          "endPos": 15
-        }
-      ]
-    },
-    {
-      "text": "2-3 propertyname 5 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 15
+          "endPos": 11
         },
         {
           "entity": "Comparison",
-          "startPos": 17,
-          "endPos": 30
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
-        },
-        {
-          "entity": "Value",
-          "startPos": 17,
-          "endPos": 17
+          "startPos": 13,
+          "endPos": 24
         }
       ]
     },
@@ -852,87 +839,9 @@
       "entities": []
     },
     {
-      "text": "1 propertyname 2+ propertyname",
+      "text": "2-3 numbername 5 numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 13
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 15,
-          "endPos": 29
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 15,
-          "endPos": 15
-        }
-      ]
-    },
-    {
-      "text": "3+ propertyname in attributename",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "3+ propertyname 2 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 16,
-          "endPos": 29
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 16,
-          "endPos": 16
-        }
-      ]
-    },
-    {
-      "text": "4-5 propertyname 3-4 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 15
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 17,
-          "endPos": 32
-        },
         {
           "entity": "Value",
           "startPos": 0,
@@ -945,13 +854,34 @@
         },
         {
           "entity": "Value",
-          "startPos": 17,
-          "endPos": 17
+          "startPos": 15,
+          "endPos": 15
         },
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 15,
+          "endPos": 26
+        }
+      ]
+    },
+    {
+      "text": "3+ numbername in attributename",
+      "intent": "Filter",
+      "entities": [
+        {
           "entity": "Value",
-          "startPos": 19,
-          "endPos": 19
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
         }
       ]
     },
@@ -961,65 +891,90 @@
       "entities": []
     },
     {
-      "text": "3+ propertyname attributename",
+      "text": "1 numbername 2+ numbername",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
         {
           "entity": "Value",
           "startPos": 0,
           "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 13,
+          "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 11
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 13,
+          "endPos": 25
         }
       ]
     },
     {
-      "text": "between 3 and 4 propertyname with a attributename",
+      "text": "3+ numbername 2 numbername",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 27
-        },
-        {
           "entity": "Value",
-          "startPos": 8,
-          "endPos": 8
+          "startPos": 0,
+          "endPos": 0
         },
         {
           "entity": "Value",
           "startPos": 14,
           "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 14,
+          "endPos": 25
         }
       ]
     },
     {
-      "text": "at least 1 propertyname, 2+ propertyname",
+      "text": "4-5 numbername 3-4 numbername",
       "intent": "Filter",
       "entities": [
         {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Value",
+          "startPos": 15,
+          "endPos": 15
+        },
+        {
+          "entity": "Value",
+          "startPos": 17,
+          "endPos": 17
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 22
+          "endPos": 13
         },
         {
           "entity": "Comparison",
-          "startPos": 25,
-          "endPos": 39
-        },
-        {
-          "entity": "Value",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Value",
-          "startPos": 25,
-          "endPos": 25
+          "startPos": 15,
+          "endPos": 28
         }
       ]
     },
@@ -1028,13 +983,13 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
+          "entity": "Value",
+          "startPos": 13,
           "endPos": 20
         },
         {
-          "entity": "Value",
-          "startPos": 13,
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 20
         }
       ]
@@ -1044,11 +999,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 22
-        },
-        {
           "entity": "Value",
           "startPos": 8,
           "endPos": 12
@@ -1056,6 +1006,11 @@
         {
           "entity": "Value",
           "startPos": 18,
+          "endPos": 22
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 22
         }
       ]
@@ -1065,11 +1020,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 10
-        },
-        {
           "entity": "Value",
           "startPos": 0,
           "endPos": 4
@@ -1078,23 +1028,55 @@
           "entity": "Value",
           "startPos": 6,
           "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 10
         }
       ]
     },
     {
-      "text": "between $200k and $500k attributename with at least 3 propertyname",
+      "text": "3+ numbername attributename",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
-          "endPos": 22
+          "endPos": 0
         },
         {
           "entity": "Comparison",
-          "startPos": 43,
-          "endPos": 65
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 numbername with a attributename",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
         },
+        {
+          "entity": "Value",
+          "startPos": 14,
+          "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "between $200k and $500k attributename with at least 3 numbername",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 8,
@@ -1109,23 +1091,49 @@
           "entity": "Value",
           "startPos": 52,
           "endPos": 52
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 22
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 43,
+          "endPos": 63
         }
       ]
     },
     {
-      "text": "between 3 and 4 propertyname attributename for no more than $950k",
+      "text": "at least 1 numbername, 2+ numbername",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 27
+          "entity": "Value",
+          "startPos": 9,
+          "endPos": 9
+        },
+        {
+          "entity": "Value",
+          "startPos": 23,
+          "endPos": 23
         },
         {
           "entity": "Comparison",
-          "startPos": 47,
-          "endPos": 64
+          "startPos": 0,
+          "endPos": 20
         },
+        {
+          "entity": "Comparison",
+          "startPos": 23,
+          "endPos": 35
+        }
+      ]
+    },
+    {
+      "text": "between 3 and 4 numbername attributename for no more than $950k",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 8,
@@ -1138,29 +1146,18 @@
         },
         {
           "entity": "Value",
-          "startPos": 60,
-          "endPos": 64
-        }
-      ]
-    },
-    {
-      "text": "3-4 propertyname attributename",
-      "intent": "Filter",
-      "entities": [
+          "startPos": 58,
+          "endPos": 58
+        },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 15
+          "endPos": 14
         },
         {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
+          "entity": "Comparison",
+          "startPos": 45,
+          "endPos": 58
         }
       ]
     },
@@ -1170,30 +1167,9 @@
       "entities": []
     },
     {
-      "text": "9 propertyname",
+      "text": "3-4 numbername attributename",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 13
-        },
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
-    },
-    {
-      "text": "2-5 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 15
-        },
         {
           "entity": "Value",
           "startPos": 0,
@@ -1203,23 +1179,34 @@
           "entity": "Value",
           "startPos": 2,
           "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 13
         }
       ]
     },
     {
-      "text": "3+ propertyname attributename in xword with a attributename for less than $800k",
+      "text": "9 numbername",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
-          "endPos": 14
+          "endPos": 0
         },
         {
           "entity": "Comparison",
-          "startPos": 64,
-          "endPos": 78
-        },
+          "startPos": 0,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "2-5 numbername",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
           "startPos": 0,
@@ -1227,25 +1214,20 @@
         },
         {
           "entity": "Value",
-          "startPos": 74,
-          "endPos": 78
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 13
         }
       ]
     },
     {
-      "text": "3+ propertyname attributename in yword with a zword for less than $600k",
+      "text": "3+ numbername attributename in xword with a attributename for less than $800k",
       "intent": "Filter",
       "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 56,
-          "endPos": 70
-        },
         {
           "entity": "Value",
           "startPos": 0,
@@ -1253,8 +1235,18 @@
         },
         {
           "entity": "Value",
-          "startPos": 66,
-          "endPos": 70
+          "startPos": 72,
+          "endPos": 76
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 62,
+          "endPos": 76
         }
       ]
     },
@@ -1263,14 +1255,40 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 7
         },
         {
-          "entity": "Value",
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "3+ numbername attributename in yword with a zword for less than $600k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 64,
+          "endPos": 68
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 54,
+          "endPos": 68
         }
       ]
     },
@@ -1279,11 +1297,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 21
-        },
-        {
           "entity": "Value",
           "startPos": 8,
           "endPos": 11
@@ -1291,6 +1304,11 @@
         {
           "entity": "Value",
           "startPos": 17,
+          "endPos": 21
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 21
         }
       ]
@@ -1300,11 +1318,6 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 23
-        },
-        {
           "entity": "Value",
           "startPos": 8,
           "endPos": 11
@@ -1312,6 +1325,11 @@
         {
           "entity": "Value",
           "startPos": 17,
+          "endPos": 23
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
           "endPos": 23
         }
       ]
@@ -1321,12 +1339,12 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Value",
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
         }
@@ -1337,12 +1355,12 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 3
         },
         {
-          "entity": "Value",
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 3
         }
@@ -1353,30 +1371,41 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Comparison",
+          "entity": "Value",
           "startPos": 0,
           "endPos": 4
         },
         {
-          "entity": "Value",
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 4
         }
       ]
     },
     {
-      "text": "between 2 & 4 propertyname and remove keywordname",
+      "text": "remove keywordname",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "RemoveKeyword",
-          "startPos": 31,
-          "endPos": 48
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 17
         },
         {
-          "entity": "Comparison",
+          "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 25
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "between 2 & 4 numbername and remove keywordname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 36,
+          "endPos": 46
         },
         {
           "entity": "Value",
@@ -1389,51 +1418,14 @@
           "endPos": 12
         },
         {
-          "entity": "Keyword",
-          "startPos": 38,
-          "endPos": 48
-        }
-      ]
-    },
-    {
-      "text": "remove keywordname and at least 3 propertyname",
-      "intent": "Filter",
-      "entities": [
-        {
           "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 17
+          "startPos": 29,
+          "endPos": 46
         },
         {
           "entity": "Comparison",
-          "startPos": 23,
-          "endPos": 45
-        },
-        {
-          "entity": "Value",
-          "startPos": 32,
-          "endPos": 32
-        },
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "remove keywordname",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 17
-        },
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 17
+          "endPos": 23
         }
       ]
     },
@@ -1449,24 +1441,28 @@
       ]
     },
     {
-      "text": "green sheep",
+      "text": "remove keywordname and at least 3 numbername",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Keyword",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "little purple dragon",
-      "intent": "Filter",
-      "entities": [
+          "startPos": 7,
+          "endPos": 17
+        },
         {
-          "entity": "Keyword",
+          "entity": "Value",
+          "startPos": 32,
+          "endPos": 32
+        },
+        {
+          "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 19
+          "endPos": 17
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 23,
+          "endPos": 43
         }
       ]
     },
@@ -1482,57 +1478,281 @@
       ]
     },
     {
-      "text": "peak",
+      "text": "aword bword cword stringname",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
+          "entity": "Value",
           "startPos": 0,
-          "endPos": 3
+          "endPos": 16
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 27
         }
       ]
     },
     {
-      "text": "foreign bird",
+      "text": "aword bword stringname",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
+          "entity": "Value",
           "startPos": 0,
-          "endPos": 11
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 21
         }
       ]
     },
     {
-      "text": "far up mountain",
+      "text": "aword stringname",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
+          "entity": "Value",
           "startPos": 0,
-          "endPos": 14
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 15
         }
       ]
     },
     {
-      "text": "super tall giraffe",
+      "text": "seattle stringname",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 17
         }
       ]
     },
     {
-      "text": "near stone peak",
+      "text": "rainy seattle stringname",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 12
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 23
+        }
+      ]
+    },
+    {
+      "text": "seattle skyline stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
           "startPos": 0,
           "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "chicago stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "chicago cubs stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 11
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "comfortable stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "tall stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "georgia stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "moneyname of at least $800k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 26
+        }
+      ]
+    },
+    {
+      "text": "any numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "any moneyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "no moneyname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "no numbername",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "eword dword stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "bword stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "hword stringname",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 15
         }
       ]
     },
@@ -1552,12 +1772,22 @@
       "entities": []
     },
     {
-      "text": "propertyname",
+      "text": "keyword",
       "intent": "Facet",
       "entities": []
     },
     {
-      "text": "keyword",
+      "text": "stringname",
+      "intent": "Facet",
+      "entities": []
+    },
+    {
+      "text": "moneyname",
+      "intent": "Facet",
+      "entities": []
+    },
+    {
+      "text": "numbername",
       "intent": "Facet",
       "entities": []
     },

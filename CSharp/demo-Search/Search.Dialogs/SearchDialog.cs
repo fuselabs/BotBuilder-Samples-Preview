@@ -18,9 +18,6 @@ namespace Search.Dialogs
 {
     // TODO: List of things still to do
     // Switch to built-in currency and numbers 
-    // Show the total number of matches
-    // Add spelling support
-    // Provide a way to reset the keywords
     // Add support around locations
     // Cannot handle street in RealEstate because of the way facet values are handled.
     // Allow multiple synonyms in canonicalizer and generate a disjunction for query
@@ -116,7 +113,7 @@ namespace Search.Dialogs
                         where score > 0.3
                         orderby score descending
                         select intent).FirstOrDefault();
-            if (best == null)
+            if (best == null || best.Intent == "None")
             {
                 best = new IntentRecommendation("Filter", 0.0);
             }
@@ -268,6 +265,7 @@ namespace Search.Dialogs
             var removeProperties = from entity in topEntities where entity.Type == "Removal" select entity;
             var removeKeywords = from entity in topEntities where entity.Type == "RemoveKeyword" select entity;
             var bareRemoves = from entity in topEntities where entity.Type == "RemoveKeywords" select entity;
+
             // Remove property constraints
             foreach (var removal in removeProperties)
             {
@@ -349,6 +347,23 @@ namespace Search.Dialogs
                 foreach (var comparison in comparisons)
                 {
                     comparison.AddEntity(entity);
+                }
+            }
+
+            // Find comparisons with unrecognized words inside
+            foreach (var comparison in comparisons)
+            {
+                if (comparison.Lower == null && comparison.Upper == null && comparison.Property != null
+                    && comparison.Property.EndIndex.HasValue && comparison.Entity.EndIndex.HasValue)
+                {
+                    if (comparison.Property.EndIndex == comparison.Entity.EndIndex)
+                    {
+                        comparison.Lower = new EntityRecommendation(null, null, comparison.Entity.Entity.Substring(0, comparison.Property.StartIndex.Value));
+                    }
+                    else if (comparison.Property.StartIndex == comparison.Entity.StartIndex)
+                    {
+                        comparison.Lower = new EntityRecommendation(null, null, comparison.Entity.Entity.Substring(comparison.Property.EndIndex.Value, comparison.Entity.EndIndex.Value + 1));
+                    }
                 }
             }
 

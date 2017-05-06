@@ -26,10 +26,12 @@ namespace RealEstateBot.Dialogs
         private const string NameKey = "Name";
         private const string QueryKey = "LastQuery";
         private const string LUISKeyKey = "LUISSubscriptionKey";
+        private const string LUISDomainKey = "LUISDomain";
         private readonly ISearchClient SearchClient;
         private SearchSpec Query = new SearchSpec();
         private SearchSpec LastQuery = null;
         private string LUISKey;
+        private string LUISDomain;
         private string ModelId;
         private Prompts Prompts = new Prompts();
 
@@ -46,7 +48,8 @@ namespace RealEstateBot.Dialogs
                 // For local debugging of the sample without checking in your key
                 this.LUISKey = Environment.GetEnvironmentVariable(LUISKeyKey);
             }
-            var subscription = new Subscription("westus.api.cognitive.microsoft.com", this.LUISKey);
+            this.LUISDomain = ConfigurationManager.AppSettings[LUISDomainKey];
+            var subscription = new Subscription(this.LUISDomain, this.LUISKey);
             var application = await subscription.GetOrImportApplicationAsync(
                         Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
                         context.CancellationToken);
@@ -120,8 +123,8 @@ namespace RealEstateBot.Dialogs
         private void Search(IDialogContext context)
         {
             context.Call(new SearchDialog(new Prompts(),
-                this.SearchClient, 
-                new LuisModelAttribute(this.ModelId, this.LUISKey, spellCheck:true),
+                this.SearchClient,
+                new LuisModelAttribute(this.ModelId, this.LUISKey, domain:this.LUISDomain, spellCheck: true),
                 multipleSelection: true,
                 query: this.Query,
                 refiners: new string[]
