@@ -977,13 +977,13 @@
       ]
     },
     {
-      "text": "no Type",
+      "text": "no Street",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Removal",
           "startPos": 0,
-          "endPos": 6
+          "endPos": 8
         }
       ]
     },
@@ -1036,13 +1036,13 @@
       ]
     },
     {
-      "text": "any area",
+      "text": "any zipcode",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Removal",
           "startPos": 0,
-          "endPos": 7
+          "endPos": 10
         }
       ]
     },
@@ -1621,6 +1621,11 @@
           "endPos": 42
         },
         {
+          "entity": "Value",
+          "startPos": 43,
+          "endPos": 46
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 14
@@ -1949,7 +1954,7 @@
       ]
     },
     {
-      "text": "aword bword cword State",
+      "text": "aword bword cword City",
       "intent": "Filter",
       "entities": [
         {
@@ -1960,7 +1965,7 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 22
+          "endPos": 21
         }
       ]
     },
@@ -1981,7 +1986,7 @@
       ]
     },
     {
-      "text": "aword region",
+      "text": "aword area",
       "intent": "Filter",
       "entities": [
         {
@@ -1992,12 +1997,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 11
+          "endPos": 9
         }
       ]
     },
     {
-      "text": "seattle area",
+      "text": "seattle zip",
       "intent": "Filter",
       "entities": [
         {
@@ -2008,12 +2013,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 11
+          "endPos": 10
         }
       ]
     },
     {
-      "text": "rainy seattle Status",
+      "text": "rainy seattle description",
       "intent": "Filter",
       "entities": [
         {
@@ -2024,12 +2029,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 19
+          "endPos": 24
         }
       ]
     },
     {
-      "text": "seattle skyline region",
+      "text": "seattle skyline area",
       "intent": "Filter",
       "entities": [
         {
@@ -2040,12 +2045,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 21
+          "endPos": 19
         }
       ]
     },
     {
-      "text": "chicago region",
+      "text": "chicago area",
       "intent": "Filter",
       "entities": [
         {
@@ -2056,7 +2061,7 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 13
+          "endPos": 11
         }
       ]
     },
@@ -2077,7 +2082,7 @@
       ]
     },
     {
-      "text": "comfortable area",
+      "text": "comfortable country",
       "intent": "Filter",
       "entities": [
         {
@@ -2088,12 +2093,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 15
+          "endPos": 18
         }
       ]
     },
     {
-      "text": "tall Status",
+      "text": "tall Listing Agent",
       "intent": "Filter",
       "entities": [
         {
@@ -2104,12 +2109,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 10
+          "endPos": 17
         }
       ]
     },
     {
-      "text": "georgia State",
+      "text": "georgia City",
       "intent": "Filter",
       "entities": [
         {
@@ -2120,7 +2125,7 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 12
+          "endPos": 11
         }
       ]
     },
@@ -2180,7 +2185,7 @@
       ]
     },
     {
-      "text": "eword dword area",
+      "text": "eword dword zip",
       "intent": "Filter",
       "entities": [
         {
@@ -2191,12 +2196,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 15
+          "endPos": 14
         }
       ]
     },
     {
-      "text": "bword region",
+      "text": "bword zip",
       "intent": "Filter",
       "entities": [
         {
@@ -2207,12 +2212,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 11
+          "endPos": 8
         }
       ]
     },
     {
-      "text": "hword region",
+      "text": "hword Zip Code",
       "intent": "Filter",
       "entities": [
         {
@@ -2223,7 +2228,7 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 11
+          "endPos": 13
         }
       ]
     },
@@ -2243,7 +2248,7 @@
       "entities": []
     },
     {
-      "text": "area",
+      "text": "country",
       "intent": "Facet",
       "entities": []
     },

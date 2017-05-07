@@ -1150,6 +1150,11 @@
           "endPos": 58
         },
         {
+          "entity": "Value",
+          "startPos": 59,
+          "endPos": 62
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 14

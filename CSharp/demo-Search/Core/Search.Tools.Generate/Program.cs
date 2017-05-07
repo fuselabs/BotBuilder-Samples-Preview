@@ -497,9 +497,7 @@
             }
 
             AddKeywords(template, schema.Keywords);
-            ReplaceGenericNames(template,
-                from field in schema.Fields.Values where field.Type.IsNumeric() || field.ValueSynonyms.Any() select field,
-                schema.Keywords);
+            ReplaceGenericNames(template, schema.Fields.Values, schema.Keywords);
             ExpandFacetExamples(template);
 
             if (p.OutputPath != null)
