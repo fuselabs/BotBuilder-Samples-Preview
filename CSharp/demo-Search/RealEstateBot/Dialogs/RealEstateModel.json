@@ -2,7 +2,7 @@
   "luis_schema_version": "2.0.0",
   "versionId": "0.1",
   "name": "RealEstateModel",
-  "desc": "LUIS model generated via the command generate ..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -o ..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -s 9e768bb58e0d4a91ab3c501b71c0e8ac {-d dialogice2.cloudapp.net -p DiceDev:15Af429A9781490eB8326dA22e4Ff727} {-l 1a8dc589b6894e2b9ca44deb237d6943} {-ut} -u",
+  "desc": "LUIS model generated via the command generate ..\\..\\RealEstateBot\\Dialogs\\RealEstate.json -o ..\\..\\RealEstateBot\\Dialogs\\RealEstateModel.json -s 9e768bb58e0d4a91ab3c501b71c0e8ac {-d dialogice2.cloudapp.net -p DiceDev:15Af429A9781490eB8326dA22e4Ff727 -l 1a8dc589b6894e2b9ca44deb237d6943} -ut -u",
   "culture": "en-us",
   "intents": [
     {
@@ -45,8 +45,8 @@
     {
       "name": "Comparison",
       "children": [
-        "Operators",
         "Value",
+        "Operators",
         "Properties"
       ]
     },
@@ -2229,6 +2229,86 @@
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "remove tall lion with ears",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 25
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "remove big dog",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 13
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "remove cat",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 9
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "remove big tall giraffe",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 22
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "remove small red fish",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 20
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 20
         }
       ]
     },

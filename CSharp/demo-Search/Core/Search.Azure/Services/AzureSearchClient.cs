@@ -180,6 +180,11 @@ namespace Search.Azure.Services
                 parameters.Facets = new List<string> {$"{facet},count:{spec.MaxFacets}"};
             }
 
+            if (Schema.KeywordFields != null)
+            {
+                parameters.SearchFields = Schema.KeywordFields;
+            }
+
             var searchExpressions = new List<FilterExpression>();
             var filter = ExtractFullText(spec.Filter, searchExpressions);
             parameters.QueryType = QueryType.Full;
@@ -196,7 +201,7 @@ namespace Search.Azure.Services
             {
                 builder.Append(prefix);
                 builder.Append(SearchTools.Constant(phrase));
-                prefix = " OR ";
+                prefix = " AND ";
             }
             if (expressions.Any())
             {

@@ -45,8 +45,8 @@
     {
       "name": "Comparison",
       "children": [
-        "Operators",
         "Value",
+        "Operators",
         "Properties"
       ]
     },
@@ -1758,6 +1758,86 @@
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "remove tall lion with ears",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 25
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "remove big dog",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 13
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "remove cat",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 9
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "remove big tall giraffe",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 22
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "remove small red fish",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 20
+        },
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 20
         }
       ]
     },

@@ -29,6 +29,8 @@ namespace Search.Models
 
         public string Keywords { get; set; }
 
+        public List<string> KeywordFields { get; set; }
+
         public List<SearchFragment> Fragments = new List<SearchFragment>();
 
         public SearchSchema()
