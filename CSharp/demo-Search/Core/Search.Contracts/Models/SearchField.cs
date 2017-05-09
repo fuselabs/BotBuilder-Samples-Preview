@@ -69,6 +69,7 @@ namespace Search.Models
         public bool IsFacetable { get; set; }
         public bool IsFilterable { get; set; }
         public bool IsKey { get; set; }
+        public bool IsMoney { get; set; }
         public bool IsRetrievable { get; set; }
         public bool IsSearchable { get; set; }
         public bool IsSortable { get; set; }
@@ -79,6 +80,6 @@ namespace Search.Models
         public Synonyms[] ValueSynonyms { get; set; } = new Synonyms[0];
         public double Min { get; set; }
         public double Max { get; set; }
-        public bool IsMoney { get; set; }
+        public List<string> Examples { get; set; }
     }
 }

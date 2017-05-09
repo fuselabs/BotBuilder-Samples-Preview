@@ -21,14 +21,18 @@ namespace Search.Models
 
         public Dictionary<string, SearchField> Fields { get; set; }
 
+        // Default property to use with currency values
         public string DefaultCurrencyProperty { get; set; }
 
+        // Default property to use with numeric values
         public string DefaultNumericProperty { get; set; }
 
         public string DefaultGeoProperty { get; set; }
 
+        // Actual keywords seperated by commas
         public string Keywords { get; set; }
 
+        // Where to search for keywords
         public List<string> KeywordFields { get; set; }
 
         public List<SearchFragment> Fragments = new List<SearchFragment>();

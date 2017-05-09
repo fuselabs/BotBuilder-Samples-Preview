@@ -224,11 +224,13 @@ namespace Search.Tools.Extract
                 Console.WriteLine(msg);
             }
             Console.WriteLine(
-                "extract <Service name> <Index name> <Admin key> [-ad <domain>] [-af <fieldList>] [-ak <key>] [-al <language>] [-c <file>] [-f <facetList>] [-g <path>] [-h <path>] [-j <jsonFile>] [-kf <fieldList>] [-km <max>] [-kt <threshold>] [-o <outputPath>] [-u <threshold>] [-v <field>]");
+                "extract <Service name> <Index name> <Admin key> [-a <attributeList>] [-ad <domain>] [-af <fieldList>] [-ak <key>] [-al <language>] [-c <file>] [-dc <Field>] [-dk <FieldList>] [-dn <Field>] [-e <examples>] [-f <facetList>] [-g <path>] [-h <path>] [-j <jsonFile>] [-kf <fieldList>] [-km <max>] [-kt <threshold>] [-o <outputPath>] [-u <threshold>] [-v <field>]");
             Console.WriteLine(
                 @"Generate <parameters.IndexName>.json schema file.
 If you generate a histogram using -g and -h, it will be used to determine attributes if less than -u unique values are found.
 You can find keywords either through -kf for actual keywords or -af to generate keywords using the text analytics cognitive service.");
+            Console.WriteLine(
+                "-a <attributeList> : Comma seperated list of field names to generate attributes from.  If not specified -u will be used to find possible attributes.");
             Console.WriteLine(
                 "-ad <domain>: Analyze text domain, westus.api.cognitive.microsoft.com by default.");
             Console.WriteLine(
@@ -240,7 +242,15 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             Console.WriteLine(
                 "-c <file> : Copy search index to local JSON file that can be used via -j instead of talking to Azure Search service.");
             Console.WriteLine(
-                "-f <facetList>: Comma seperated list of facet names for histogram.  By default all schema parameters.Facets.");
+                "-dc <Field> : Default currency field.");
+            Console.WriteLine(
+                "-dn <Field> : Default numeric field.");
+            Console.WriteLine(
+                "-dk <FieldList> : Comma seperated list of fields to search for user keywords.");
+            Console.WriteLine(
+                "-e <examples> : Number of most frequent examples to keep, default is 3.");
+            Console.WriteLine(
+                "-f <facetList>: Comma seperated list of facet names for histogram.  By default all fields in schema.");
             Console.WriteLine(
                 "-g <path>: Generate a file with histogram information from index.  This can take a long time.");
             Console.WriteLine(
@@ -258,7 +268,8 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             Console.WriteLine(
                 "-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
             Console.WriteLine(
-                "-u <threshold>: Maximum number of unique string values for a field to be an attribute from -g.  By default is 100.  LUIS allows a total of 5000.");
+                @"-u <threshold>: Maximum number of unique string values for a field to be an attribute from -g.  
+    By default is 100.  LUIS allows a total of 5000.  Can also specify -a to specify a specific field to generate attributes from.");
             Console.WriteLine(
                 "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.  Will use key field if sortable and filterable.");
             Console.WriteLine(
@@ -290,8 +301,13 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             public string[] AnalyzeFields = null;
             public string AnalyzeLanguage = "en";
             public string ApplyPath;
+            public string[] Attributes = null;
             public bool CopyJSON = false;
             public string CopyPath;
+            public string DefaultCurrencyField;
+            public string DefaultNumericField;
+            public string[] DefaultKeywordFields = null;
+            public int Examples = 3;
             public string[] Facets;
             public string GeneratePath;
             public string HistogramPath;
@@ -461,6 +477,18 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                     schema = JsonConvert.DeserializeObject<SearchSchema>(applyStream.ReadLine());
                     applyStream.ReadLine();
                 }
+                if (parameters.DefaultCurrencyField != null)
+                {
+                    schema.DefaultCurrencyProperty = parameters.DefaultCurrencyField;
+                }
+                if (parameters.DefaultNumericField != null)
+                {
+                    schema.DefaultNumericProperty = parameters.DefaultNumericField;
+                }
+                if (parameters.DefaultKeywordFields != null)
+                {
+                    schema.KeywordFields = parameters.DefaultKeywordFields.ToList();
+                }
                 if (parameters.GeneratePath != null)
                 {
                     if (parameters.Sortable == null)
@@ -542,7 +570,9 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                         {
                             var field = schema.Field(histogram.Key);
                             var counts = histogram.Value;
-                            if (counts.Counts().Count() < parameters.UniqueValueThreshold
+                            if ((parameters.Attributes == null
+                                ? counts.Counts().Count() < parameters.UniqueValueThreshold
+                                : parameters.Attributes.Contains(field.Name))
                                 && counts.Values().FirstOrDefault() != null 
                                 && (field.Type == typeof(string) || field.Type == typeof(string[])))
                             {
@@ -572,6 +602,16 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                                 }
                                 field.Min = min;
                                 field.Max = max;
+                            }
+                            if (parameters.Examples > 0)
+                            {
+                                field.Examples = (from count in counts.Pairs()
+                                                  let key = Convert.ToString(count.Key).Trim()
+                                                  where key.Length > 0
+                                                  orderby count.Value descending
+                                                  select key)
+                                                  .Take(parameters.Examples)
+                                                  .ToList();
                             }
                         }
                     }
@@ -608,6 +648,9 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                 {
                     switch (arg)
                     {
+                        case "-a":
+                            parameters.Attributes = NextArg(++i, args).Split(',');
+                            break;
                         case "-ad":
                             parameters.AnalyzeDomain = NextArg(++i, args);
                             break;
@@ -628,6 +671,15 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                             break;
                         case "-c":
                             parameters.CopyPath = NextArg(++i, args);
+                            break;
+                        case "-dc":
+                            parameters.DefaultCurrencyField = NextArg(++i, args);
+                            break;
+                        case "-dn":
+                            parameters.DefaultNumericField = NextArg(++i, args);
+                            break;
+                        case "-dk":
+                            parameters.DefaultKeywordFields = NextArg(++i, args).Split(',');
                             break;
                         case "-f":
                             parameters.Facets = NextArg(++i, args).Split(',');
