@@ -67,6 +67,34 @@
             sublists.Add(sublist);
         }
 
+        public class SubListComparer : IEqualityComparer<JToken>
+        {
+            public bool Equals(JToken x, JToken y)
+            {
+                dynamic dx = x;
+                dynamic dy = y;
+                return ((string)dx.canonicalForm).Equals((string)dy.canonicalForm, StringComparison.CurrentCultureIgnoreCase);
+            }
+
+            public int GetHashCode(JToken obj)
+            {
+                dynamic d = obj;
+                return ((string) d.canonicalForm).ToLower().GetHashCode();
+            }
+        }
+
+        static void SortClosedList(dynamic model, string closedList)
+        {
+            var list = ClosedList(model, closedList);
+            var sublists = (JArray)list.subLists;
+            var newlists = new JArray();
+            foreach (var sub in (from sub in sublists.Distinct(new SubListComparer()) let word = (string) sub["canonicalForm"] orderby word ascending select sub))
+            {
+                newlists.Add(sub);
+            }
+            list.subLists = newlists;
+        }
+
         static void AddDescription(dynamic model, string appName, string[] args)
         {
             model.desc = $"LUIS model generated via the command generate {string.Join(" ", args)}";
@@ -469,7 +497,7 @@
             {
                 if ((field.Type == typeof(string)
                     || field.Type == typeof(string[]))
-                    && field.ValueSynonyms.Length > 0)
+                    && field.ValueSynonyms.Any())
                 {
                     AddAttribute(template, field);
                 }
@@ -499,6 +527,7 @@
             AddKeywords(template, schema.Keywords);
             ReplaceGenericNames(template, schema.Fields.Values, schema.Keywords);
             ExpandFacetExamples(template);
+            SortClosedList(template, "Attributes");
 
             if (p.OutputPath != null)
             {

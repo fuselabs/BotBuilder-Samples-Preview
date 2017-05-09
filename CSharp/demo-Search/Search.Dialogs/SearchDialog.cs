@@ -13,6 +13,7 @@ using Search.Dialogs.Tools;
 using Search.Dialogs.UserInteraction;
 using Search.Models;
 using Search.Services;
+using Microsoft.Bot.Builder.FormFlow.Advanced;
 
 namespace Search.Dialogs
 {
@@ -612,14 +613,17 @@ namespace Search.Dialogs
                 {
                     foreach (var synonym in field.ValueSynonyms)
                     {
-                        // TODO: We should not normalize, but currently LUIS does
-                        ValueCanonicalizers.Add(Normalize(synonym.Canonical),
-                                new CanonicalValue
-                                {
-                                    Field = field,
-                                    Value = synonym.Canonical,
-                                    Description = synonym.Description
-                                });
+                        // TODO: We have two different fields with the same value for now, just pick one
+                        if (!ValueCanonicalizers.ContainsKey(synonym.Canonical))
+                        {
+                            ValueCanonicalizers.Add(synonym.Canonical,
+                                    new CanonicalValue
+                                    {
+                                        Field = field,
+                                        Value = synonym.Canonical,
+                                        Description = synonym.Description
+                                    });
+                        }
                     }
                 }
             }
@@ -635,9 +639,13 @@ namespace Search.Dialogs
             CanonicalValue canonical = null;
             if (entity.Type == "Attributes")
             {
-                // TODO: We should not normalize, but currently LUIS does
-                var key = Normalize(entity.FirstResolution());
-                ValueCanonicalizers.TryGetValue(key, out canonical);
+                var key = entity.FirstResolution();
+                // Ignore noise words as attributes
+                // TODO: Ideally we would filter when generating, but the Bot Builder is not available in .net core yet
+                if (!Language.NoiseWord(key))
+                {
+                    ValueCanonicalizers.TryGetValue(key, out canonical);
+                }
             }
             return canonical;
         }

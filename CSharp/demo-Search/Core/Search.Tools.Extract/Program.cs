@@ -224,58 +224,60 @@ namespace Search.Tools.Extract
                 Console.WriteLine(msg);
             }
             Console.WriteLine(
-                "extract <Service name> <Index name> <Admin key> [-a <attributeList>] [-ad <domain>] [-af <fieldList>] [-ak <key>] [-al <language>] [-c <file>] [-dc <Field>] [-dk <FieldList>] [-dn <Field>] [-e <examples>] [-f <facetList>] [-g <path>] [-h <path>] [-j <jsonFile>] [-kf <fieldList>] [-km <max>] [-kt <threshold>] [-o <outputPath>] [-u <threshold>] [-v <field>]");
+                @"extract <Service name> <Index name> <Admin key> [-a <attributeList>] [-ad <domain>] [-af <fieldList>] [-ak <key>] [-al <language>] [-c <file>] [-dc <Field>] [-dk <FieldList>] [-dn <Field>] [-e <examples>] [-f <facetList>] [-g <path>] [-h <path>] [-j <jsonFile>] [-kf <fieldList>] [-km <max>] [-kt <threshold>] [-mo <min>] [-mt <max>] [-o <outputPath>] [-v <field>]");
             Console.WriteLine(
                 @"Generate <parameters.IndexName>.json schema file.
 If you generate a histogram using -g and -h, it will be used to determine attributes if less than -u unique values are found.
 You can find keywords either through -kf for actual keywords or -af to generate keywords using the text analytics cognitive service.");
             Console.WriteLine(
-                "-a <attributeList> : Comma seperated list of field names to generate attributes from.  If not specified -u will be used to find possible attributes.");
+                @"-a <attributeList> : Comma seperated list of field names to generate attributes from.  
+    If not specified, all string or string[] will be considered for atttributes.");
             Console.WriteLine(
-                "-ad <domain>: Analyze text domain, westus.api.cognitive.microsoft.com by default.");
+                @"-ad <domain>: Analyze text domain, westus.api.cognitive.microsoft.com by default.");
             Console.WriteLine(
-                "-af <fieldList> : Comma seperated fields to analyze for keywords.");
+                @"-af <fieldList> : Comma seperated fields to analyze for keywords.");
             Console.WriteLine(
-                "-ak <key> : Key for calling analyze text cognitive service.");
+                @"-ak <key> : Key for calling analyze text cognitive service.");
             Console.WriteLine(
-                "-al <language> : Language to use for keyword analysis, en by default.");
+                @"-al <language> : Language to use for keyword analysis, en by default.");
             Console.WriteLine(
-                "-c <file> : Copy search index to local JSON file that can be used via -j instead of talking to Azure Search service.");
+                @"-c <file> : Copy search index to local JSON file that can be used via -j instead of talking to Azure Search service.");
             Console.WriteLine(
-                "-dc <Field> : Default currency field.");
+                @"-dc <Field> : Default currency field.");
             Console.WriteLine(
-                "-dn <Field> : Default numeric field.");
+                @"-dn <Field> : Default numeric field.");
             Console.WriteLine(
-                "-dk <FieldList> : Comma seperated list of fields to search for user keywords.");
+                @"-dk <FieldList> : Comma seperated list of fields to search for user keywords.");
             Console.WriteLine(
-                "-e <examples> : Number of most frequent examples to keep, default is 3.");
+                @"-e <examples> : Number of most frequent examples to keep, default is 3.");
             Console.WriteLine(
-                "-f <facetList>: Comma seperated list of facet names for histogram.  By default all fields in schema.");
+                @"-f <facetList>: Comma seperated list of facet names for histogram.  By default all fields in schema.");
             Console.WriteLine(
-                "-g <path>: Generate a file with histogram information from index.  This can take a long time.");
+                @"-g <path>: Generate a file with histogram information from index.  This can take a long time.");
             Console.WriteLine(
-                "-h <path>: Use histogram to help generate schema.  This can be the just generated histogram.");
+                @"-h <path>: Use histogram to help generate schema.  This can be the just generated histogram.");
             Console.WriteLine(
-                "-j <file> : Apply analysis to JSON file rather than search index.");
+                @"-j <file> : Apply analysis to JSON file rather than search index.");
             Console.WriteLine(
-                "-kf <fieldList> : Comma seperated fields that contain keywords.");
+                @"-kf <fieldList> : Comma seperated fields that contain keywords.");
             Console.WriteLine(
-                "-km <max> : Maximum number of keywords to extract, default is 10,000.");
+                @"-km <max> : Maximum number of keywords to extract, default is 10,000.");
             Console.WriteLine(
-                "-kt <threshold> : Minimum number of docs required to be a keyword, default is 5.");
+                @"-kt <threshold> : Minimum number of docs required to be a keyword, default is 5.");
             Console.WriteLine(
-                "-o <path>: Where to put generated schema.");
+                @"-mo <min> : Minimum number of occurrences for a value to be an attribute candidate, default is 3.");
             Console.WriteLine(
-                "-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
+                @"-mt <max> : Maximum number of attributes to allow, default is 5000 and must be < 20,000.");
             Console.WriteLine(
-                @"-u <threshold>: Maximum number of unique string values for a field to be an attribute from -g.  
-    By default is 100.  LUIS allows a total of 5000.  Can also specify -a to specify a specific field to generate attributes from.");
+                @"-o <path>: Where to put generated schema.");
             Console.WriteLine(
-                "-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.  Will use key field if sortable and filterable.");
+                @"-s <samples>: Maximum number of rows to sample from index when doing -g.  All by default.");
             Console.WriteLine(
-                "-w : Create a new index from -j JSON file.");
+                @"-v <field>: Field to order by when using -g.  There must be no more than 100,000 rows with the same value.  Will use key field if sortable and filterable.");
             Console.WriteLine(
-                "{} can be used to comment out arguments.");
+                @"-w : Create a new index from -j JSON file.");
+            Console.WriteLine(
+                @"{} can be used to comment out arguments.");
             Environment.Exit(-1);
         }
 
@@ -315,11 +317,12 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             public string[] KeywordFields;
             public int KeywordMax = 10000;
             public int KeywordThreshold = 5;
+            public int MinAttributeOccurrences = 5;
+            public int MaxAttributeValues = 5000;
             public int Samples = int.MaxValue;
             public string SchemaPath;
             public string ServiceName;
             public string Sortable;
-            public int UniqueValueThreshold = 100;
 
             public void Display(TextWriter writer)
             {
@@ -436,7 +439,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                     {
                         dynamic obj = val as JObject;
                         var coords = CoordinateSystem.Geography(obj.EpsgId as int?);
-                        var spatial = GeographyPoint.Create(coords, (double) obj.Latitude, (double) obj.Longitude, (double?) obj.Z, (double?) obj.M);
+                        var spatial = GeographyPoint.Create(coords, (double)obj.Latitude, (double)obj.Longitude, (double?)obj.Z, (double?)obj.M);
                         val = spatial;
                     }
                     newDoc[field.Key] = val;
@@ -451,6 +454,29 @@ You can find keywords either through -kf for actual keywords or -af to generate 
             if (docs.Any())
             {
                 await WriteDocs(indexClient, docs, keyName);
+            }
+        }
+
+        private struct Attribute: IEqualityComparer<Attribute>
+        {
+            public readonly SearchField Field;
+            public readonly int Count;
+            public readonly string Value;
+            public Attribute(SearchField field, int count, string value)
+            {
+                Field = field;
+                Count = count;
+                Value = value;
+            }
+
+            public bool Equals(Attribute x, Attribute y)
+            {
+                return x.Value.Equals(y.Value, StringComparison.CurrentCultureIgnoreCase);
+            }
+
+            public int GetHashCode(Attribute obj)
+            {
+                return obj.Value.ToLower().GetHashCode();
             }
         }
 
@@ -480,6 +506,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                 if (parameters.DefaultCurrencyField != null)
                 {
                     schema.DefaultCurrencyProperty = parameters.DefaultCurrencyField;
+                    schema.Field(parameters.DefaultCurrencyField).IsMoney = true;
                 }
                 if (parameters.DefaultNumericField != null)
                 {
@@ -565,30 +592,23 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                             histograms = JsonConvert.DeserializeObject<Dictionary<string, Histogram<object>>>(text, jsonSettings);
                         }
 #endif
-
+                        var attributes = new List<Attribute>();
                         foreach (var histogram in histograms)
                         {
                             var field = schema.Field(histogram.Key);
                             var counts = histogram.Value;
-                            if ((parameters.Attributes == null
-                                ? counts.Counts().Count() < parameters.UniqueValueThreshold
-                                : parameters.Attributes.Contains(field.Name))
-                                && counts.Values().FirstOrDefault() != null 
+                            if ((parameters.Attributes == null || parameters.Attributes.Contains(field.Name))
+                                && counts.Values().FirstOrDefault() != null
                                 && (field.Type == typeof(string) || field.Type == typeof(string[])))
                             {
-                                var vals = new List<Synonyms>();
                                 foreach (var value in counts.Pairs())
                                 {
-                                    var canonical = value.Key as string;
-                                    if (!string.IsNullOrWhiteSpace(canonical))
+                                    var canonical = Normalize(value.Key as string);
+                                    if (value.Value >= parameters.MinAttributeOccurrences && !string.IsNullOrEmpty(canonical))
                                     {
-                                        // Remove punctuation and trimming
-                                        var alt = Normalize(canonical);
-                                        var synonyms = new Synonyms(canonical, alt);
-                                        vals.Add(synonyms);
+                                        attributes.Add(new Attribute(field, value.Value, canonical));
                                     }
                                 }
-                                field.ValueSynonyms = vals.ToArray();
                             }
                             if (field.Type.IsNumeric())
                             {
@@ -596,7 +616,7 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                                 double max = double.MinValue;
                                 foreach (var val in counts.Values())
                                 {
-                                    var num = double.Parse((string) val);
+                                    var num = double.Parse((string)val);
                                     if (num < min) min = num;
                                     if (num > max) max = num;
                                 }
@@ -612,6 +632,25 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                                                   select key)
                                                   .Take(parameters.Examples)
                                                   .ToList();
+                            }
+                        }
+                        var selected = (from attribute in attributes
+                                        orderby attribute.Count descending
+                                        select attribute)
+                                        .Take(parameters.MaxAttributeValues);
+                        var grouped = (from attribute in selected
+                                       orderby attribute.Value ascending
+                                       group attribute by attribute.Field into afield
+                                       select afield);
+                        var vals = new List<Synonyms>();
+                        foreach(var afield in grouped)
+                        {
+                            var field = afield.Key;
+                            field.ValueSynonyms = new List<Synonyms>();
+                            foreach(var attribute in afield)
+                            {
+                                var synonyms = new Synonyms(attribute.Value, attribute.Value);
+                                field.ValueSynonyms.Add(synonyms);
                             }
                         }
                     }
@@ -696,14 +735,17 @@ You can find keywords either through -kf for actual keywords or -af to generate 
                         case "-k":
                             parameters.KeywordFields = NextArg(++i, args).Split(',');
                             break;
+                        case "-mo":
+                            parameters.MinAttributeOccurrences = int.Parse(NextArg(++i, args));
+                            break;
+                        case "-mt":
+                            parameters.MaxAttributeValues = int.Parse(NextArg(++i, args));
+                            break;
                         case "-o":
                             parameters.SchemaPath = NextArg(++i, args);
                             break;
                         case "-s":
                             parameters.Samples = int.Parse(NextArg(++i, args));
-                            break;
-                        case "-u":
-                            parameters.UniqueValueThreshold = int.Parse(NextArg(++i, args));
                             break;
                         case "-v":
                             parameters.Sortable = NextArg(++i, args);
@@ -723,23 +765,32 @@ You can find keywords either through -kf for actual keywords or -af to generate 
 
         public static string Normalize(string input)
         {
-            var start = 0;
-            for (; start < input.Length; ++start)
+            if (input == null)
             {
-                if (!char.IsPunctuation(input[start]))
-                {
-                    break;
-                }
+                return "";
             }
-            var end = input.Length;
-            for (; end > 0; --end)
+            else
             {
-                if (!char.IsPunctuation(input[end - 1]))
+                var start = 0;
+                for (; start < input.Length; ++start)
                 {
-                    break;
+                    var ch = input[start];
+                    if (!char.IsPunctuation(ch) && !char.IsWhiteSpace(ch))
+                    {
+                        break;
+                    }
                 }
+                var end = input.Length;
+                for (; end > 0; --end)
+                {
+                    var ch = input[end - 1];
+                    if (!char.IsPunctuation(ch) && !char.IsWhiteSpace(ch))
+                    {
+                        break;
+                    }
+                }
+                return end > start ? input.Substring(start, end - start) : "";
             }
-            return end > start ? input.Substring(start, end - start) : "";
         }
     }
 }

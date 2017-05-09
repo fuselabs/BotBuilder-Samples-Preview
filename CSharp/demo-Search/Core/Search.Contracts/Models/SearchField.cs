@@ -77,7 +77,7 @@ namespace Search.Models
         // Fields to control experience
         public PreferredFilter FilterPreference { get; set; }
         public Synonyms NameSynonyms { get; set; }
-        public Synonyms[] ValueSynonyms { get; set; } = new Synonyms[0];
+        public List<Synonyms> ValueSynonyms { get; set; } = new List<Synonyms>();
         public double Min { get; set; }
         public double Max { get; set; }
         public List<string> Examples { get; set; }
