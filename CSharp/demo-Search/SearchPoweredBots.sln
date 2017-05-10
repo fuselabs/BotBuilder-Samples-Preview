@@ -1,40 +1,40 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateBot", "RealEstateBot\RealEstateBot.csproj", "{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CEADC8B-6F00-4643-AC7B-D9BD4299F823}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reusable Assets", "Reusable Assets", "{A17FC7C1-DC4A-40A2-B80B-E4C403AD655A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{94DF71D2-8CCF-4433-8800-DFBD0DE19B31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateBot", "RealEstateBot\RealEstateBot.csproj", "{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search.Dialogs", "Search.Dialogs\Search.Dialogs.csproj", "{C3583B53-4097-44D5-8537-2A8354B32654}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search.Azure", "Search.Azure\Search.Azure.csproj", "{2734B7AA-2144-41A8-9423-225A544438B8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reusable Assets", "Reusable Assets", "{A17FC7C1-DC4A-40A2-B80B-E4C403AD655A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search.Contracts", "Search.Contracts\Search.Contracts.csproj", "{FF10CD6A-2BE1-4520-A01F-769C396906CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search.Utilities", "Search.Utilities\Search.Utilities.csproj", "{A9AF656A-82C5-4309-A573-C9AF4BFD49C2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{94DF71D2-8CCF-4433-8800-DFBD0DE19B31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search.Contracts", "Core\Search.Contracts\Search.Contracts.csproj", "{67281567-FC0D-4917-9C63-853CB07B7B01}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Search.Contracts", "Core\Search.Contracts\Search.Contracts.xproj", "{67281567-FC0D-4917-9C63-853CB07B7B01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search.Utilities", "Core\Search.Utilities\Search.Utilities.csproj", "{6357CC2D-EA9F-4072-BA08-3EA222408704}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Search.Utilities", "Core\Search.Utilities\Search.Utilities.xproj", "{6357CC2D-EA9F-4072-BA08-3EA222408704}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search.Azure", "Core\Search.Azure\Search.Azure.csproj", "{4460533E-A0E0-42D8-8654-0860922B94A9}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Search.Azure", "Core\Search.Azure\Search.Azure.xproj", "{4460533E-A0E0-42D8-8654-0860922B94A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search.Tools.Extract", "Core\Search.Tools.Extract\Search.Tools.Extract.csproj", "{BDC9A75E-7281-4E3E-ACB5-F2F8CC488C02}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Search.Tools.Extract", "Core\Search.Tools.Extract\Search.Tools.Extract.xproj", "{BDC9A75E-7281-4E3E-ACB5-F2F8CC488C02}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Search.Tools.Generate", "Core\Search.Tools.Generate\Search.Tools.Generate.xproj", "{9DDAA590-04B8-4C59-ABE8-A0CD13ED5143}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search.Tools.Generate", "Core\Search.Tools.Generate\Search.Tools.Generate.csproj", "{9DDAA590-04B8-4C59-ABE8-A0CD13ED5143}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.LUIS.API", "Microsoft.LUIS.API\Microsoft.LUIS.API.csproj", "{23DB64B7-E168-4A86-9C1F-EADADB1C6B7E}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.LUIS.API", "Core\Microsoft.LUIS.API\Microsoft.LUIS.API.xproj", "{5E219C2E-4160-4CE1-AF8F-962D2CB89613}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.LUIS.API", "Core\Microsoft.LUIS.API\Microsoft.LUIS.API.csproj", "{5E219C2E-4160-4CE1-AF8F-962D2CB89613}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

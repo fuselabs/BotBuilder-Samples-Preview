@@ -78,7 +78,7 @@ namespace Search.Tools.Extract
                 {
                     throw new Exception($"Could not find id {lastID} in {lastValue}");
                 }
-                if (row == 1)
+                if (row == 1 || total >= max)
                 {
                     // Last row in the table
                     break;
