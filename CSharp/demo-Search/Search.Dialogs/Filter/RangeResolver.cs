@@ -23,17 +23,19 @@ namespace Search.Dialogs.Filter
             object lower = c.Lower == null ? double.NegativeInfinity : ParseValue(c.Lower, out isLowerCurrency);
             object upper = c.Upper == null ? double.PositiveInfinity : ParseValue(c.Upper, out isUpperCurrency);
             var isCurrency = isLowerCurrency || isUpperCurrency;
+            bool addPropertyName = false;
 
             var propertyName = c.Property?.FirstResolution();
             if (propertyName == null)
             {
+                addPropertyName = true;
                 if (isCurrency)
                 {
-                    propertyName = schema.DefaultCurrencyProperty ?? defaultProperty;
+                    propertyName = defaultProperty ?? schema.DefaultCurrencyProperty;
                 }
                 else
                 {
-                    propertyName = defaultProperty;
+                    propertyName = defaultProperty ?? schema.DefaultNumericProperty;
                 }
             }
 
@@ -98,6 +100,10 @@ namespace Search.Dialogs.Filter
                     range.Lower = lower;
                     range.Upper = upper;
                     range.Description = c.Entity?.Entity;
+                    if (addPropertyName)
+                    {
+                        range.Description = field.Description() + " " + range.Description;
+                    }
                 }
             }
             return range;
