@@ -45,16 +45,16 @@
     {
       "name": "Comparison",
       "children": [
+        "Properties",
         "Value",
-        "Operators",
-        "Properties"
+        "Operators"
       ]
     },
     {
       "name": "Removal",
       "children": [
-        "RemovalOperators",
-        "Properties"
+        "Properties",
+        "RemovalOperators"
       ]
     },
     {
@@ -29787,23 +29787,7 @@
   "regex_features": [],
   "utterances": [
     {
-      "text": "3 sq foot",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "3-4 Days On Market",
+      "text": "3-4 sq foot",
       "intent": "Filter",
       "entities": [
         {
@@ -29819,12 +29803,44 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 17
+          "endPos": 10
         }
       ]
     },
     {
-      "text": "no more than 3 Days On Market",
+      "text": "at least 43 Days On Market",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 9,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "at most 1 Days On Market",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 23
+        }
+      ]
+    },
+    {
+      "text": "no more than 3 sq feet",
       "intent": "Filter",
       "entities": [
         {
@@ -29835,23 +29851,7 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 28
-        }
-      ]
-    },
-    {
-      "text": "at least 3 sq feet",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
+          "endPos": 21
         }
       ]
     },
@@ -29877,39 +29877,7 @@
       ]
     },
     {
-      "text": "at least 43 sq feet",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 9,
-          "endPos": 10
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 18
-        }
-      ]
-    },
-    {
-      "text": "at most 1 cost",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 8
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 13
-        }
-      ]
-    },
-    {
-      "text": "3+ bathroom",
+      "text": "1+ sq feet",
       "intent": "Filter",
       "entities": [
         {
@@ -29920,12 +29888,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 10
+          "endPos": 9
         }
       ]
     },
     {
-      "text": "between 3 and 4 costs",
+      "text": "between 3 and 4 cost",
       "intent": "Filter",
       "entities": [
         {
@@ -29941,12 +29909,101 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 20
+          "endPos": 19
         }
       ]
     },
     {
-      "text": "1+ Bathrooms",
+      "text": "bathroom is at least 4",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 21,
+          "endPos": 21
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "between 200 and 400 costs",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 10
+        },
+        {
+          "entity": "Value",
+          "startPos": 16,
+          "endPos": 18
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "3 Bathrooms 2 Bathrooms",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 12,
+          "endPos": 12
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 12,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "at most 3 bathroom and 1 sqft",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Value",
+          "startPos": 23,
+          "endPos": 23
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 17
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 23,
+          "endPos": 28
+        }
+      ]
+    },
+    {
+      "text": "3 bathroom",
       "intent": "Filter",
       "entities": [
         {
@@ -29957,28 +30014,28 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 11
+          "endPos": 9
         }
       ]
     },
     {
-      "text": "at most 3 Bathrooms",
+      "text": "3+ costs",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
-          "startPos": 8,
-          "endPos": 8
+          "startPos": 0,
+          "endPos": 0
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 18
+          "endPos": 7
         }
       ]
     },
     {
-      "text": "no more than 4 bathroom and at most 2 sqft",
+      "text": "no more than 4 Bedrooms and at most 2 Price",
       "intent": "Filter",
       "entities": [
         {
@@ -29999,12 +30056,23 @@
         {
           "entity": "Comparison",
           "startPos": 28,
-          "endPos": 41
+          "endPos": 42
         }
       ]
     },
     {
-      "text": "between 3-4 bathroom and at least 3 costs",
+      "text": "any country Code",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "between 3-4 square foot and at least 3 bath",
       "intent": "Filter",
       "entities": [
         {
@@ -30019,288 +30087,23 @@
         },
         {
           "entity": "Value",
-          "startPos": 34,
-          "endPos": 34
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 19
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 25,
-          "endPos": 40
-        }
-      ]
-    },
-    {
-      "text": "find me a 2 Bedrooms with at least 1 Price",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 10
-        },
-        {
-          "entity": "Value",
-          "startPos": 35,
-          "endPos": 35
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 10,
-          "endPos": 19
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 26,
-          "endPos": 41
-        }
-      ]
-    },
-    {
-      "text": "at most 3 costs and 1 square foot",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 8
-        },
-        {
-          "entity": "Value",
-          "startPos": 20,
-          "endPos": 20
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 20,
-          "endPos": 32
-        }
-      ]
-    },
-    {
-      "text": "no Street",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "any number of Days On Market",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 27
-        }
-      ]
-    },
-    {
-      "text": "between 100,000 and 450,000",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 14
-        },
-        {
-          "entity": "Value",
-          "startPos": 20,
-          "endPos": 26
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 26
-        }
-      ]
-    },
-    {
-      "text": "more than $110k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 14
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        }
-      ]
-    },
-    {
-      "text": "any zipcode",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "less than 200k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 13
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 13
-        }
-      ]
-    },
-    {
-      "text": "between $100k and $250k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 12
-        },
-        {
-          "entity": "Value",
-          "startPos": 18,
-          "endPos": 22
+          "startPos": 37,
+          "endPos": 37
         },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 22
-        }
-      ]
-    },
-    {
-      "text": "less than $200,000",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 17
         },
         {
           "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
+          "startPos": 28,
+          "endPos": 42
         }
       ]
     },
     {
-      "text": "no more than $500k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 13,
-          "endPos": 17
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "parks nearby",
-      "intent": "Filter",
-      "entities": []
-    },
-    {
-      "text": "less than $200k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 10,
-          "endPos": 14
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        }
-      ]
-    },
-    {
-      "text": "costs more than 10",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 16,
-          "endPos": 17
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "Bedrooms is at least 4",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 21,
-          "endPos": 21
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 21
-        }
-      ]
-    },
-    {
-      "text": "between 200 and 400 square foot",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 10
-        },
-        {
-          "entity": "Value",
-          "startPos": 16,
-          "endPos": 18
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 30
-        }
-      ]
-    },
-    {
-      "text": "3 Square Feet 2 cost",
+      "text": "1 Days On Market 1 Price",
       "intent": "Filter",
       "entities": [
         {
@@ -30310,23 +30113,65 @@
         },
         {
           "entity": "Value",
-          "startPos": 14,
-          "endPos": 14
+          "startPos": 17,
+          "endPos": 17
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 12
+          "endPos": 15
         },
         {
           "entity": "Comparison",
-          "startPos": 14,
-          "endPos": 19
+          "startPos": 17,
+          "endPos": 23
         }
       ]
     },
     {
-      "text": "square foot less than 500k",
+      "text": "find me a 2 costs with at least 1 Bedrooms",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 10
+        },
+        {
+          "entity": "Value",
+          "startPos": 32,
+          "endPos": 32
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 10,
+          "endPos": 16
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 23,
+          "endPos": 41
+        }
+      ]
+    },
+    {
+      "text": "at most 3 square foot",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 20
+        }
+      ]
+    },
+    {
+      "text": "Square Feet less than 500k",
       "intent": "Filter",
       "entities": [
         {
@@ -30338,6 +30183,28 @@
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "any number of cost",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "no area",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 6
         }
       ]
     },
@@ -30363,28 +30230,34 @@
       ]
     },
     {
-      "text": "1 bed 1 beds",
+      "text": "at least 3 bed",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
+          "startPos": 9,
+          "endPos": 9
         },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "beds more than 10",
+      "intent": "Filter",
+      "entities": [
         {
           "entity": "Value",
-          "startPos": 6,
-          "endPos": 6
+          "startPos": 15,
+          "endPos": 16
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 6,
-          "endPos": 11
+          "endPos": 16
         }
       ]
     },
@@ -30415,12 +30288,7 @@
       ]
     },
     {
-      "text": "Michigan",
-      "intent": "Filter",
-      "entities": []
-    },
-    {
-      "text": "2-3 sqft 5 sq foot",
+      "text": "2-3 costs 5 sqft",
       "intent": "Filter",
       "entities": [
         {
@@ -30435,23 +30303,23 @@
         },
         {
           "entity": "Value",
-          "startPos": 9,
-          "endPos": 9
+          "startPos": 10,
+          "endPos": 10
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 7
+          "endPos": 8
         },
         {
           "entity": "Comparison",
-          "startPos": 9,
-          "endPos": 17
+          "startPos": 10,
+          "endPos": 15
         }
       ]
     },
     {
-      "text": "3+ Bedrooms in Iowa City",
+      "text": "3+ sq foot in Ashtabula",
       "intent": "Filter",
       "entities": [
         {
@@ -30462,17 +30330,12 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 10
+          "endPos": 9
         }
       ]
     },
     {
-      "text": "a Hartsburg",
-      "intent": "Filter",
-      "entities": []
-    },
-    {
-      "text": "1 costs 2+ Square Feet",
+      "text": "1 baths 2+ bath",
       "intent": "Filter",
       "entities": [
         {
@@ -30493,12 +30356,12 @@
         {
           "entity": "Comparison",
           "startPos": 8,
-          "endPos": 21
+          "endPos": 14
         }
       ]
     },
     {
-      "text": "3+ sq foot 2 bedroom",
+      "text": "3+ costs 2 Square Feet",
       "intent": "Filter",
       "entities": [
         {
@@ -30508,23 +30371,23 @@
         },
         {
           "entity": "Value",
-          "startPos": 11,
-          "endPos": 11
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
+          "startPos": 9,
           "endPos": 9
         },
         {
           "entity": "Comparison",
-          "startPos": 11,
-          "endPos": 19
+          "startPos": 0,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 9,
+          "endPos": 21
         }
       ]
     },
     {
-      "text": "4-5 Bathrooms 3-4 cost",
+      "text": "4-5 sq foot 3-4 bedroom",
       "intent": "Filter",
       "entities": [
         {
@@ -30539,86 +30402,28 @@
         },
         {
           "entity": "Value",
+          "startPos": 12,
+          "endPos": 12
+        },
+        {
+          "entity": "Value",
           "startPos": 14,
           "endPos": 14
         },
         {
-          "entity": "Value",
-          "startPos": 16,
-          "endPos": 16
-        },
-        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 12
+          "endPos": 10
         },
         {
           "entity": "Comparison",
-          "startPos": 14,
-          "endPos": 21
-        }
-      ]
-    },
-    {
-      "text": "no more than $500,000",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 13,
-          "endPos": 20
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 20
-        }
-      ]
-    },
-    {
-      "text": "between $200k and $500k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 12
-        },
-        {
-          "entity": "Value",
-          "startPos": 18,
-          "endPos": 22
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
+          "startPos": 12,
           "endPos": 22
         }
       ]
     },
     {
-      "text": "$100k-$800k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Value",
-          "startPos": 6,
-          "endPos": 10
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "3+ Days On Market Hanover",
+      "text": "3+ Bathrooms Amelia County",
       "intent": "Filter",
       "entities": [
         {
@@ -30629,7 +30434,33 @@
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 16
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "at least 1 Days On Market, 2+ bath",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 9,
+          "endPos": 9
+        },
+        {
+          "entity": "Value",
+          "startPos": 27,
+          "endPos": 27
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 24
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 27,
+          "endPos": 33
         }
       ]
     },
@@ -30655,64 +30486,7 @@
       ]
     },
     {
-      "text": "between $200k and $500k Dover with at least 3 baths",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 8,
-          "endPos": 12
-        },
-        {
-          "entity": "Value",
-          "startPos": 18,
-          "endPos": 22
-        },
-        {
-          "entity": "Value",
-          "startPos": 44,
-          "endPos": 44
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 22
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 35,
-          "endPos": 50
-        }
-      ]
-    },
-    {
-      "text": "at least 1 sq foot, 2+ sqft",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 9,
-          "endPos": 9
-        },
-        {
-          "entity": "Value",
-          "startPos": 20,
-          "endPos": 20
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 20,
-          "endPos": 26
-        }
-      ]
-    },
-    {
-      "text": "between 3 and 4 Square Feet CrystaL-River for no more than $950k",
+      "text": "between 3 and 4 beds La Crosse for no more than $950k",
       "intent": "Filter",
       "entities": [
         {
@@ -30727,13 +30501,13 @@
         },
         {
           "entity": "Value",
-          "startPos": 59,
-          "endPos": 59
+          "startPos": 48,
+          "endPos": 48
         },
         {
           "entity": "Value",
-          "startPos": 60,
-          "endPos": 63
+          "startPos": 49,
+          "endPos": 52
         },
         {
           "entity": "Comparison",
@@ -30742,18 +30516,81 @@
         },
         {
           "entity": "Comparison",
-          "startPos": 46,
-          "endPos": 59
+          "startPos": 35,
+          "endPos": 48
         }
       ]
     },
     {
-      "text": "an Wickenburg",
+      "text": "between $200k and $500k Sheridan with at least 3 sqft",
       "intent": "Filter",
-      "entities": []
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 12
+        },
+        {
+          "entity": "Value",
+          "startPos": 18,
+          "endPos": 22
+        },
+        {
+          "entity": "Value",
+          "startPos": 47,
+          "endPos": 47
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 22
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 38,
+          "endPos": 52
+        }
+      ]
     },
     {
-      "text": "3-4 Price South Ogden",
+      "text": "9 Square Feet",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "3-4 beds Wickenburg",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 0
+        },
+        {
+          "entity": "Value",
+          "startPos": 2,
+          "endPos": 2
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "2-5 Price",
       "intent": "Filter",
       "entities": [
         {
@@ -30774,7 +30611,7 @@
       ]
     },
     {
-      "text": "9 Price",
+      "text": "3+ sq foot West Friendship in xword with a Rowlett for less than $800k",
       "intent": "Filter",
       "entities": [
         {
@@ -30783,14 +30620,102 @@
           "endPos": 0
         },
         {
+          "entity": "Value",
+          "startPos": 65,
+          "endPos": 69
+        },
+        {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 6
+          "endPos": 9
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 55,
+          "endPos": 69
         }
       ]
     },
     {
-      "text": "2-5 square foot",
+      "text": "between 2 & 4 sqft and remove dead end street",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 23,
+          "endPos": 44
+        },
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "Value",
+          "startPos": 12,
+          "endPos": 12
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 17
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 30,
+          "endPos": 44
+        }
+      ]
+    },
+    {
+      "text": "remove stainless steel appliances and at least 3 cost",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 32
+        },
+        {
+          "entity": "Value",
+          "startPos": 47,
+          "endPos": 47
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 38,
+          "endPos": 52
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 32
+        }
+      ]
+    },
+    {
+      "text": "between $200k and $500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 12
+        },
+        {
+          "entity": "Value",
+          "startPos": 18,
+          "endPos": 22
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "3+ bed Walla Walla in yword with a zword for less than $600k",
       "intent": "Filter",
       "entities": [
         {
@@ -30800,102 +30725,313 @@
         },
         {
           "entity": "Value",
-          "startPos": 2,
-          "endPos": 2
+          "startPos": 55,
+          "endPos": 59
         },
         {
           "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 45,
+          "endPos": 59
+        }
+      ]
+    },
+    {
+      "text": "aword bword Listing Agent",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "remove huge bonus room",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 21
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "listing Id of at least $800k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 27
+        }
+      ]
+    },
+    {
+      "text": "dead end street",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Keyword",
           "startPos": 0,
           "endPos": 14
         }
       ]
     },
     {
-      "text": "3+ sqft District Heights in xword with a Woodward for less than $800k",
+      "text": "georgia country Code",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 64,
-          "endPos": 68
-        },
-        {
-          "entity": "Comparison",
           "startPos": 0,
           "endPos": 6
         },
         {
           "entity": "Comparison",
-          "startPos": 54,
-          "endPos": 68
+          "startPos": 0,
+          "endPos": 19
         }
       ]
     },
     {
-      "text": "$120,000",
+      "text": "aword bword cword City",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
           "startPos": 0,
-          "endPos": 7
+          "endPos": 16
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 7
+          "endPos": 21
         }
       ]
     },
     {
-      "text": "3+ cost Branford in yword with a zword for less than $600k",
+      "text": "chicago region",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 0
-        },
-        {
-          "entity": "Value",
-          "startPos": 53,
-          "endPos": 57
-        },
-        {
-          "entity": "Comparison",
           "startPos": 0,
           "endPos": 6
         },
         {
           "entity": "Comparison",
-          "startPos": 43,
-          "endPos": 57
+          "startPos": 0,
+          "endPos": 13
         }
       ]
     },
     {
-      "text": "between $80k and $120k",
+      "text": "any listing Id",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "seattle zip",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
-          "startPos": 8,
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "comfortable description",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "chicago cubs area",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
           "endPos": 11
         },
         {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "no sq foot",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "any bedroom",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "aword country",
+      "intent": "Filter",
+      "entities": [
+        {
           "entity": "Value",
-          "startPos": 17,
-          "endPos": 21
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "no listing Id",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Removal",
+          "startPos": 0,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "tall City",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 8
+        }
+      ]
+    },
+    {
+      "text": "$100k-$800k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Value",
+          "startPos": 6,
+          "endPos": 10
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "no more than $500,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 13,
+          "endPos": 20
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 20
+        }
+      ]
+    },
+    {
+      "text": "rainy seattle District",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 12
         },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "seattle skyline st",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 17
         }
       ]
     },
@@ -30921,18 +31057,50 @@
       ]
     },
     {
-      "text": "$20k",
+      "text": "eword dword region",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
           "startPos": 0,
-          "endPos": 3
+          "endPos": 10
         },
         {
           "entity": "Comparison",
           "startPos": 0,
-          "endPos": 3
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "bword Type",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "hword zip",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 4
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 8
         }
       ]
     },
@@ -30953,6 +31121,74 @@
       ]
     },
     {
+      "text": "$120,000",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 7
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "between $80k and $120k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 11
+        },
+        {
+          "entity": "Value",
+          "startPos": 17,
+          "endPos": 21
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "a UnioN-Park",
+      "intent": "Filter",
+      "entities": []
+    },
+    {
+      "text": "an Town Of Lake Tomahawk",
+      "intent": "Filter",
+      "entities": []
+    },
+    {
+      "text": "Sugarloaf",
+      "intent": "Filter",
+      "entities": []
+    },
+    {
+      "text": "no more than $500k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 13,
+          "endPos": 17
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 17
+        }
+      ]
+    },
+    {
       "text": "$300k",
       "intent": "Filter",
       "entities": [
@@ -30969,86 +31205,209 @@
       ]
     },
     {
-      "text": "remove spacious living room",
+      "text": "between 100,000 and 450,000",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 7,
+          "entity": "Value",
+          "startPos": 8,
+          "endPos": 14
+        },
+        {
+          "entity": "Value",
+          "startPos": 20,
           "endPos": 26
         },
         {
-          "entity": "RemoveKeyword",
+          "entity": "Comparison",
           "startPos": 0,
           "endPos": 26
         }
       ]
     },
     {
-      "text": "between 2 & 4 bedroom and remove huge bonus room",
+      "text": "parks nearby",
+      "intent": "Filter",
+      "entities": []
+    },
+    {
+      "text": "between $100k and $250k",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 33,
-          "endPos": 47
-        },
-        {
           "entity": "Value",
           "startPos": 8,
-          "endPos": 8
-        },
-        {
-          "entity": "Value",
-          "startPos": 12,
           "endPos": 12
         },
         {
-          "entity": "RemoveKeyword",
-          "startPos": 26,
-          "endPos": 47
+          "entity": "Value",
+          "startPos": 18,
+          "endPos": 22
         },
         {
           "entity": "Comparison",
           "startPos": 0,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "remove tall lion with ears",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 25
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "remove big dog",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 13
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "remove cat",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 9
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "$20k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 0,
+          "endPos": 3
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "remove small red fish",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 20
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
           "endPos": 20
         }
       ]
     },
     {
-      "text": "spacious living room",
+      "text": "remove big tall giraffe",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
+          "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 19
+          "endPos": 22
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 22
         }
       ]
     },
     {
-      "text": "remove dead end street and at least 3 costs",
+      "text": "less than $200,000",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 21
-        },
-        {
           "entity": "Value",
-          "startPos": 36,
-          "endPos": 36
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 21
+          "startPos": 10,
+          "endPos": 17
         },
         {
           "entity": "Comparison",
-          "startPos": 27,
-          "endPos": 42
+          "startPos": 0,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "less than $200k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "more than $110k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 14
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "less than 200k",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "Value",
+          "startPos": 10,
+          "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 0,
+          "endPos": 13
         }
       ]
     },
@@ -31064,368 +31423,72 @@
       ]
     },
     {
-      "text": "aword bword cword City",
+      "text": "1-4 cost Fuquay Varina with a Mouth Of Wilson for less than $20k",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
           "startPos": 0,
-          "endPos": 16
+          "endPos": 0
         },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 21
-        }
-      ]
-    },
-    {
-      "text": "aword bword region",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 10
+          "startPos": 2,
+          "endPos": 2
         },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "aword area",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 4
+          "startPos": 60,
+          "endPos": 63
         },
         {
           "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "seattle zip",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "rainy seattle description",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 12
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 24
-        }
-      ]
-    },
-    {
-      "text": "seattle skyline area",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 14
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 19
-        }
-      ]
-    },
-    {
-      "text": "chicago area",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 11
-        }
-      ]
-    },
-    {
-      "text": "chicago cubs Status",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 11
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 18
-        }
-      ]
-    },
-    {
-      "text": "comfortable country",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 10
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 18
-        }
-      ]
-    },
-    {
-      "text": "tall Listing Agent",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 3
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "georgia City",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 6
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 11
-        }
-      ]
-    },
-    {
-      "text": "listing Id of at least $800k",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 27
-        }
-      ]
-    },
-    {
-      "text": "any bath",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
           "startPos": 0,
           "endPos": 7
-        }
-      ]
-    },
-    {
-      "text": "any listing Id",
-      "intent": "Filter",
-      "entities": [
+        },
         {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 13
+          "entity": "Comparison",
+          "startPos": 50,
+          "endPos": 63
         }
       ]
     },
     {
-      "text": "no listing Id",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 12
-        }
-      ]
-    },
-    {
-      "text": "no Price",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Removal",
-          "startPos": 0,
-          "endPos": 7
-        }
-      ]
-    },
-    {
-      "text": "eword dword zip",
+      "text": "2+ square foot Hague with an Fox in Vida for less than 20k",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Value",
           "startPos": 0,
-          "endPos": 10
+          "endPos": 0
         },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 14
-        }
-      ]
-    },
-    {
-      "text": "bword zip",
-      "intent": "Filter",
-      "entities": [
         {
           "entity": "Value",
-          "startPos": 0,
-          "endPos": 4
-        },
-        {
-          "entity": "Comparison",
-          "startPos": 0,
-          "endPos": 8
-        }
-      ]
-    },
-    {
-      "text": "hword Zip Code",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Value",
-          "startPos": 0,
-          "endPos": 4
+          "startPos": 55,
+          "endPos": 57
         },
         {
           "entity": "Comparison",
           "startPos": 0,
           "endPos": 13
+        },
+        {
+          "entity": "Comparison",
+          "startPos": 45,
+          "endPos": 57
         }
       ]
     },
     {
-      "text": "remove tall lion with ears",
+      "text": "Draper City (sl Co less than $452k",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 25
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 25
+          "entity": "Comparison",
+          "startPos": 19,
+          "endPos": 33
         }
       ]
-    },
-    {
-      "text": "remove big dog",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 13
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 13
-        }
-      ]
-    },
-    {
-      "text": "remove cat",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 9
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "remove big tall giraffe",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 22
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 22
-        }
-      ]
-    },
-    {
-      "text": "remove small red fish",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 20
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 20
-        }
-      ]
-    },
-    {
-      "text": "search again",
-      "intent": "StartOver",
-      "entities": []
     },
     {
       "text": "start over",
@@ -31438,8 +31501,8 @@
       "entities": []
     },
     {
-      "text": "country",
-      "intent": "Facet",
+      "text": "search again",
+      "intent": "StartOver",
       "entities": []
     },
     {
@@ -31448,12 +31511,42 @@
       "entities": []
     },
     {
-      "text": "Square Feet",
+      "text": "sqft",
       "intent": "Facet",
       "entities": []
     },
     {
+      "text": "keyword",
+      "intent": "Facet",
+      "entities": []
+    },
+    {
+      "text": "stop",
+      "intent": "Quit",
+      "entities": []
+    },
+    {
+      "text": "quit",
+      "intent": "Quit",
+      "entities": []
+    },
+    {
+      "text": "refine",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "browse",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
       "text": "so far",
+      "intent": "List",
+      "entities": []
+    },
+    {
+      "text": "list",
       "intent": "List",
       "entities": []
     },
@@ -31468,46 +31561,6 @@
       "entities": []
     },
     {
-      "text": "list",
-      "intent": "List",
-      "entities": []
-    },
-    {
-      "text": "refine",
-      "intent": "Refine",
-      "entities": []
-    },
-    {
-      "text": "browse",
-      "intent": "Refine",
-      "entities": []
-    },
-    {
-      "text": "stop",
-      "intent": "Quit",
-      "entities": []
-    },
-    {
-      "text": "quit",
-      "intent": "Quit",
-      "entities": []
-    },
-    {
-      "text": "more",
-      "intent": "NextPage",
-      "entities": []
-    },
-    {
-      "text": "next page",
-      "intent": "NextPage",
-      "entities": []
-    },
-    {
-      "text": "next",
-      "intent": "NextPage",
-      "entities": []
-    },
-    {
       "text": "done",
       "intent": "Done",
       "entities": []
@@ -31518,56 +31571,71 @@
       "entities": []
     },
     {
-      "text": "remove ocean views",
+      "text": "next page",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "more",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "next",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "remove walking distance",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 17
-        },
-        {
           "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 17
+          "endPos": 22
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 22
         }
       ]
     },
     {
-      "text": "gated community",
+      "text": "duplex residence",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Keyword",
           "startPos": 0,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "remove shopping",
+      "intent": "Filter",
+      "entities": [
+        {
+          "entity": "RemoveKeyword",
+          "startPos": 0,
+          "endPos": 14
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
           "endPos": 14
         }
       ]
     },
     {
-      "text": "remove cul-",
-      "intent": "Filter",
-      "entities": [
-        {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 10
-        },
-        {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "bungalow",
+      "text": "porch",
       "intent": "Filter",
       "entities": [
         {
           "entity": "Keyword",
           "startPos": 0,
-          "endPos": 7
+          "endPos": 4
         }
       ]
     },
@@ -31576,13 +31644,13 @@
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 7,
+          "entity": "RemoveKeyword",
+          "startPos": 0,
           "endPos": 42
         },
         {
-          "entity": "RemoveKeyword",
-          "startPos": 0,
+          "entity": "Keyword",
+          "startPos": 7,
           "endPos": 42
         }
       ]
@@ -31599,18 +31667,18 @@
       ]
     },
     {
-      "text": "remove high end kitchen appliances",
+      "text": "remove features stainless steel appliances",
       "intent": "Filter",
       "entities": [
         {
-          "entity": "Keyword",
-          "startPos": 7,
-          "endPos": 33
-        },
-        {
           "entity": "RemoveKeyword",
           "startPos": 0,
-          "endPos": 33
+          "endPos": 41
+        },
+        {
+          "entity": "Keyword",
+          "startPos": 7,
+          "endPos": 41
         }
       ]
     },

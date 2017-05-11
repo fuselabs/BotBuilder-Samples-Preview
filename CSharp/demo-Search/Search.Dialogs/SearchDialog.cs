@@ -219,7 +219,8 @@ namespace Search.Dialogs
                 var root = sorted.First();
                 foreach (var child in sorted)
                 {
-                    if (child.StartIndex > root.EndIndex)
+                    if (child.StartIndex > root.EndIndex 
+                        || (child != root && child.StartIndex == root.StartIndex && child.EndIndex == root.EndIndex))
                     {
                         yield return root;
                         root = child;
@@ -469,7 +470,7 @@ namespace Search.Dialogs
                     Query = LastQuery;
                     // Ensure the queries are not equal
                     LastQuery = badQuery;
-                    prompt = Prompts.NoResultsPrompt;
+                    prompt = string.Format(Prompts.NoResultsPrompt, badQuery.Description(Prompts));
                 }
                 else
                 {

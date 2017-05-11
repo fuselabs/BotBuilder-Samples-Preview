@@ -14,7 +14,7 @@ namespace Search.Dialogs.UserInteraction
         public string FilterPrompt = "Enter a filter for {0} like \"no more than 4\".";
         public string InitialPrompt = "Please describe in your own words what you would like to find?";
         public string ListPrompt = "Here is what you have selected so far.";
-        public string NoResultsPrompt = "Your search found no results so I undid your last change.  You can refine again.";
+        public string NoResultsPrompt = "{0}Found no results so I undid your last change.  You can refine again.";
         public string NotAddedPrompt = "You have not added anything yet.";
         public string NotUnderstoodPrompt = "I did not understand what you said.";
         public string NoValuesPrompt = "There are no values to filter by for {0}.";
