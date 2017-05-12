@@ -30,11 +30,11 @@ namespace Search.Dialogs
     {
         #region Members
 
+        public readonly IResource Resources;
         private IList<SearchHit> Found;
 
         protected readonly ISearchHitStyler HitStyler;
         protected readonly bool MultipleSelection;
-        protected readonly Prompts Prompts;
         protected readonly PromptStyler PromptStyler;
         protected Button[] Refiners;
         protected readonly ISearchClient SearchClient;
@@ -60,21 +60,23 @@ namespace Search.Dialogs
 
         #region Constructor
 
-        public SearchDialog(Prompts prompts, ISearchClient searchClient,
+        public SearchDialog(ISearchClient searchClient,
             LuisModelAttribute luis,
+            IResource resources = null,
             SearchSpec query = null,
             PromptStyler promptStyler = null,
             ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
+            bool includeCount = true,
             IEnumerable<string> refiners = null)
             : base(new LuisService(luis))
         {
-            Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out Prompts, nameof(Prompts), prompts);
             Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out SearchClient, nameof(searchClient), searchClient);
+            Resources = resources ?? new ResourceGenerator(new Prompts());
             SkipIntro = query != null && !query.HasNoConstraints;
             Query = query ?? new SearchSpec();
             LastQuery = new SearchSpec();
-            Query.GetTotalCount = prompts.Count != null;
+            Query.GetTotalCount = includeCount;
             HitStyler = searchHitStyler ?? new SearchHitStyler();
             PromptStyler = promptStyler ?? new SearchPromptStyler();
             MultipleSelection = multipleSelection;
@@ -102,7 +104,10 @@ namespace Search.Dialogs
             }
             else
             {
-                await PromptAsync(context, Prompts.InitialPrompt, Prompts.Refine, Prompts.Quit);
+                await PromptAsync(context,
+                    Resources.Resource(ResourceType.InitialPrompt) 
+                    + Environment.NewLine + Environment.NewLine + Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context),
+                    Resources.ButtonResource(ButtonType.Refine), Resources.ButtonResource(ButtonType.Quit));
                 context.Wait(MessageReceived);
             }
         }
@@ -148,7 +153,7 @@ namespace Search.Dialogs
         [LuisIntent("")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            await PromptAsync(context, Prompts.NotUnderstoodPrompt, LastButtons);
+            await PromptAsync(context, Resources.Resource(ResourceType.NotUnderstoodPrompt), LastButtons);
             context.Wait(MessageReceived);
         }
 
@@ -172,9 +177,7 @@ namespace Search.Dialogs
                 {
                     var field = SearchClient.Schema.Field(Refiner);
                     var desc = field.Description();
-                    var anyButton = new Button(
-                        string.Format(Prompts.AnyMessage, desc),
-                        string.Format(field.Type.IsNumeric() ? Prompts.AnyNumberLabel : Prompts.AnyLabel, desc));
+                    var anyButton = Resources.ButtonResource(field.Type.IsNumeric() ? ButtonType.AnyNumber : ButtonType.Any, desc);
                     var preference = field.FilterPreference;
                     if (preference == PreferredFilter.Facet
                         || preference == PreferredFilter.MinValue
@@ -191,18 +194,18 @@ namespace Search.Dialogs
                         if (buttons.Any())
                         {
                             buttons.Add(anyButton);
-                            await PromptAsync(context, string.Format(Prompts.FacetValuePrompt, desc), buttons.ToArray());
+                            await PromptAsync(context, Resources.Resource(ResourceType.FacetValuePrompt, desc), buttons.ToArray());
                             context.Wait(MessageReceived);
                         }
                         else
                         {
-                            await PromptAsync(context, string.Format(Prompts.NoValuesPrompt, desc));
+                            await PromptAsync(context, Resources.FieldResource(FieldType.NoValuesPrompt, Refiner, SearchClient.Schema, context));
                             context.Wait(MessageReceived);
                         }
                     }
                     else
                     {
-                        await PromptAsync(context, string.Format(Prompts.FilterPrompt, desc), anyButton);
+                        await PromptAsync(context, Resources.FieldResource(FieldType.FilterPrompt, Refiner, SearchClient.Schema, context), anyButton);
                         DefaultProperty = Refiner;
                         context.Wait(MessageReceived);
                     }
@@ -219,7 +222,7 @@ namespace Search.Dialogs
                 var root = sorted.First();
                 foreach (var child in sorted)
                 {
-                    if (child.StartIndex > root.EndIndex 
+                    if (child.StartIndex > root.EndIndex
                         || (child != root && child.StartIndex == root.StartIndex && child.EndIndex == root.EndIndex))
                     {
                         yield return root;
@@ -237,13 +240,13 @@ namespace Search.Dialogs
                 var buttons = new List<Button>();
                 foreach (var phrase in Query.Phrases.OrderBy(k => k))
                 {
-                    buttons.Add(new Button(phrase, string.Format(Prompts.RemoveKeywordMessage, phrase)));
+                    buttons.Add(Resources.ButtonResource(ButtonType.RemoveKeyword, phrase));
                 }
-                await PromptAsync(context, Prompts.AddOrRemoveKeywordPrompt, buttons.ToArray());
+                await PromptAsync(context, Resources.Resource(ResourceType.AddOrRemoveKeywordPrompt), buttons.ToArray());
             }
             else
             {
-                await PromptAsync(context, Prompts.AddKeywordPrompt);
+                await PromptAsync(context, Resources.Resource(ResourceType.AddKeywordPrompt));
             }
             context.Wait(MessageReceived);
         }
@@ -400,7 +403,7 @@ namespace Search.Dialogs
         [LuisIntent("Refine")]
         public async Task Refine(IDialogContext context, LuisResult result)
         {
-            await PromptAsync(context, Prompts.FacetPrompt, Refiners);
+            await PromptAsync(context, Resources.Resource(ResourceType.FacetPrompt), Refiners);
             context.Wait(MessageReceived);
         }
 
@@ -438,15 +441,15 @@ namespace Search.Dialogs
         private string SearchDescription(long? totalCount)
         {
 
-            var description = Query.Description(Prompts);
+            var description = Query.Description(Resources);
             if (totalCount != null)
             {
-                description += Environment.NewLine + string.Format(Prompts.Count, totalCount.Value);
+                description += Environment.NewLine + Resources.Resource(ResourceType.Count, totalCount.Value);
             }
             if (Selected.Any())
             {
                 var builder = new StringBuilder();
-                builder.AppendLine(string.Format(Prompts.Selected, Selected.Count()));
+                builder.AppendLine(Resources.Resource(ResourceType.Selected, Selected.Count()));
                 builder.AppendLine();
                 builder.Append(description);
                 description = builder.ToString();
@@ -456,10 +459,10 @@ namespace Search.Dialogs
 
         public async Task Search(IDialogContext context)
         {
-            var prompt = Prompts.RefinePrompt;
+            var prompt = Resources.Resource(ResourceType.RefinePrompt);
             if (Query.Equals(LastQuery))
             {
-                prompt = Prompts.NotUnderstoodPrompt;
+                prompt = Resources.Resource(ResourceType.NotUnderstoodPrompt);
             }
             else
             {
@@ -470,7 +473,7 @@ namespace Search.Dialogs
                     Query = LastQuery;
                     // Ensure the queries are not equal
                     LastQuery = badQuery;
-                    prompt = string.Format(Prompts.NoResultsPrompt, badQuery.Description(Prompts));
+                    prompt = string.Format(Resources.Resource(ResourceType.NoResultsPrompt), badQuery.Description(Resources));
                 }
                 else
                 {
@@ -480,7 +483,7 @@ namespace Search.Dialogs
                         ref message,
                         (IReadOnlyList<SearchHit>)Found,
                         SearchDescription(response.TotalCount),
-                        Prompts.Add
+                        Resources.ButtonResource(ButtonType.Add)
                     );
                     await context.PostAsync(message);
                     LastQuery = Query.DeepCopy();
@@ -488,8 +491,14 @@ namespace Search.Dialogs
                 }
             }
             await
-                PromptAsync(context, prompt, Prompts.Refine, Prompts.NextPage, Prompts.List, Prompts.Finished,
-                    Prompts.Quit, Prompts.StartOver);
+                PromptAsync(context,
+                prompt,
+                Resources.ButtonResource(ButtonType.Refine),
+                Resources.ButtonResource(ButtonType.NextPage),
+                Resources.ButtonResource(ButtonType.List),
+                Resources.ButtonResource(ButtonType.Finished),
+                    Resources.ButtonResource(ButtonType.Quit),
+                    Resources.ButtonResource(ButtonType.StartOver));
             context.Wait(MessageReceived);
         }
 
@@ -507,7 +516,7 @@ namespace Search.Dialogs
             var hit = Found.SingleOrDefault(h => h.Key == selection);
             if (hit == null)
             {
-                await PromptAsync(context, Prompts.UnknownItemPrompt, LastButtons);
+                await PromptAsync(context, Resources.Resource(ResourceType.UnknownItemPrompt), LastButtons);
                 context.Wait(MessageReceived);
             }
             else
@@ -519,7 +528,7 @@ namespace Search.Dialogs
 
                 if (MultipleSelection)
                 {
-                    await PromptAsync(context, string.Format(Prompts.AddedToListPrompt, hit.Title), LastButtons);
+                    await PromptAsync(context, Resources.Resource(ResourceType.AddedToListPrompt, hit.Title), LastButtons);
                     context.Wait(MessageReceived);
                 }
                 else
@@ -534,12 +543,12 @@ namespace Search.Dialogs
             var hit = Selected.SingleOrDefault(h => h.Key == selection);
             if (hit == null)
             {
-                await PromptAsync(context, Prompts.UnknownItemPrompt, LastButtons);
+                await PromptAsync(context, Resources.Resource(ResourceType.UnknownItemPrompt), LastButtons);
                 context.Wait(MessageReceived);
             }
             else
             {
-                await PromptAsync(context, string.Format(Prompts.RemovedFromListPrompt, hit.Title));
+                await PromptAsync(context, Resources.Resource(ResourceType.RemovedFromListPrompt, hit.Title));
                 Selected.Remove(hit);
                 if (Selected.Any())
                 {
@@ -547,7 +556,7 @@ namespace Search.Dialogs
                 }
                 else
                 {
-                    await PromptAsync(context, Prompts.RefinePrompt, LastButtons);
+                    await PromptAsync(context, Resources.Resource(ResourceType.RefinePrompt), LastButtons);
                 }
             }
         }
@@ -556,16 +565,21 @@ namespace Search.Dialogs
         {
             if (Selected.Count == 0)
             {
-                await PromptAsync(context, Prompts.NotAddedPrompt, LastButtons);
+                await PromptAsync(context, Resources.Resource(ResourceType.NotAddedPrompt), LastButtons);
             }
             else
             {
                 var message = context.MakeMessage();
-                HitStyler.Show(ref message, (IReadOnlyList<SearchHit>)Selected, Prompts.ListPrompt, Prompts.Remove);
+                HitStyler.Show(ref message, (IReadOnlyList<SearchHit>)Selected, 
+                    Resources.Resource(ResourceType.ListPrompt), 
+                    Resources.ButtonResource(ButtonType.Remove));
                 await context.PostAsync(message);
                 await
-                    PromptAsync(context, Prompts.RefinePrompt, Prompts.Finished, Prompts.Quit, Prompts.StartOver,
-                        Prompts.Refine);
+                    PromptAsync(context, Resources.Resource(ResourceType.RefinePrompt),
+                        Resources.ButtonResource(ButtonType.Finished), 
+                        Resources.ButtonResource(ButtonType.Quit), 
+                        Resources.ButtonResource(ButtonType.StartOver),
+                        Resources.ButtonResource(ButtonType.Refine));
             }
             context.Wait(MessageReceived);
         }
@@ -586,15 +600,16 @@ namespace Search.Dialogs
                         defaultRefiners.Add(field.Name);
                     }
                 }
-                defaultRefiners.Add(Prompts.Keyword.Label);
+                defaultRefiners.Add(Resources.ButtonResource(ButtonType.Keyword).Label);
                 refiners = defaultRefiners;
             }
             var buttons = new List<Button>();
+            var keywordButton = Resources.ButtonResource(ButtonType.Keyword);
             foreach (var refiner in refiners)
             {
-                if (refiner == Prompts.Keyword.Label)
+                if (refiner == keywordButton.Label)
                 {
-                    buttons.Add(Prompts.Keyword);
+                    buttons.Add(keywordButton);
                 }
                 else
                 {

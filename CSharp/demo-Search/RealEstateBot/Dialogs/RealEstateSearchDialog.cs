@@ -33,7 +33,7 @@ namespace RealEstateBot.Dialogs
         private string LUISKey;
         private string LUISDomain;
         private string ModelId;
-        private Prompts Prompts = new Prompts();
+        private IResource Resources = new ResourceGenerator(new Prompts());
 
         public RealEstateSearchDialog(ISearchClient searchClient)
         {
@@ -75,7 +75,7 @@ namespace RealEstateBot.Dialogs
                         }
                         await context.PostAsync($@"**Last Search**
 
-{this.LastQuery.Description(this.Prompts)}");
+{this.LastQuery.Description(this.Resources)}");
                         context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1, promptStyle:PromptStyle.Keyboard), UseLastSearch);
                     }
                     else
@@ -122,7 +122,7 @@ namespace RealEstateBot.Dialogs
 
         private void Search(IDialogContext context)
         {
-            context.Call(new SearchDialog(new Prompts(),
+            context.Call(new SearchDialog(
                 this.SearchClient,
                 new LuisModelAttribute(this.ModelId, this.LUISKey, domain:this.LUISDomain, spellCheck: true),
                 multipleSelection: true,
