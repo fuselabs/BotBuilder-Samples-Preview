@@ -164,6 +164,11 @@ namespace Microsoft.LUIS.API
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> AddSpelling(string key, CancellationToken ct)
+        {
+            return await AddExternalKey(JObject.Parse($@"{{""type"":""BingSpellCheck"", ""value"":""{key}""}}"), ct);
+        }
+
         public async Task<JObject> DownloadAsync(CancellationToken ct)
         {
             var response = await GetAsync("export", ct);

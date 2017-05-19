@@ -20,46 +20,51 @@ namespace Search.Dialogs.Tools
             }
         }
 
-        public static IEnumerable<Range> NonEntityRanges(IEnumerable<EntityRecommendation> entities, int length)
+        public static IEnumerable<Range> NonEntityRanges(IEnumerable<EntityRecommendation> entities, EntityRecommendation span)
         {
             var ranges = new List<Range>();
-            ranges.Add(new Range(0, length - 1));
+            ranges.Add(new Range(span.StartIndex.Value, span.EndIndex.Value));
             foreach (var entity in entities)
             {
                 if (entity.StartIndex.HasValue)
                 {
-                    int i = 0;
-                    while (i < ranges.Count)
+                    // Ignore entity that covers whole range
+                    if (entity != span)
                     {
-                        var range = ranges[i];
-                        if (range.Start > entity.EndIndex)
+
+                        int i = 0;
+                        while (i < ranges.Count)
                         {
-                            // No overlap and since ranges are in ascending order we are done
-                            break;
-                        }
-                        else if (range.Start >= entity.StartIndex && range.End <= entity.EndIndex)
-                        {
-                            // Completely contained by entity, so remove
-                            ranges.RemoveAt(i);
-                        }
-                        else if (range.End < entity.StartIndex)
-                        {
-                            // Range is before entity
-                            ++i;
-                        }
-                        else
-                        {
-                            // We have overlap, so replace
-                            ranges.RemoveAt(i);
-                            if (range.Start < entity.StartIndex)
+                            var range = ranges[i];
+                            if (range.Start > entity.EndIndex)
                             {
-                                ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
+                                // No overlap and since ranges are in ascending order we are done
+                                break;
+                            }
+                            else if (range.Start >= entity.StartIndex && range.End <= entity.EndIndex)
+                            {
+                                // Completely contained by entity, so remove
+                                ranges.RemoveAt(i);
+                            }
+                            else if (range.End < entity.StartIndex)
+                            {
+                                // Range is before entity
                                 ++i;
                             }
-                            if (range.End > entity.EndIndex)
+                            else
                             {
-                                ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
-                                ++i;
+                                // We have overlap, so replace
+                                ranges.RemoveAt(i);
+                                if (range.Start < entity.StartIndex)
+                                {
+                                    ranges.Insert(i, new Range(range.Start, entity.StartIndex.Value - 1));
+                                    ++i;
+                                }
+                                if (range.End > entity.EndIndex)
+                                {
+                                    ranges.Insert(i, new Range(entity.EndIndex.Value + 1, range.End));
+                                    ++i;
+                                }
                             }
                         }
                     }

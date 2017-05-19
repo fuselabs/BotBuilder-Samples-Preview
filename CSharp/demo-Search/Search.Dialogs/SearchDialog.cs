@@ -257,7 +257,7 @@ namespace Search.Dialogs
             Canonicalizers();
             var query = result.AlteredQuery ?? result.Query;
             var entities = result.Entities ?? new List<EntityRecommendation>();
-            var nonEntities = Keywords.NonEntityRanges(entities, query.Length).ToList();
+            var nonEntities = Keywords.NonEntityRanges(entities, new EntityRecommendation(null, startIndex:0, endIndex: query.Length - 1)).ToList();
             var rangeResolver = new RangeResolver(SearchClient.Schema);
             var topEntities = TopEntities(entities).ToArray();
             var comparisons = (from entity in topEntities
@@ -334,13 +334,22 @@ namespace Search.Dialogs
                 // Remove keywords from the filter
                 foreach (var removeKeyword in removeKeywords)
                 {
+                    bool foundKeyword = false;
                     foreach (var entity in entities)
                     {
                         if (entity.Type == "Keyword"
                             && entity.StartIndex >= removeKeyword.StartIndex
                             && entity.EndIndex <= removeKeyword.EndIndex)
                         {
+                            foundKeyword = true;
                             removePhrases.AddRange(entity.Entity.Phrases());
+                        }
+                    }
+                    if (!foundKeyword)
+                    {
+                        foreach(var range in Keywords.NonEntityRanges(entities, removeKeyword))
+                        {
+                            removePhrases.AddRange(query.Substring(range.Start, range.End - range.Start + 1).Phrases());
                         }
                     }
                 }

@@ -71,10 +71,13 @@ namespace Search.Dialogs.UserInteraction
     {
         private readonly Prompts _prompts;
         private readonly Random _random = new Random();
+        [NonSerialized]
+        private readonly HumanNumberFormatter _formatter;
 
         public ResourceGenerator(Prompts prompts)
         {
             _prompts = prompts;
+            _formatter = new HumanNumberFormatter(prompts);
         }
 
         public Button ButtonResource(ButtonType type, params object[] parameters)
@@ -112,7 +115,7 @@ namespace Search.Dialogs.UserInteraction
             {
                 var prompt = _prompts.ValueHints[_random.Next(_prompts.ValueHints.Length)];
                 var builder = new StringBuilder();
-                foreach(var synonym in field.ValueSynonyms)
+                foreach (var synonym in field.ValueSynonyms)
                 {
                     if (field.Examples.Contains(synonym.Canonical))
                     {
@@ -126,14 +129,14 @@ namespace Search.Dialogs.UserInteraction
                 double typical, min, max;
                 Examples(field, out typical, out min, out max);
                 var prompt = _prompts.MoneyHints[_random.Next(_prompts.MoneyHints.Length)];
-                hint = string.Format(prompt, field.Description(), typical, min, max);
+                hint = string.Format(_formatter, prompt, field.Description(), typical, min, max);
             }
             else if (field.Type.IsNumeric())
             {
                 double typical, min, max;
                 Examples(field, out typical, out min, out max);
                 var prompt = _prompts.NumberHints[_random.Next(_prompts.NumberHints.Length)];
-                hint = string.Format(prompt, field.Description(), typical, min, max);
+                hint = string.Format(_formatter, prompt, field.Description(), typical, min, max);
             }
             return hint;
         }
@@ -177,7 +180,14 @@ namespace Search.Dialogs.UserInteraction
             else
             {
                 var field = schema.Field(fieldName);
-                if (field.Type.IsNumeric())
+                if (field.IsMoney)
+                {
+                    double typical, min, max;
+                    prompt = (string)_prompts.GetType().GetField(type.ToString() + "Money").GetValue(_prompts);
+                    Examples(field, out typical, out min, out max);
+                    prompt = string.Format(prompt, field.Description(), field.Min, field.Max, typical, min, max);
+                }
+                else if (field.Type.IsNumeric())
                 {
                     double typical, min, max;
                     prompt = (string)_prompts.GetType().GetField(type.ToString() + "Number").GetValue(_prompts);
@@ -205,6 +215,64 @@ namespace Search.Dialogs.UserInteraction
         }
     }
 
+    public class HumanNumberFormatter : ICustomFormatter, IFormatProvider
+    {
+        private Prompts _prompts;
+        public HumanNumberFormatter(Prompts prompts)
+        {
+            _prompts = prompts;
+        }
+
+        public object GetFormat(Type formatType)
+        {
+            return (formatType == typeof(ICustomFormatter)) ? this : null;
+        }
+
+        public string Format(string format, object arg, IFormatProvider formatProvider)
+        {
+            if (format == null || !format.Trim().StartsWith("H"))
+            {
+                if (arg is IFormattable)
+                {
+                    return ((IFormattable)arg).ToString(format, formatProvider);
+                }
+                return arg.ToString();
+            }
+
+            int precision;
+            int.TryParse(format.Trim().Substring(1), out precision);
+
+            decimal value = Convert.ToDecimal(arg);
+            string units = "";
+            if (value >= 1000)
+            {
+                value = value / 1000;
+                units = _prompts.Thousand;
+            }
+            else if (value >= 1000000)
+            {
+                value = value / 10000000;
+                units = " " + _prompts.Million;
+            }
+            else if (value >= 1000000000)
+            {
+                value = (value / 10000000000);
+                units = " " + _prompts.Billion;
+            }
+            else if (value >= 1000000000000)
+            {
+                value = (value / 10000000000000);
+                units = " " + _prompts.Trillion;
+            }
+            else if (value >= 1000000000000000)
+            {
+                value = (value / 1000000000000000);
+                units = " " + _prompts.Quadrillion;
+            }
+            return value.ToString("n" + precision.ToString()) + units;
+        }
+    }
+
     [Serializable]
     public class Prompts
     {
@@ -214,8 +282,9 @@ namespace Search.Dialogs.UserInteraction
         public string AddOrRemoveKeywordPrompt = "Type a keyword phrase to search for, or select what you would like to remove.";
         public string FacetPrompt = "What would you like to refine by?";
         public string FacetValuePrompt = "What value for {0} would you like to filter by?";
-        public string FilterPromptNumber = "{0} can have values between {2} and {3}.  Enter a filter like \"between {4} and {5}\".";
-        public string FilterPrompString = "Enter a value for {0} like \"{1}\".";
+        public string FilterPromptNumber = "{0} can have values between {1:n0} and {2:n0}.  Enter a filter like \"between {4:n0} and {5:n0}\".";
+        public string FilterPrompString = "Enter a value for {0} like \"{3}\".";
+        public string FilterPromptMoney = "{0} can have values between ${1:H} and ${2:H}.  Enter a filter like \"no more than ${4:H}\".";
         public string InitialPrompt = "Please describe in your own words what you would like to find?";
         public string ListPrompt = "Here is what you have selected so far.";
         public string NoResultsPrompt = "{0}Found no results so I undid your last change.  You can refine again.";
@@ -255,28 +324,38 @@ namespace Search.Dialogs.UserInteraction
         public string[] NumberHints = new string[]
         {
             // 0-Field, 1-Typical, 2-MinExample, 3-MaxExample
-            "at least {1} {0}",
-            "no more than {1} {0}",
-            "between {2} and {3} {0}",
-            "{1}+ {0}",
-            "{2}-{3} {0}"
+            "at least {1:n0} {0}",
+            "no more than {1:n0} {0}",
+            "between {2:n0} and {3:n0} {0}",
+            "{1:n0}+ {0}",
+            "{2:n0}-{3:n0} {0}",
+            "any number of {0}"
         };
 
         public string[] MoneyHints = new string[]
         {
             // 0-Field, 1-Typical, 2-MinExample, 3-MaxExample
-            "{0} is less than ${1}",
-            "{0} is more than ${1}",
-            "more than ${1}",
-            "less than ${1}",
-            "at least ${1}",
-            "between ${2} and ${3}",
-            "${2}-${3}"
+            "{0} is less than ${1:H}",
+            "{0} is more than ${1:H}",
+            "more than ${1:H}",
+            "less than ${1:H}",
+            "at least ${1:H}",
+            "between ${2:H} and ${3:H}",
+            "${2:H}-${3:H}",
+            "any {0}"
         };
+
         public string[] ValueHints = new string[]
         {
             // 0-Field, 1-list of possible values
             "{1} for {0}"
         };
+
+        // Units
+        public string Thousand = "k";
+        public string Million = "million";
+        public string Billion = "billion";
+        public string Trillion = "trillion";
+        public string Quadrillion = "quadrillion";
     }
 }

@@ -541,26 +541,13 @@
             if (p.Upload)
             {
                 Console.WriteLine($"Uploading {p.OutputName} to LUIS");
-                var app = await subscription.ReplaceApplicationAsync(template, cts.Token);
+                var app = await subscription.ReplaceApplicationAsync(template, cts.Token, p.SpellingKey);
                 if (app == null)
                 {
                     Console.WriteLine($"Could not upload, train or publish {p.OutputName} to LUIS.");
                 }
                 else
                 {
-                    if (p.SpellingKey != null)
-                    {
-                        try
-                        {
-                            Console.WriteLine("Adding spelling");
-                            await app.AddExternalKey(JObject.Parse($@"{{""type"":""BingSpellCheck"", ""value"":""{p.SpellingKey}""}}"), cts.Token);
-                            await app.PublishAsync(false, cts.Token);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine($"Could not add spelling\n{e.Message}");
-                        }
-                    }
                     Console.WriteLine($"New LUIS app key is {app.ApplicationID}");
                 }
             }

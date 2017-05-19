@@ -23,14 +23,16 @@ namespace RealEstateBot.Dialogs
     [Serializable]
     public class RealEstateSearchDialog : IDialog
     {
+        private const string LUISKeySetting = "LUISSubscriptionKey";
+        private const string LUISSpellingKeySetting = "LUISSpellingKey";
+        private const string LUISDomainSetting = "LUISDomain";
         private const string NameKey = "Name";
-        private const string QueryKey = "LastQuery";
-        private const string LUISKeyKey = "LUISSubscriptionKey";
-        private const string LUISDomainKey = "LUISDomain";
+        private const string QueryKey= "LastQuery";
         private readonly ISearchClient SearchClient;
         private SearchSpec Query = new SearchSpec();
         private SearchSpec LastQuery = null;
         private string LUISKey;
+        private string LUISSpellingKey;
         private string LUISDomain;
         private string ModelId;
         private IResource Resources = new ResourceGenerator(new Prompts());
@@ -42,17 +44,24 @@ namespace RealEstateBot.Dialogs
 
         public async Task StartAsync(IDialogContext context)
         {
-            this.LUISKey = ConfigurationManager.AppSettings[LUISKeyKey];
+            this.LUISKey = ConfigurationManager.AppSettings[LUISKeySetting];
+            this.LUISSpellingKey = ConfigurationManager.AppSettings[LUISSpellingKeySetting];
+            this.LUISDomain = ConfigurationManager.AppSettings[LUISDomainSetting];
+
+            // For local debugging without checking in keys
             if (string.IsNullOrWhiteSpace(this.LUISKey))
             {
-                // For local debugging of the sample without checking in your key
-                this.LUISKey = Environment.GetEnvironmentVariable(LUISKeyKey);
+                this.LUISKey = Environment.GetEnvironmentVariable(LUISKeySetting);
             }
-            this.LUISDomain = ConfigurationManager.AppSettings[LUISDomainKey];
+            if (string.IsNullOrWhiteSpace(this.LUISSpellingKey))
+            {
+                this.LUISSpellingKey = Environment.GetEnvironmentVariable(LUISSpellingKeySetting);
+            }
+
             var subscription = new Subscription(this.LUISDomain, this.LUISKey);
             var application = await subscription.GetOrImportApplicationAsync(
                         Path.Combine(HttpContext.Current.Server.MapPath("/"), @"dialogs\RealEstateModel.json"),
-                        context.CancellationToken);
+                        context.CancellationToken, this.LUISSpellingKey);
             this.ModelId = application.ApplicationID;
             context.Wait(IgnoreFirstMessage);
         }
@@ -76,7 +85,7 @@ namespace RealEstateBot.Dialogs
                         await context.PostAsync($@"**Last Search**
 
 {this.LastQuery.Description(this.Resources)}");
-                        context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1, promptStyle:PromptStyle.Keyboard), UseLastSearch);
+                        context.Call(new PromptDialog.PromptConfirm("Do you want to start from your last search?", null, 1, promptStyle: PromptStyle.Keyboard), UseLastSearch);
                     }
                     else
                     {
@@ -124,7 +133,7 @@ namespace RealEstateBot.Dialogs
         {
             context.Call(new SearchDialog(
                 this.SearchClient,
-                new LuisModelAttribute(this.ModelId, this.LUISKey, domain:this.LUISDomain, spellCheck: true),
+                new LuisModelAttribute(this.ModelId, this.LUISKey, domain: this.LUISDomain, spellCheck: true),
                 multipleSelection: true,
                 query: this.Query,
                 refiners: new string[]
