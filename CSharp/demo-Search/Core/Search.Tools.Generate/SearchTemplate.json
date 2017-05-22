@@ -6,6 +6,9 @@
   "culture": "en-us",
   "intents": [
     {
+      "name": "Clear"
+    },
+    {
       "name": "Done"
     },
     {
@@ -24,10 +27,10 @@
       "name": "None"
     },
     {
-      "name": "Quit"
+      "name": "Refine"
     },
     {
-      "name": "Refine"
+      "name": "Search"
     },
     {
       "name": "StartOver"
@@ -1920,7 +1923,17 @@
       "entities": []
     },
     {
-      "text": "search again",
+      "text": "clear search filter",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "clear search",
+      "intent": "StartOver",
+      "entities": []
+    },
+    {
+      "text": "clear filter",
       "intent": "StartOver",
       "entities": []
     },
@@ -1945,17 +1958,42 @@
       "entities": []
     },
     {
-      "text": "stop",
-      "intent": "Quit",
+      "text": "clear",
+      "intent": "Clear",
       "entities": []
     },
     {
-      "text": "quit",
-      "intent": "Quit",
+      "text": "clear list",
+      "intent": "Clear",
+      "entities": []
+    },
+    {
+      "text": "empty list",
+      "intent": "Clear",
       "entities": []
     },
     {
       "text": "refine",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "browse",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "help",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "help me search",
+      "intent": "Refine",
+      "entities": []
+    },
+    {
+      "text": "search",
       "intent": "Refine",
       "entities": []
     },
@@ -1975,6 +2013,11 @@
       "entities": []
     },
     {
+      "text": "my list",
+      "intent": "List",
+      "entities": []
+    },
+    {
       "text": "saved",
       "intent": "List",
       "entities": []
@@ -1985,12 +2028,27 @@
       "entities": []
     },
     {
+      "text": "show list",
+      "intent": "List",
+      "entities": []
+    },
+    {
       "text": "done",
       "intent": "Done",
       "entities": []
     },
     {
       "text": "finished",
+      "intent": "Done",
+      "entities": []
+    },
+    {
+      "text": "done searching",
+      "intent": "Done",
+      "entities": []
+    },
+    {
+      "text": "finished searching",
       "intent": "Done",
       "entities": []
     },
@@ -2007,6 +2065,31 @@
     {
       "text": "next",
       "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "more results",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "more search results",
+      "intent": "NextPage",
+      "entities": []
+    },
+    {
+      "text": "search",
+      "intent": "Search",
+      "entities": []
+    },
+    {
+      "text": "continue searching",
+      "intent": "Search",
+      "entities": []
+    },
+    {
+      "text": "find more",
+      "intent": "Search",
       "entities": []
     }
   ]

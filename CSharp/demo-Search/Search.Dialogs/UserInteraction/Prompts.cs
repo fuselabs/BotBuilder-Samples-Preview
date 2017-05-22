@@ -13,6 +13,7 @@ namespace Search.Dialogs.UserInteraction
         AddedToListPrompt,          // 0-ItemID
         AddKeywordPrompt,
         AddOrRemoveKeywordPrompt,
+        ClearPrompt,
         FacetPrompt,
         FacetValuePrompt,           // 0-ItemID
         InitialPrompt,
@@ -20,6 +21,7 @@ namespace Search.Dialogs.UserInteraction
         NoResultsPrompt,            // 0-Filter
         NotAddedPrompt,
         NotUnderstoodPrompt,
+        NoValuesPrompt,
         RefinePrompt,
         RemovedFromListPrompt,      // 0-ItemID
         UnknownItemPrompt,
@@ -40,11 +42,12 @@ namespace Search.Dialogs.UserInteraction
         Add,                // 0-ItemID
         Any,                // 0-Field
         AnyNumber,          // 0-Field
+        Clear,
+        ContinueSearch,
         Finished,
         Keyword,
         List,
         NextPage,
-        Quit,
         Refine,
         Remove,             // 0-ItemID
         RemoveKeyword,      // 0-Keyword
@@ -56,7 +59,6 @@ namespace Search.Dialogs.UserInteraction
         // 0-Field, 1-Typical, 2-Min, 3-Max, 4-Most common, 5-Example Min, 6-Example Max
         IntroHint,
         FilterPrompt,
-        NoValuesPrompt
     };
 
     public interface IResource
@@ -280,7 +282,8 @@ namespace Search.Dialogs.UserInteraction
         public string AddedToListPrompt = "{0} was added to your list.";
         public string AddKeywordPrompt = "Type a keyword phrase to search for.";
         public string AddOrRemoveKeywordPrompt = "Type a keyword phrase to search for, or select what you would like to remove.";
-        public string FacetPrompt = "What would you like to refine by?";
+        public string ClearPrompt = "Cleared all selections from your list.";
+        public string FacetPrompt = "What would you like to refine your search by?";
         public string FacetValuePrompt = "What value for {0} would you like to filter by?";
         public string FilterPromptNumber = "{0} can have values between {1:n0} and {2:n0}.  Enter a filter like \"between {4:n0} and {5:n0}\".";
         public string FilterPrompString = "Enter a value for {0} like \"{3}\".";
@@ -296,18 +299,19 @@ namespace Search.Dialogs.UserInteraction
         public string UnknownItemPrompt = "That is not an item in the current results.";
 
         // Buttons
-        public Button Add = new Button("Add to List", "ADD:{0}");
+        public Button Add = new Button("Add to list", "ADD:{0}");
         public Button Any = new Button("Any", "Any {0}");
         public Button AnyNumber = new Button("Any", "Any number of {0}");
-        public Button Finished = new Button("Finished");
-        public Button Keyword = new Button("Keyword");
-        public Button List = new Button("List");
-        public Button NextPage = new Button("Next Page");
-        public Button Quit = new Button("Quit");
-        public Button Refine = new Button("Refine");
-        public Button Remove = new Button("Remove from List", "REMOVE:{0}");
+        public Button Clear = new Button("Clear list", "clear list");
+        public Button ContinueSearch = new Button("Continue searching", "search");
+        public Button Finished = new Button("Done searching", "done");
+        public Button Keyword = new Button("Keyword", "keyword");
+        public Button List = new Button("Show list", "list");
+        public Button NextPage = new Button("More results", "more results");
+        public Button Refine = new Button("Help me search", "help");
+        public Button Remove = new Button("Remove from list", "REMOVE:{0}");
         public Button RemoveKeyword = new Button("{0}", "remove {0}");
-        public Button StartOver = new Button("Start Over");
+        public Button StartOver = new Button("Clear search");
 
         // Status
         public string Ascending = "Ascending";
