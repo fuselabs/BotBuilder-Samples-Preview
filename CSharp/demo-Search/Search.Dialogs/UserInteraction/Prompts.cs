@@ -51,6 +51,7 @@ namespace Search.Dialogs.UserInteraction
         Refine,
         Remove,             // 0-ItemID
         RemoveKeyword,      // 0-Keyword
+        Select,             // 0-ItemID
         StartOver
     };
 
@@ -311,6 +312,7 @@ namespace Search.Dialogs.UserInteraction
         public Button Refine = new Button("Help me search", "help");
         public Button Remove = new Button("Remove from list", "REMOVE:{0}");
         public Button RemoveKeyword = new Button("{0}", "remove {0}");
+        public Button Select = new Button("Select", "ADD:{0}");
         public Button StartOver = new Button("Clear search");
 
         // Status

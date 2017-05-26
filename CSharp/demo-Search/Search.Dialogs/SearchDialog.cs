@@ -498,12 +498,12 @@ namespace Search.Dialogs
                 else
                 {
                     var message = context.MakeMessage();
-                    Found = response.Results.ToList();
+                    var hits = response.Results.ToList();
                     HitStyler.Show(
                         ref message,
-                        (IReadOnlyList<SearchHit>)Found,
+                        (IReadOnlyList<SearchHit>)hits,
                         SearchDescription(response.TotalCount),
-                        Resources.ButtonResource(ButtonType.Add)
+                        Resources.ButtonResource(MultipleSelection ? ButtonType.Add : ButtonType.Select)
                     );
                     var nextPage = Resources.ButtonResource(ButtonType.NextPage);
                     message.Attachments.Add(new ThumbnailCard(buttons: new List<CardAction> { new CardAction { Type = ActionTypes.ImBack, Title = nextPage.Label, Value = nextPage.Message } }).ToAttachment());
@@ -511,6 +511,8 @@ namespace Search.Dialogs
                     LastQuery = Query.DeepCopy();
                     LastQuery.PageNumber = 0;
                     Showing = Show.Search;
+                    // Only keep partial records to minimize state
+                    Found = (from hit in hits select new SearchHit { Key = hit.Key, Title = hit.Title }).ToList();
                 }
                 ShowSearch = false;
             }
