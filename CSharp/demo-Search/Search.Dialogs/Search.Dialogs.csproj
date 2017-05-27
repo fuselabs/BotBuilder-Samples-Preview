@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureSearchDialog.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Filter\ComparisonEntity.cs" />
     <Compile Include="Filter\FilterExpressionBuilder.cs" />

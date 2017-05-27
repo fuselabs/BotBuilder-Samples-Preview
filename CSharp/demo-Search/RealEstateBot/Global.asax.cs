@@ -19,26 +19,9 @@ namespace RealEstateBot
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<RealEstateSearchDialog>()
+            builder.RegisterType<RealEstateDialog>()
                 .As<IDialog<object>>()
                 .InstancePerDependency();
-
-            builder.RegisterType<RealEstateMapper>()
-                .Keyed<IMapper<DocumentSearchResult, GenericSearchResult>>(FiberModule.Key_DoNotSerialize)
-                .AsImplementedInterfaces()
-                .SingleInstance();
-
-            builder.Register(
-                    (c) =>
-                        JsonConvert.DeserializeObject<SearchSchema>(
-                            File.ReadAllText(Path.Combine(HttpContext.Current.Server.MapPath("/"),
-                                @"dialogs\RealEstate.json"))))
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<AzureSearchClient>()
-                .Keyed<ISearchClient>(FiberModule.Key_DoNotSerialize)
-                .AsImplementedInterfaces()
-                .SingleInstance();
 
             builder.Update(Conversation.Container);
 

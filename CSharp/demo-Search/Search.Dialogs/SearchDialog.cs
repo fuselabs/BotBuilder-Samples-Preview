@@ -26,18 +26,18 @@ namespace Search.Dialogs
     public delegate SearchField CanonicalizerDelegate(string propertyName);
 
     [Serializable]
-    public class SearchDialog : LuisDialog<IList<SearchHit>>
+    public abstract class SearchDialog : LuisDialog<IList<SearchHit>>
     {
         #region Members
+        // Static default implementations
+        public static IResource DefaultResources = new ResourceGenerator(new Prompts());
+        public static ISearchHitStyler DefaultHitStyler = new SearchHitStyler();
+        public static PromptStyler DefaultPromptStyler = new PromptStyler(PromptStyle.Keyboard);
 
-        public readonly IResource Resources;
         private IList<SearchHit> Found;
 
-        protected readonly ISearchHitStyler HitStyler;
         protected readonly bool MultipleSelection;
-        protected readonly PromptStyler PromptStyler;
-        protected Button[] Refiners;
-        protected readonly ISearchClient SearchClient;
+        protected string[] Refiners;
 
         protected string DefaultProperty = null;
         protected SearchSpec LastQuery;
@@ -53,6 +53,33 @@ namespace Search.Dialogs
 
         #endregion Members
 
+        #region Overrides
+        public virtual IResource Resources
+        {
+            get { return DefaultResources; }
+        }
+
+        public virtual ISearchHitStyler HitStyler
+        {
+            get { return DefaultHitStyler; }
+        }
+
+        public virtual PromptStyler PromptStyler
+        {
+            get { return DefaultPromptStyler; }
+        }
+
+        public virtual IEnumerable<string> DefaultRefiners()
+        {
+            return null; 
+        }
+
+        public abstract ISearchClient SearchClient
+        {
+            get;
+        }
+        #endregion
+
         #region Properties
 
         // Expose this publically so that other dialogs could interact with partial results
@@ -62,27 +89,20 @@ namespace Search.Dialogs
 
         #region Constructor
 
-        public SearchDialog(ISearchClient searchClient,
+        public SearchDialog(
             LuisModelAttribute luis,
-            IResource resources = null,
             SearchSpec query = null,
-            PromptStyler promptStyler = null,
-            ISearchHitStyler searchHitStyler = null,
             bool multipleSelection = false,
             bool includeCount = true,
             IEnumerable<string> refiners = null)
             : base(new LuisService(luis))
         {
-            Microsoft.Bot.Builder.Internals.Fibers.SetField.NotNull(out SearchClient, nameof(searchClient), searchClient);
-            Resources = resources ?? new ResourceGenerator(new Prompts());
             SkipIntro = query != null && !query.HasNoConstraints;
             Query = query ?? new SearchSpec();
             LastQuery = new SearchSpec();
             Query.GetTotalCount = includeCount;
-            HitStyler = searchHitStyler ?? new SearchHitStyler();
-            PromptStyler = promptStyler ?? new SearchPromptStyler();
             MultipleSelection = multipleSelection;
-            InitializeRefiners(refiners);
+            Refiners = (refiners ?? DefaultRefiners()).ToArray();
         }
 
         #endregion Constructor
@@ -415,7 +435,7 @@ namespace Search.Dialogs
         [LuisIntent("Refine")]
         public async Task Refine(IDialogContext context, LuisResult result)
         {
-            await PromptAsync(context, Resources.Resource(ResourceType.FacetPrompt), Refiners);
+            await PromptAsync(context, Resources.Resource(ResourceType.FacetPrompt), RefinerButtons());
             context.Wait(MessageReceived);
         }
 
@@ -511,8 +531,7 @@ namespace Search.Dialogs
                     LastQuery = Query.DeepCopy();
                     LastQuery.PageNumber = 0;
                     Showing = Show.Search;
-                    // Only keep partial records to minimize state
-                    Found = (from hit in hits select new SearchHit { Key = hit.Key, Title = hit.Title }).ToList();
+                    Found = hits;
                 }
                 ShowSearch = false;
             }
@@ -631,24 +650,11 @@ namespace Search.Dialogs
             return buttons.ToArray();
         }
 
-        private void InitializeRefiners(IEnumerable<string> refiners)
+        private Button[] RefinerButtons()
         {
-            if (refiners == null)
-            {
-                var defaultRefiners = new List<string>();
-                foreach (var field in SearchClient.Schema.Fields.Values.OrderBy(f => f.Name))
-                {
-                    if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
-                    {
-                        defaultRefiners.Add(field.Name);
-                    }
-                }
-                defaultRefiners.Add(Resources.ButtonResource(ButtonType.Keyword).Label);
-                refiners = defaultRefiners;
-            }
             var buttons = new List<Button>();
             var keywordButton = Resources.ButtonResource(ButtonType.Keyword);
-            foreach (var refiner in refiners)
+            foreach (var refiner in Refiners)
             {
                 if (refiner == keywordButton.Label)
                 {
@@ -660,7 +666,7 @@ namespace Search.Dialogs
                     buttons.Add(new Button(field.Description()));
                 }
             }
-            Refiners = buttons.ToArray();
+            return buttons.ToArray();
         }
 
         private void Canonicalizers()

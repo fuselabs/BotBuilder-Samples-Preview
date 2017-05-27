@@ -7,20 +7,21 @@ using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using Search.Models;
 using Search.Services;
+using Newtonsoft.Json;
 
 namespace Search.Azure.Services
 {
 #if !NETSTANDARD1_6
-    using System.Configuration;
+    [Serializable]
 #else
-    using Microsoft.Extensions.Configuration;
+    [JsonObject(MemberSerialization.Fields)]
 #endif
-
-    internal class AzureSearchConfiguration
+    public class AzureSearchConfiguration
     {
         public string ServiceName { get; set; }
         public string IndexName { get; set; }
         public string ServiceKey { get; set; }
+        public string SchemaPath { get; set; }
     }
 
     public class AzureSearchClient : ISearchClient
@@ -28,25 +29,12 @@ namespace Search.Azure.Services
         private readonly IMapper<DocumentSearchResult, GenericSearchResult> mapper;
         private readonly ISearchIndexClient searchClient;
 
-        public AzureSearchClient(SearchSchema schema, IMapper<DocumentSearchResult, GenericSearchResult> mapper)
+        public AzureSearchClient(AzureSearchConfiguration configuration, IMapper<DocumentSearchResult, GenericSearchResult> mapper)
         {
-            Schema = schema;
+            this.Schema = SearchSchema.Load(configuration.SchemaPath);
             this.mapper = mapper;
-#if !NETSTANDARD1_6
-            var serviceName = ConfigurationManager.AppSettings["SearchDialogsServiceName"];
-            var indexName = ConfigurationManager.AppSettings["SearchDialogsIndexName"];
-            var serviceKey = ConfigurationManager.AppSettings["SearchDialogsServiceKey"];
-#else
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("config.json", true);
-            var config = configurationBuilder.Build();
-
-            var serviceName = config["SearchDialogsServiceName"];
-            var indexName = config["SearchDialogsIndexName"];
-            var serviceKey = config["SearchDialogsServiceKey"];
-#endif
-            var client = new SearchServiceClient(serviceName, new SearchCredentials(serviceKey));
-            searchClient = client.Indexes.GetClient(indexName);
+            var client = new SearchServiceClient(configuration.ServiceName, new SearchCredentials(configuration.ServiceKey));
+            searchClient = client.Indexes.GetClient(configuration.IndexName);
         }
 
         public async Task<GenericSearchResult> SearchAsync(SearchSpec spec, string refiner)
