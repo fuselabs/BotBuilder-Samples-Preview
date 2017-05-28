@@ -37,12 +37,9 @@ namespace RealEstateBot.Dialogs
         {
         }
 
-        public override IMapper<DocumentSearchResult, GenericSearchResult> SearchResultMapper
+        public override IMapper<DocumentSearchResult, GenericSearchResult> SearchResultMapper()
         {
-            get
-            {
-                return new RealEstateMapper();
-            }
+            return new RealEstateMapper();
         }
     }
 
