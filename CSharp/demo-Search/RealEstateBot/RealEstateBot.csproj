@@ -147,7 +147,6 @@
     <None Include="Properties\PublishProfiles\catalogbot - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\catalogbot - Web Deploy.pubxml" />
     <Content Include="Readme.md" />
-    <None Include="Properties\PublishProfiles\RealEstateBot20170521100151 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\RealEstateBotCUI - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

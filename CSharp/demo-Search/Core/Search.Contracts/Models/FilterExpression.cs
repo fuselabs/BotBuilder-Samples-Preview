@@ -52,12 +52,12 @@ namespace Search.Models
             return filter;
         }
 
-        public IEnumerable<SearchField> Fields()
+        public IEnumerable<string> Fields()
         {
             return AllFields().Distinct();
         }
 
-        public FilterExpression Remove(SearchField field)
+        public FilterExpression Remove(string field)
         {
             FilterExpression result = null;
             if (Operator == FilterOperator.And
@@ -77,7 +77,7 @@ namespace Search.Models
             }
             else
             {
-                if (Values.All((v) => v is SearchField ? (v as SearchField).Name != field.Name : true))
+                if ((string) Values[0] != field)
                 {
                     result = this;
                 }
@@ -165,7 +165,7 @@ namespace Search.Models
             return builder.ToString();
         }
 
-        private IEnumerable<SearchField> AllFields()
+        private IEnumerable<string> AllFields()
         {
             if (Operator == FilterOperator.And
                 || Operator == FilterOperator.Or
@@ -181,13 +181,7 @@ namespace Search.Models
             }
             else 
             {
-                foreach(var value in Values)
-                {
-                    if (value is SearchField)
-                    {
-                        yield return value as SearchField;
-                    }
-                }
+                yield return (string) Values[0];
             }
         }
 

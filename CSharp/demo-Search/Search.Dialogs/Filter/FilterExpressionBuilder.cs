@@ -18,20 +18,20 @@ namespace Search.Dialogs.Filter
                     if (range.Upper is double && !double.IsPositiveInfinity((double)range.Upper))
                     {
                         filter = FilterExpression.Combine(filter,
-                            new FilterExpression(range.Description, uppercmp, range.Property, range.Upper), connector);
+                            new FilterExpression(range.Description, uppercmp, range.Property.Name, range.Upper), connector);
                     }
                 }
                 else if (range.Upper is double && double.IsPositiveInfinity((double)range.Upper))
                 {
                     filter = FilterExpression.Combine(filter,
-                        new FilterExpression(range.Description, lowercmp, range.Property, range.Lower), connector);
+                        new FilterExpression(range.Description, lowercmp, range.Property.Name, range.Lower), connector);
                 }
                 else if (range.Lower == range.Upper)
                 {
                     filter = FilterExpression.Combine(filter,
                         new FilterExpression(range.Description,
                             range.Lower is string && range.Property.IsSearchable ? FilterOperator.FullText : FilterOperator.Equal,
-                            range.Property, range.Lower), connector);
+                            range.Property.Name, range.Lower), connector);
                 }
                 else
                 {

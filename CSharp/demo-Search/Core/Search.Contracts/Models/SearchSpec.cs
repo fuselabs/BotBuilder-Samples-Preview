@@ -41,7 +41,7 @@ namespace Search.Models
         {
             if (Filter != null)
             {
-                Filter = Filter.Remove(field);
+                Filter = Filter.Remove(field.Name);
             }
             Sort.RemoveAll((s) => s.Field == field.Name);
         }

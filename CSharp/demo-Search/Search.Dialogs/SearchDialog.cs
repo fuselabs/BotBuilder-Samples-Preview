@@ -284,7 +284,7 @@ namespace Search.Dialogs
             var attributes = from entity in topEntities
                              let canonical = CanonicalAttribute(entity)
                              where canonical != null
-                             select new FilterExpression(entity.Entity, FilterOperator.Equal, canonical.Field, canonical.Value);
+                             select new FilterExpression(entity.Entity, FilterOperator.Equal, canonical.Field.Name, canonical.Value);
             var removeProperties = from entity in topEntities where entity.Type == "Removal" select entity;
             var removeKeywords = from entity in topEntities where entity.Type == "RemoveKeyword" select entity;
             var bareRemoves = from entity in topEntities where entity.Type == "RemoveKeywords" select entity;
@@ -302,7 +302,7 @@ namespace Search.Dialogs
                         if (Query.Filter != null)
                         {
                             Query.Filter =
-                                Query.Filter.Remove(SearchClient().Schema.Field(entity.FirstResolution()));
+                                Query.Filter.Remove(entity.FirstResolution());
                         }
                         else
                         {

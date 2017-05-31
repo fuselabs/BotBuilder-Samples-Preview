@@ -42,7 +42,7 @@ namespace Search.Azure.Services
             var oldFilter = spec.Filter;
             if (refiner != null && oldFilter != null)
             {
-                spec.Filter = spec.Filter.Remove(Schema.Field(refiner));
+                spec.Filter = spec.Filter.Remove(refiner);
             }
             string search;
             var parameters = BuildSearch(spec, refiner, out search);
@@ -134,7 +134,7 @@ namespace Search.Azure.Services
                 }
                 if (op != null)
                 {
-                    var field = (SearchField) expression.Values[0];
+                    var field = Schema.Field((string)expression.Values[0]);
                     var value = SearchTools.Constant(expression.Values[1]);
                     if (field.Type == typeof(string[]))
                     {
