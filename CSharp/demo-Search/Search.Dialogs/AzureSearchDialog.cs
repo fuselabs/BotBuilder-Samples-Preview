@@ -35,18 +35,18 @@ namespace Search.Dialogs
             if (refiners == null)
             {
                 var defaultRefiners = new List<string>();
-                foreach (var field in SearchClient().Schema.Fields.Values.OrderBy(f => f.Name))
+                foreach (var field in SearchClient.Schema.Fields.Values.OrderBy(f => f.Name))
                 {
                     if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
                     {
                         defaultRefiners.Add(field.Name);
                     }
                 }
-                defaultRefiners.Add(Resources().ButtonResource(ButtonType.Keyword).Label);
+                defaultRefiners.Add(Resources.ButtonResource(ButtonType.Keyword).Label);
                 refiners = defaultRefiners;
             }
             var buttons = new List<Button>();
-            var keywordButton = Resources().ButtonResource(ButtonType.Keyword);
+            var keywordButton = Resources.ButtonResource(ButtonType.Keyword);
             foreach (var refiner in refiners)
             {
                 if (refiner == keywordButton.Label)
@@ -55,28 +55,33 @@ namespace Search.Dialogs
                 }
                 else
                 {
-                    var field = SearchClient().Schema.Field(refiner);
+                    var field = SearchClient.Schema.Field(refiner);
                     buttons.Add(new Button(field.Description()));
                 }
             }
         }
 
-        public override IEnumerable<string> DefaultRefiners()
+        public override IEnumerable<string> DefaultRefiners
         {
-            var defaultRefiners = new List<string>();
-            foreach (var field in SearchClient().Schema.Fields.Values.OrderBy(f => f.Name))
+            get
             {
-                if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
+                var defaultRefiners = new List<string>();
+                foreach (var field in SearchClient.Schema.Fields.Values.OrderBy(f => f.Name))
                 {
-                    defaultRefiners.Add(field.Name);
+                    if (field.IsFacetable && field.NameSynonyms.Alternatives.Any())
+                    {
+                        defaultRefiners.Add(field.Name);
+                    }
                 }
+                defaultRefiners.Add(Resources.ButtonResource(ButtonType.Keyword).Label);
+                return defaultRefiners;
             }
-            defaultRefiners.Add(Resources().ButtonResource(ButtonType.Keyword).Label);
-            return defaultRefiners;
         }
 
-        public override ISearchClient SearchClient()
+        public override ISearchClient SearchClient
         {
+            get
+            {
                 AzureSearchClient client;
                 if (!_clients.TryGetValue(_configuration, out client))
                 {
@@ -84,6 +89,7 @@ namespace Search.Dialogs
                     client = _clients.GetOrAdd(_configuration, client);
                 }
                 return client;
+            }
         }
 
         public abstract IMapper<DocumentSearchResult, GenericSearchResult> SearchResultMapper();
