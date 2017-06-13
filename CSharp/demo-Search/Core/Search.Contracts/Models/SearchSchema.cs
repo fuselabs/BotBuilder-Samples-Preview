@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Search.Models
 {
@@ -28,6 +29,15 @@ namespace Search.Models
         public string DefaultNumericProperty { get; set; }
 
         public string DefaultGeoProperty { get; set; }
+
+        // Key field for looking up record
+        public SearchField Key
+        {
+            get
+            {
+                return Fields.Values.First((f) => f.IsKey);
+            }
+        }
 
         // Actual keywords seperated by commas
         public string Keywords { get; set; }

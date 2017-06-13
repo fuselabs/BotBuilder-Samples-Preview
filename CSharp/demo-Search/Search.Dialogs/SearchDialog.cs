@@ -34,8 +34,6 @@ namespace Search.Dialogs
         public static ISearchHitStyler DefaultHitStyler = new SearchHitStyler();
         public static PromptStyler DefaultPromptStyler = new PromptStyler(PromptStyle.Keyboard);
 
-        private IList<SearchHit> Found;
-
         protected readonly bool MultipleSelection;
         protected string[] Refiners;
 
@@ -538,7 +536,6 @@ namespace Search.Dialogs
                     LastQuery = Query.DeepCopy();
                     LastQuery.PageNumber = 0;
                     Showing = Show.Search;
-                    Found = hits;
                 }
                 ShowSearch = false;
             }
@@ -557,14 +554,17 @@ namespace Search.Dialogs
 
         protected virtual async Task AddSelectedItem(IDialogContext context, string selection)
         {
-            var hit = Found.SingleOrDefault(h => h.Key == selection);
-            if (hit == null)
+            var spec = new SearchSpec();
+            spec.Filter = new FilterExpression(FilterOperator.Equal, SearchClient.Schema.Key.Name, selection);
+            var search = await SearchClient.SearchAsync(spec);
+            if (search == null || search.TotalCount == 0)
             {
                 await PromptAsync(context, Resources.Resource(ResourceType.UnknownItemPrompt), Buttons());
                 context.Wait(MessageReceived);
             }
             else
             {
+                var hit = search.Results.First();
                 if (!Selected.Any(h => h.Key == hit.Key))
                 {
                     Selected.Add(hit);
