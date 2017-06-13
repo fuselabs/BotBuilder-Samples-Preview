@@ -111,7 +111,7 @@ namespace Search.Dialogs.UserInteraction
             }
         }
 
-        private string FieldHint(SearchField field)
+        private string FieldHint(SearchField field, bool single = false)
         {
             string hint = null;
             if (field.ValueSynonyms.Any())
@@ -123,6 +123,10 @@ namespace Search.Dialogs.UserInteraction
                     if (field.Examples.Contains(synonym.Canonical))
                     {
                         examples.Add(synonym.Alternatives[_random.Next(synonym.Alternatives.Length)]);
+                        if (single)
+                        {
+                            break;
+                        }
                     }
                 }
                 var builder = new StringBuilder();
@@ -143,7 +147,14 @@ namespace Search.Dialogs.UserInteraction
                     builder.Append('"');
                     ++count;
                 }
-                hint = string.Format(prompt, field.Description(), builder.ToString());
+                if (single)
+                {
+                    hint = builder.ToString();
+                }
+                else
+                {
+                    hint = string.Format(prompt, field.Description(), builder.ToString());
+                }
             }
             else if (field.IsMoney)
             {
@@ -171,31 +182,46 @@ namespace Search.Dialogs.UserInteraction
                 var numbers = (from field in schema.Fields.Values where field.Type.IsNumeric() && !field.IsMoney select field).ToArray();
                 var values = (from field in schema.Fields.Values where field.ValueSynonyms.Any() select field).ToArray();
                 var money = (from field in schema.Fields.Values where field.IsMoney select field).ToArray();
-                var builder = new StringBuilder();
+                var singleBuilder = new StringBuilder();
+                var compositeBuilder = new StringBuilder();
                 if (numbers.Any())
                 {
                     var field = numbers[_random.Next(numbers.Length)];
-                    builder.Append("* ");
-                    builder.AppendLine(FieldHint(field));
-                    builder.AppendLine();
+                    singleBuilder.Append("* ");
+                    singleBuilder.AppendLine(FieldHint(field));
+                    singleBuilder.AppendLine();
+                    field = numbers[_random.Next(numbers.Length)];
+                    compositeBuilder.Append(FieldHint(field));
                 }
                 if (values.Any())
                 {
                     var field = values[_random.Next(values.Length)];
-                    builder.Append("* ");
-                    builder.AppendLine(FieldHint(field));
-                    builder.AppendLine();
+                    singleBuilder.Append("* ");
+                    singleBuilder.AppendLine(FieldHint(field));
+                    singleBuilder.AppendLine();
+                    field = values[_random.Next(values.Length)];
+                    if (compositeBuilder.Length > 0)
+                    {
+                        compositeBuilder.Append(' ');
+                    }
+                    compositeBuilder.Append(FieldHint(field, true));
                 }
                 if (money.Any())
                 {
                     var field = money[_random.Next(money.Length)];
-                    builder.Append("* ");
-                    builder.AppendLine(FieldHint(field));
-                    builder.AppendLine();
+                    singleBuilder.Append("* ");
+                    singleBuilder.AppendLine(FieldHint(field));
+                    singleBuilder.AppendLine();
+                    field = money[_random.Next(money.Length)];
+                    if (compositeBuilder.Length > 0)
+                    {
+                        compositeBuilder.Append(' ');
+                    }
+                    compositeBuilder.Append(FieldHint(field, true));
                 }
-                if (builder.Length > 0)
+                if (singleBuilder.Length > 0)
                 {
-                    prompt = string.Format(_prompts.IntroHint, Environment.NewLine + Environment.NewLine + builder.ToString());
+                    prompt = string.Format(_prompts.IntroHint, Environment.NewLine + Environment.NewLine + singleBuilder.ToString(), compositeBuilder.ToString());
                 }
             }
             else
@@ -344,7 +370,8 @@ namespace Search.Dialogs.UserInteraction
         public string Sort = "**Sort**: {0}";
 
         // Hints
-        public string IntroHint = "Some of the things I understand include: {0}";
+        // 0-hints one per-line, 1-composite hint
+        public string IntroHint = "Some of the things I understand include: {0}You can also combine multiple restrictions: {1}";
         public string[] NumberHints = new string[]
         {
             // 0-Field, 1-Typical, 2-MinExample, 3-MaxExample
