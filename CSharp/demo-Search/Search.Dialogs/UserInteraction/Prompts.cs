@@ -117,13 +117,31 @@ namespace Search.Dialogs.UserInteraction
             if (field.ValueSynonyms.Any())
             {
                 var prompt = _prompts.ValueHints[_random.Next(_prompts.ValueHints.Length)];
-                var builder = new StringBuilder();
+                var examples = new List<string>();
                 foreach (var synonym in field.ValueSynonyms)
                 {
                     if (field.Examples.Contains(synonym.Canonical))
                     {
-                        builder.Append(" \"" + synonym.Alternatives[_random.Next(synonym.Alternatives.Length)] + "\"");
+                        examples.Add(synonym.Alternatives[_random.Next(synonym.Alternatives.Length)]);
                     }
+                }
+                var builder = new StringBuilder();
+                var count = 0;
+                foreach(var example in examples)
+                {
+                    if (count > 0)
+                    {
+                             builder.Append(", ");
+                       if (count == examples.Count() - 1)
+                        {
+                            builder.Append(_prompts.Or);
+                            builder.Append(' ');
+                        }
+                    }
+                    builder.Append('"');
+                    builder.Append(example);
+                    builder.Append('"');
+                    ++count;
                 }
                 hint = string.Format(prompt, field.Description(), builder.ToString());
             }
@@ -149,7 +167,7 @@ namespace Search.Dialogs.UserInteraction
             string prompt = null;
             if (type == FieldType.IntroHint)
             {
-                // 1) Randomly select field of each type
+                // Randomly select field of each type
                 var numbers = (from field in schema.Fields.Values where field.Type.IsNumeric() && !field.IsMoney select field).ToArray();
                 var values = (from field in schema.Fields.Values where field.ValueSynonyms.Any() select field).ToArray();
                 var money = (from field in schema.Fields.Values where field.IsMoney select field).ToArray();
@@ -356,6 +374,8 @@ namespace Search.Dialogs.UserInteraction
             // 0-Field, 1-list of possible values
             "{1} for {0}"
         };
+
+        public string Or = "or";
 
         // Units
         public string Thousand = "k";
