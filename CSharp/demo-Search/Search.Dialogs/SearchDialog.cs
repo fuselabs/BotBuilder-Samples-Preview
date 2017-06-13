@@ -45,6 +45,7 @@ namespace Search.Dialogs
         protected enum Show { Intro, Search, List };
         protected Show Showing = Show.Intro;
         protected bool ShowSearch = false;
+        protected bool ShowFullHint = true;
 
         [NonSerialized]
         protected Dictionary<string, CanonicalValue> ValueCanonicalizers;
@@ -131,11 +132,7 @@ namespace Search.Dialogs
             }
             else
             {
-                await PromptAsync(context,
-                    Resources.Resource(ResourceType.InitialPrompt)
-                    + Environment.NewLine + Environment.NewLine + Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context),
-                    Buttons());
-                context.Wait(MessageReceived);
+                await FullHint(context, Resources.Resource(ResourceType.InitialPrompt), Buttons());
             }
         }
 
@@ -440,8 +437,7 @@ namespace Search.Dialogs
         [LuisIntent("Refine")]
         public async Task Refine(IDialogContext context, LuisResult result)
         {
-            await PromptAsync(context, Resources.Resource(ResourceType.FacetPrompt), RefinerButtons());
-            context.Wait(MessageReceived);
+            await FullHint(context, Resources.Resource(ResourceType.FacetPrompt), RefinerButtons());
         }
 
         [LuisIntent("List")]
@@ -505,6 +501,7 @@ namespace Search.Dialogs
         public async Task Search(IDialogContext context)
         {
             var prompt = Resources.Resource(ResourceType.RefinePrompt);
+            ShowFullHint = true;
             if (!ShowSearch && Query.Equals(LastQuery))
             {
                 prompt = Resources.Resource(ResourceType.NotUnderstoodPrompt);
@@ -536,6 +533,7 @@ namespace Search.Dialogs
                     LastQuery = Query.DeepCopy();
                     LastQuery.PageNumber = 0;
                     Showing = Show.Search;
+                    ShowFullHint = false;
                 }
                 ShowSearch = false;
             }
@@ -627,6 +625,23 @@ namespace Search.Dialogs
         #endregion User List
 
         #region Helpers 
+
+        private async Task FullHint(IDialogContext context, string prompt, params Button[] buttons)
+        {
+            if (ShowFullHint)
+            {
+                await PromptAsync(context,
+                    prompt
+                    + Environment.NewLine + Environment.NewLine + Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context),
+                    buttons);
+                ShowFullHint = false;
+            }
+            else
+            {
+                await PromptAsync(context, prompt, buttons);
+            }
+            context.Wait(MessageReceived);
+        }
 
         private Button[] Buttons()
         {

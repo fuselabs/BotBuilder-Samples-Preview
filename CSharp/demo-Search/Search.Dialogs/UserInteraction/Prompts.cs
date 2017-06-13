@@ -131,12 +131,12 @@ namespace Search.Dialogs.UserInteraction
                 }
                 var builder = new StringBuilder();
                 var count = 0;
-                foreach(var example in examples)
+                foreach (var example in examples)
                 {
                     if (count > 0)
                     {
-                             builder.Append(", ");
-                       if (count == examples.Count() - 1)
+                        builder.Append(", ");
+                        if (count == examples.Count() - 1)
                         {
                             builder.Append(_prompts.Or);
                             builder.Append(' ');
@@ -219,10 +219,7 @@ namespace Search.Dialogs.UserInteraction
                     }
                     compositeBuilder.Append(FieldHint(field, true));
                 }
-                if (singleBuilder.Length > 0)
-                {
-                    prompt = string.Format(_prompts.IntroHint, Environment.NewLine + Environment.NewLine + singleBuilder.ToString(), compositeBuilder.ToString());
-                }
+                prompt = string.Format(_prompts.IntroHint, Environment.NewLine + Environment.NewLine + singleBuilder.ToString(), compositeBuilder.ToString());
             }
             else
             {
