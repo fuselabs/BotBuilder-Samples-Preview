@@ -44,7 +44,6 @@ namespace Search.Dialogs
         protected bool SkipIntro = false;
         protected enum Show { Intro, Search, List };
         protected Show Showing = Show.Intro;
-        protected bool ShowSearch = false;
         protected bool ShowFullHint = true;
 
         [NonSerialized]
@@ -303,7 +302,6 @@ namespace Search.Dialogs
                         && entity.StartIndex >= removal.StartIndex
                         && entity.EndIndex <= removal.EndIndex)
                     {
-                        ShowSearch = true;
                         if (Query.Filter != null)
                         {
                             Query.Filter =
@@ -355,7 +353,6 @@ namespace Search.Dialogs
 
             if (Query.Phrases != null && (removeKeywords.Any() || removePhrases.Any()))
             {
-                ShowSearch = true;
                 // Remove keywords from the filter
                 foreach (var removeKeyword in removeKeywords)
                 {
@@ -449,7 +446,6 @@ namespace Search.Dialogs
         [LuisIntent("Search")]
         public async Task DoSearch(IDialogContext context, LuisResult result)
         {
-            ShowSearch = true;
             await Search(context);
         }
 
@@ -502,40 +498,30 @@ namespace Search.Dialogs
         {
             var prompt = Resources.Resource(ResourceType.RefinePrompt);
             ShowFullHint = true;
-            if (!ShowSearch && Query.Equals(LastQuery))
+            var response = await ExecuteSearchAsync();
+            if (!response.Results.Any())
             {
-                prompt = Resources.Resource(ResourceType.NotUnderstoodPrompt);
+                var badQuery = Query;
+                Query = LastQuery.DeepCopy();
+                prompt = string.Format(Resources.Resource(ResourceType.NoResultsPrompt), badQuery.Description(Resources));
             }
             else
             {
-                var response = await ExecuteSearchAsync();
-                if (!response.Results.Any())
-                {
-                    var badQuery = Query;
-                    Query = LastQuery;
-                    // Ensure the queries are not equal
-                    LastQuery = badQuery;
-                    prompt = string.Format(Resources.Resource(ResourceType.NoResultsPrompt), badQuery.Description(Resources));
-                }
-                else
-                {
-                    var message = context.MakeMessage();
-                    var hits = response.Results.ToList();
-                    HitStyler.Show(
-                        ref message,
-                        (IReadOnlyList<SearchHit>)hits,
-                        SearchDescription(response.TotalCount),
-                        Resources.ButtonResource(MultipleSelection ? ButtonType.Add : ButtonType.Select)
-                    );
-                    var nextPage = Resources.ButtonResource(ButtonType.NextPage);
-                    message.Attachments.Add(new ThumbnailCard(buttons: new List<CardAction> { new CardAction { Type = ActionTypes.ImBack, Title = nextPage.Label, Value = nextPage.Message } }).ToAttachment());
-                    await context.PostAsync(message);
-                    LastQuery = Query.DeepCopy();
-                    LastQuery.PageNumber = 0;
-                    Showing = Show.Search;
-                    ShowFullHint = false;
-                }
-                ShowSearch = false;
+                var message = context.MakeMessage();
+                var hits = response.Results.ToList();
+                HitStyler.Show(
+                    ref message,
+                    (IReadOnlyList<SearchHit>)hits,
+                    SearchDescription(response.TotalCount),
+                    Resources.ButtonResource(MultipleSelection ? ButtonType.Add : ButtonType.Select)
+                );
+                var nextPage = Resources.ButtonResource(ButtonType.NextPage);
+                message.Attachments.Add(new ThumbnailCard(buttons: new List<CardAction> { new CardAction { Type = ActionTypes.ImBack, Title = nextPage.Label, Value = nextPage.Message } }).ToAttachment());
+                await context.PostAsync(message);
+                LastQuery = Query.DeepCopy();
+                LastQuery.PageNumber = 0;
+                Showing = Show.Search;
+                ShowFullHint = false;
             }
             await PromptAsync(context, prompt, Buttons());
             context.Wait(MessageReceived);
@@ -631,7 +617,7 @@ namespace Search.Dialogs
             if (ShowFullHint)
             {
                 await PromptAsync(context,
-                    Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context) 
+                    Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context)
                     + Environment.NewLine + Environment.NewLine + prompt,
                     buttons);
                 ShowFullHint = false;

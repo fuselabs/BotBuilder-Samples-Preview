@@ -68,9 +68,9 @@ namespace Search.Models
                 HitsPerPage = this.HitsPerPage,
                 MaxFacets = this.MaxFacets,
                 Filter = this.Filter?.DeepCopy(),
-                Phrases = this.Phrases.ToList(),
-                Sort = this.Sort.ToList(),
-                Selection = this.Selection.ToList(),
+                Phrases = new List<string>(this.Phrases),
+                Sort = new List<SortKey>(this.Sort),
+                Selection = new List<string>(this.Selection),
                 Skip = this.Skip,
             };
         }
