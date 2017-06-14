@@ -142,9 +142,9 @@ namespace Search.Dialogs.UserInteraction
                             builder.Append(' ');
                         }
                     }
-                    builder.Append('"');
+                    if (!single) builder.Append('"');
                     builder.Append(example);
-                    builder.Append('"');
+                    if (!single) builder.Append('"');   
                     ++count;
                 }
                 if (single)
@@ -219,7 +219,9 @@ namespace Search.Dialogs.UserInteraction
                     }
                     compositeBuilder.Append(FieldHint(field, true));
                 }
-                prompt = string.Format(_prompts.IntroHint, Environment.NewLine + Environment.NewLine + singleBuilder.ToString(), compositeBuilder.ToString());
+                prompt = string.Format(_prompts.IntroHint, 
+                    Environment.NewLine + Environment.NewLine + singleBuilder.ToString(), 
+                    Environment.NewLine + Environment.NewLine + "* " + compositeBuilder.ToString());
             }
             else
             {

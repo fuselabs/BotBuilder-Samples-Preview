@@ -631,8 +631,8 @@ namespace Search.Dialogs
             if (ShowFullHint)
             {
                 await PromptAsync(context,
-                    prompt
-                    + Environment.NewLine + Environment.NewLine + Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context),
+                    Resources.FieldResource(FieldType.IntroHint, null, SearchClient.Schema, context) 
+                    + Environment.NewLine + Environment.NewLine + prompt,
                     buttons);
                 ShowFullHint = false;
             }
