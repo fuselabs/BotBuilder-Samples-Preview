@@ -36,8 +36,8 @@ namespace Search.Dialogs.Filter
                 else
                 {
                     //Only add the description to the combination to avoid description duplication and limit the tree traversal
-                    var child = FilterExpression.Combine(new FilterExpression(lowercmp, range.Property, range.Lower),
-                        new FilterExpression(uppercmp, range.Property, range.Upper), FilterOperator.And, range.Description);
+                    var child = FilterExpression.Combine(new FilterExpression(lowercmp, range.Property.Name, range.Lower),
+                        new FilterExpression(uppercmp, range.Property.Name, range.Upper), FilterOperator.And, range.Description);
                     filter = FilterExpression.Combine(filter, child, connector);
                 }
             }
