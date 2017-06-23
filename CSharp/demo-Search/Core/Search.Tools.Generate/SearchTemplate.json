@@ -102,7 +102,8 @@
             "+",
             "greater than or equal",
             "at least",
-            "no less than"
+            "no less than",
+            "over"
           ]
         },
         {
@@ -125,7 +126,8 @@
           "list": [
             "<=",
             "no more than",
-            "less than or equal"
+            "less than or equal",
+            "under"
           ]
         },
         {

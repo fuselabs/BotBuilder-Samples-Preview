@@ -49,7 +49,9 @@
           "Bedrooms",
           "bed",
           "bedroom",
-          "beds"
+          "beds",
+          "bd",
+          "br"
         ]
       },
       "ValueSynonyms": [],
@@ -78,7 +80,8 @@
           "Bathrooms",
           "bath",
           "baths",
-          "bathroom"
+          "bathroom",
+          "ba"
         ]
       },
       "ValueSynonyms": [],
